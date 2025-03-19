@@ -1,18 +1,21 @@
 import jwt from 'jsonwebtoken';
 
-export const authSeller = (req, res, next) => {
-  try {
-    const { token } = req.cookies;
-    if (!token) return res.status(401).json({ message: "Unauthorized" });
 
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    if (decodedToken.role !== "seller") {
-      return res.status(403).json({ message: "Forbidden: Seller access only" });
+// Example of checking for the token in cookies:
+const authSeller = (req, res, next) => {
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+  
+    if (!token) {
+      return res.status(401).json({ message: 'No token provided' });
     }
-
-    req.user = decodedToken;
-    next();
-  } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
+  
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      req.seller = { id: decoded.sellerId }; // ✅ Now matches token structure
+      next();
+    } catch (error) {
+      return res.status(401).json({ message: 'Invalid or expired token' });
+    }
+  };
+  
+export default authSeller;

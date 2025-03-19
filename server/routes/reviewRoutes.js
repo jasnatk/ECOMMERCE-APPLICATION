@@ -1,8 +1,24 @@
-// import express from "express";
-// const router = express.Router();
+import express from "express";
+import { authUser } from "../middleware/authUser.js";
+import { 
+    addReview, 
+    deleteReview, 
+    getAverageRating, 
+    getProductReviews 
+} from "../controllers/reviewController.js";
 
-// router.get("/:productId", getReviewsForProduct);
-// router.post("/:productId", protect, createReview);
-// router.delete("/:reviewId", protect, deleteReview);
+const router = express.Router();
 
-// export default router;
+// Add review 
+router.post("/add-review", authUser, addReview);
+
+// Delete review 
+router.delete("/delete-review/:reviewId", authUser, deleteReview);
+
+// Get product reviews
+router.get("/product-reviews/:productId", getProductReviews);
+
+// Get product average rating
+router.get("/avg-rating/:productId", getAverageRating);
+
+export default router

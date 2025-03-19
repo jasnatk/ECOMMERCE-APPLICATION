@@ -1,12 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
-
-// Function to generate JWT token
-const generateToken = (id, role) => {
-    return jwt.sign({ id, role }, process.env.JWT_SECRET_KEY, { expiresIn: "30d" });
-};
-
+import { generateToken } from "../utilities/token.js";
 
 // 1. User/Admin Registration
 export const userSignUp = async (req, res) => {
@@ -34,7 +29,12 @@ export const userSignUp = async (req, res) => {
         const newUser = new User({ name, email, password: hashedPassword, phoneNumber, address, profilePic });
         await newUser.save();
 
-        
+        console.log("User created:", newUser);
+
+        // Generate JWT Token
+        if (!process.env.JWT_SECRET_KEY) {
+            throw new Error("JWT_SECRET_KEY is missing in .env file");
+        }
         // Generate JWT Token
         
         const token = jwt.sign(
@@ -42,10 +42,15 @@ export const userSignUp = async (req, res) => {
             process.env.JWT_SECRET_KEY,
             { expiresIn: "1h" }
         );
-        
+        console.log("Token generated:", token);
 
-        res.status(201).json({ data: newUser, message: "Signup successful" });
+        // Select all fields except the password
+        const userWithoutPassword = await User.findById(newUser._id).select("-password");
+
+
+        res.status(201).json({ data: userWithoutPassword, message: "Signup successful" });
     } catch (error) {
+        console.log("Error in Signup:", error.message);
         res.status(500).json({ message: error.message });
     }
 };
@@ -76,6 +81,8 @@ export const loginUser = async (req, res) => {
         // Generate token
         const token = generateToken(user._id, 'user');
         res.cookie('token', token, { httpOnly: true });
+
+        
         
         res.json({ data: user, message: "Login successful" });
     } catch (error) {

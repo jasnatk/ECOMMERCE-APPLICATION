@@ -1,19 +1,7 @@
-
-// import Order from "../models/orderModel.js";
-// import Dashboard from "../models/dashboardModel.js";
-// import Settings from "../models/settingsModel.js";
-
-// Get all users
 import User from "../models/userModel.js";  
-
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { generateToken } from "../utilities/token.js";
 
-
-// Function to generate JWT token
-const generateToken = (id, role) => {
-    return jwt.sign({ id, role }, process.env.JWT_SECRET_KEY, { expiresIn: "30d" });
-};
 
 // Admin Registration
 export const adminSignUp = async (req, res) => {

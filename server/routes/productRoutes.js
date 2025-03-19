@@ -1,16 +1,26 @@
-// import express from "express"
+import express from "express";
 
-// const router = express.Router();
+import { authAdmin } from "../middleware/authAdmin.js";
+import upload from "../middleware/multer.js"
+import {
+    deleteProduct,
+    updateProduct,
+    createProduct,
+    getAllProducts,
+    getProductDetails,
+    getProductsBySeller
+} from "../controllers/productController.js";
 
-// // Public routes
-// router.get("/", getAllProducts);
-// router.get("/:id", getProductById);
+const router = express.Router();
 
-// // Protected routes (only admin can manage products)
-// router.post("/", protect, adminOnly, createProduct);
-// router.put("/:id", protect, adminOnly, updateProduct);
-// router.delete("/:id", protect, adminOnly, deleteProduct);
+// Public routes
+router.get("/productList", getAllProducts);
+router.get("/productDetails/:productId", getProductDetails);
+router.get("/products/seller/:sellerId", getProductsBySeller);
 
+// Protected routes (only admin can manage products)
+router.post("/create-product", upload.single("image"), createProduct);
+router.put("/update-product/:productId", authAdmin, upload.single("image"), updateProduct);
+router.delete("/remove-product/:productId", authAdmin, deleteProduct);
 
-
-// export default router;
+export default router;

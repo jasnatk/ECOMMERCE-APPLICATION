@@ -1,27 +1,28 @@
+
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const sellerSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  storeName: { type: String, required: true },
-  storeDescription: { type: String },
-  address: { type: String, required: true },
-  phone: { type: String, required: true },
-  isVerified: { type: Boolean, default: false },
-}, { timestamps: true });
-
-// Hash password before saving
-sellerSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    address: { type: String, required: true },
+    phone: { type: String, required: true },
+    isVerified: { type: Boolean, default: false }
 });
 
-// Compare passwords
-sellerSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+// Hash password before saving to database
+sellerSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+});
+
+// Method to compare entered password with hashed password
+sellerSchema.methods.comparePassword = async function(password) {
+    return await bcrypt.compare(password, this.password);
 };
 
-export const Seller = mongoose.model('Seller', sellerSchema);
+ const Seller = mongoose.model('Seller', sellerSchema);
+
+export default Seller ;

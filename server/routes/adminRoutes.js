@@ -26,6 +26,7 @@ router.post('/logout', authAdmin, adminLogout);
 
 router.get('/profile', authAdmin, getAdminProfile);
 router.get("/check-admin",authAdmin,checkAdmin)
+
 // // User Management Routes
 // router.get('/users', authAdmin, getAllUsers);
 // router.put('/users/:id/deactivate', authAdmin, deactivateUser);

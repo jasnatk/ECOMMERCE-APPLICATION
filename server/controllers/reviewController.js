@@ -1,66 +1,82 @@
-// import Review from "../models/reviewModel.js";
-// import Product from "../models/productModel.js";
+import mongoose from "mongoose";
+import Product from "../models/productModel.js";
+import {Review} from "../models/reviewModel.js";
 
-// // Get all reviews for a product
-// export const getReviewsForProduct = async (req, res) => {
-//   try {
-//     const product = await Product.findById(req.params.productId);
-//     if (!product) {
-//       return res.status(404).json({ message: "Product not found" });
-//     }
+export const addReview = async (req, res) => {
+    try {
+        const { productId, rating, comment } = req.body;
+        const userId = req.user.id;
 
-//     const reviews = await Review.find({ product: req.params.productId });
-//     res.status(200).json(reviews);
-//   } catch (error) {
-//     res.status(500).json({ message: "Error fetching reviews", error: error.message });
-//   }
-// };
+        // Validate if the product exists
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
 
-// // Create a new review for a product
-// export const createReview = async (req, res) => {
-//   try {
-//     const { rating, comment } = req.body;
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({ message: "Please provide a rating between 1 and 5" });
+        }
 
-//     // Check if product exists
-//     const product = await Product.findById(req.params.productId);
-//     if (!product) {
-//       return res.status(404).json({ message: "Product not found" });
-//     }
+        // Create or update the review
+        const review = await Review.findOneAndUpdate(
+            { userId, productId },
+            { rating, comment },
+            { new: true, upsert: true, runValidators: true }
+        );
 
-//     // Create the review
-//     const newReview = new Review({
-//       user: req.user.id,  // Assumes req.user is populated via authentication middleware
-//       product: req.params.productId,
-//       rating,
-//       comment,
-//     });
+        res.status(201).json({ data: review, message: "Review added successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
 
-//     await newReview.save();
+export const getProductReviews = async (req, res) => {
+    try {
+        const { productId } = req.params;
 
-//     // Optionally, you could also update the product's average rating here
-//     res.status(201).json({ message: "Review created successfully", review: newReview });
-//   } catch (error) {
-//     res.status(500).json({ message: "Error creating review", error: error.message });
-//   }
-// };
+        const reviews = await Review.find({ productId })
+            .populate("userId", "name")
+            .sort({ createdAt: -1 });
 
-// // Delete a review
-// export const deleteReview = async (req, res) => {
-//   try {
-//     const review = await Review.findById(req.params.reviewId);
-//     if (!review) {
-//       return res.status(404).json({ message: "Review not found" });
-//     }
+        res.status(200).json({ data: reviews, message: "Product reviews fetched successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
 
-//     // Check if the user is the one who created the review
-//     if (review.user.toString() !== req.user.id) {
-//       return res.status(403).json({ message: "You can only delete your own reviews" });
-//     }
+export const deleteReview = async (req, res) => {
+    try {
+        const { reviewId } = req.params;
+        const userId = req.user.id;
 
-//     // Delete the review
-//     await review.remove();
-//     res.status(200).json({ message: "Review deleted successfully" });
-//   } catch (error) {
-//     res.status(500).json({ message: "Error deleting review", error: error.message });
-//   }
-// };
+        if (!mongoose.Types.ObjectId.isValid(reviewId)) {
+            return res.status(400).json({ message: "Invalid review ID" });
+        }
+
+        const review = await Review.findOneAndDelete({ _id: reviewId, userId });
+
+        if (!review) {
+            return res.status(404).json({ message: "Review not found or unauthorized" });
+        }
+
+        res.status(200).json({ message: "Review deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+export const getAverageRating = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const reviews = await Review.find({ productId });
+
+        const totalReviews = reviews.length;
+        const averageRating = totalReviews
+            ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+            : 0;
+
+        res.status(200).json({ data: averageRating, message: "Average rating fetched successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
