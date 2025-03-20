@@ -1,15 +1,25 @@
-// import express from "express"
+import express from "express";
+import { authAdmin } from "../middleware/authAdmin.js";
+import { authUser } from "../middleware/authUser.js";
+import {
+    createOrder,
+    getMyOrders,
+    getOrderById,
+    cancelOrder,
+    getAllOrders,
+    updateOrderStatus
+} from "../controllers/orderController.js";
 
-// const router = express.Router();
+const router = express.Router();
 
-// // User routes
-// router.post("/", protect, createOrder);
-// router.get("/my-orders", protect, getMyOrders);
-// router.get("/:id", protect, getOrderById);
-// router.put("/:id/cancel", protect, cancelOrder);
+// User routes
+router.post("/create-order", authUser, createOrder);
+router.get("/my-orders", authUser, getMyOrders);
+router.get("/:id", authUser, getOrderById);
+router.put("/:id/cancel", authUser, cancelOrder);
 
-// // Admin routes
-// router.get("/", protect, adminOnly, getAllOrders);
-// router.put("/:id/status", protect, adminOnly, updateOrderStatus);
+// Admin routes
+router.get("/", authAdmin, getAllOrders);
+router.put("/:id/status", authAdmin, updateOrderStatus);
 
-// export default router;
+export default router;
