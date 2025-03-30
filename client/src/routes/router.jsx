@@ -9,6 +9,13 @@ import { ErrorPage } from "../pages/shared/ErrorPage";
 import { Product} from "../pages/user/Products";
 import { ProductDetails } from "../pages/user/ProductDetails";
 import { LoginPage } from "../pages/shared/LoginPage";
+import { SellerLayout } from "../Layout/SellerLayout";
+import { SignupPage } from "../pages/shared/SignupPage";
+import { Men } from "../pages/user/Men";
+import { Women } from "../pages/user/Women";
+import { Kids } from "../pages/user/Kids";
+
+
 
 
 export const router = createBrowserRouter([
@@ -37,7 +44,7 @@ errorElement: <ErrorPage />,
         },
         {
         path: "SignUp",
-        element: <h1>signup</h1>,
+        element: <SignupPage/>,
        },
        {
          path: "product",
@@ -47,7 +54,18 @@ errorElement: <ErrorPage />,
         path: "productDetails/:id",
         element: <ProductDetails/>,
       },
-
+      {
+        path: "product/productList?category=Men",
+        element: <Product/>,
+      },
+      {
+        path: "women",
+        element: <Women/>,
+      },
+      {
+        path: "kids",
+        element: <Kids/>,
+      },
        
       {
         element: <ProtectRoutes />,
@@ -59,7 +77,7 @@ errorElement: <ErrorPage />,
           },
           {
             path: "cart",
-            element: <h1>cart</h1>,
+            element: <h1>Cart</h1>,
           }, {
             path: "wishlist",
             element: <h1>wishlist</h1>,
@@ -73,9 +91,33 @@ errorElement: <ErrorPage />,
             element: <h1>payment</h1>,
           },
 
-        ]
-      }
+        ],
+      },
 
-    ]
-  }
+    ],
+  },
+
+           {
+            path: "seller",
+            element: <SellerLayout/>,
+            children:[
+
+              {
+                path: "login",
+            element:<LoginPage role ="seller"/>,
+              },
+              {
+                path: "signup",
+            element: <h1>sellersignup</h1>,
+              },
+              {
+                path: "logout",
+            element: <h1>sellerlogout</h1>,
+              },
+              {
+                path: "profile",
+            element: <h1>sellerprofile</h1>,
+              },
+            ],
+            },
 ]);

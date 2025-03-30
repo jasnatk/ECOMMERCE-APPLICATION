@@ -18,10 +18,10 @@ export const LoginPage = ({ role }) => {
         signupRoute: "/signup",
     };
 
-    if (role == "mentor") {
-        user.role = "mentor";
-        user.loginAPI = "/mentor/login";
-        (user.profileRoute = "/mentor/profile"), (user.signupRoute = "/mentor/signup");
+    if (role == "seller") {
+        user.role = "seller";
+        user.loginAPI = "/seller/login";
+        (user.profileRoute = "/seller/profile"), (user.signupRoute = "/seller/signup");
     }
 
     const onSubmit = async (data) => {
@@ -29,16 +29,16 @@ export const LoginPage = ({ role }) => {
 
         try {
             const response = await axiosInstance({
-                method: "PUT",
+                method: "POST",
                 url: user.loginAPI,
                 data: data,
             });
             console.log("response====", response);
-            dispatch(saveUser(response?.data?.data));
+            // dispatch(saveUser(response?.data?.data));
             // toast.success("Login success");
             navigate(user.profileRoute);
         } catch (error) {
-            dispatch(clearUser());
+            // dispatch(clearUser());
             // toast.error("Login Failed");
             console.log(error);
         }
@@ -48,10 +48,9 @@ export const LoginPage = ({ role }) => {
         <div className="bg-base-200 hero min-h-screen">
             <div className="flex-col hero-content lg:flex-row-reverse">
                 <div className="text-center lg:text-left">
-                    <h1 className="text-5xl font-bold">Login now! {user.role} </h1>
+                    <h1 className="text-5xl font-bold"> {user.role} Login! </h1>
                     <p className="py-6">
-                        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque
-                        aut repudiandae et a id nisi.
+                    Z Fashion - Your Ultimate Fashion Destination
                     </p>
                 </div>
                 <div className="card bg-base-100 shadow-2xl w-full max-w-sm shrink-0">
@@ -93,16 +92,14 @@ export const LoginPage = ({ role }) => {
                                     </a>
                                 </label>
                                 <label className="label">
-                                    <Link to={user.signupRoute}>
-                                        <a href="#" className="label-text-alt link link-hover">
-                                            New User?
-                                        </a>
+                                    <Link to={user.signupRoute} className="label-text-alt link link-hover">
+                                    New User?
                                     </Link>
                                 </label>
                             </div>
                         </div>
                         <div className="form-control mt-6">
-                            <button className="btn btn-primary">Login</button>
+                            <button className="btn bg-black text-white w-full">Login</button>
                         </div>
                     </form>
                 </div>

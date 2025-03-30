@@ -2,3 +2,9 @@
 @plugin "daisyui" {
     themes: light --default, dark --prefersdark, cupcake;
   }
+  @font-face {
+    font-family: 'Playfair Display';
+    src: url('/assets/fonts/PlayfairDisplay-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+  }

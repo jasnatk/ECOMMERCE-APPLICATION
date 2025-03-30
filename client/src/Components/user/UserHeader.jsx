@@ -1,62 +1,52 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { DarkMode } from "../shared/DarkMode";
-import { FaSearch, FaUser, FaHeart, FaShoppingCart } from "react-icons/fa";
+ import { Link, } from "react-router-dom";
+ import React from "react";
+ import { FaSearch } from "react-icons/fa";
+ import { DarkMode } from "../shared/DarkMode";
 
-export const UserHeader = () => {
-  return (
-    <div className="flex justify-between items-center px-10 py-5 shadow-2xl">
-      {/* Left Section - Logo & Navigation */}
-      <nav className="flex items-center gap-10">
-        <h1 className="text-3xl font-bold">
-          <Link to="/product" className="hover:text-gray-500">
-            Z FASHION
-          </Link>
-        </h1>
-        <ul className="hidden md:flex gap-8 font-semibold">
-          <li>
-            <Link to="/men" className="hover:text-gray-500">Men</Link>
-          </li>
-          <li>
-            <Link to="/women" className="hover:text-gray-500">Women</Link>
-          </li>
-          <li>
-            <Link to="/kids" className="hover:text-gray-500">Kids</Link>
-          </li>
-        </ul>
-      </nav>
+ export const UserHeader = () => {
+  
+   return (
+     <div className="flex justify-between items-center px-10 py-5 shadow-2xl dark:bg-gray-800 dark:text-white">
+      
+       {/* Left Section - Logo & Navigation */}
+       <nav className="flex items-center gap-20 ">
+        
+         <h1 className="text-3xl font-bold ">
+           <Link
+             to="/product"
+             className="hover:text-gray-500 dark:hover:text-gray-300 text-4xl tracking-wide"
+             style={{ fontFamily: "Playfair Display, serif" }}>
+             Z FASHION
+           </Link>
+         </h1>
+         <ul className="hidden md:flex gap-8 font-semibold text-xl dark:bg-black dark:text-white">
+           <li>
+             <Link to="/products?category=Men" className="hover:text-gray-500 dark:hover:text-gray-300 ">Men</Link>
+           </li>
+           <li>
+             <Link to="/products?category=Women" className="hover:text-gray-500 dark:hover:text-gray-300">Women</Link>
+           </li>
+           <li>
+             <Link to="/products?category=Kids" className="hover:text-gray-500 dark:hover:text-gray-300">Kids</Link>
+           </li>
+         </ul>
+       </nav>
 
-      {/* Middle Section - Search Bar */}
-      <div className="relative w-64">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-full p-2 pl-10 border rounded-md bg-gray-100 dark:bg-gray-800 text-black dark:text-white focus:outline-none"
-        />
-        <FaSearch className="absolute top-3 left-3 text-gray-500" />
-      </div>
-
-      {/* Right Section - Icons */}
-      <div className="flex items-center gap-6 text-xl">
-        <DarkMode />
-        {/* User Dropdown */}
-        <div className="relative group">
-          <FaUser className="cursor-pointer hover:text-gray-500" />
-          <div className="absolute right-0 mt-2 w-40 bg-white shadow-md rounded-md hidden group-hover:block">
-            <ul className="text-gray-800">
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">Profile</li>
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">Orders</li>
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">Logout</li>
-            </ul>
-          </div>
-        </div>
-        <Link to="/wishlist">
-          <FaHeart className="cursor-pointer hover:text-gray-500" />
-        </Link>
-        <Link to="/cart">
-          <FaShoppingCart className="cursor-pointer hover:text-gray-500" />
-        </Link>
-      </div>
-    </div>
-  );
-};
+       {/* Search Box + Button + Dark Mode */}
+       <div className="flex items-center gap-4">
+         <div className="relative w-80">
+           <input
+             type="text"
+             placeholder="Search..."
+             className="w-full p-1 pl-10 border rounded-md bg-gray-100 dark:bg-gray-700 text-black dark:text-white focus:outline-none"
+           />
+           <FaSearch className="absolute top-3 left-3 text-gray-500 dark:text-gray-300" />
+         </div>
+         <button className="px-4 py-1 bg-black text-white rounded-md hover:bg-gray-700 dark:hover:bg-gray-500 border border-gray-400">
+           Search
+         </button>
+         <DarkMode />
+       </div>
+     </div>
+   );
+ };

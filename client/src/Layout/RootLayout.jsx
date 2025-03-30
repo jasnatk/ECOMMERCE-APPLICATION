@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { UserHeader } from "../Components/user/UserHeader";
+import {  UserHeader } from "../Components/user/UserHeader";
 import { Header } from "../Components/user/Header";
-import { Footer } from "../Components/user/Footer";
+import {Footer} from "../Components/user/Footer";
+
 
 export const RootLayout = () => {
     const [isUserAuth, setIsUserAuth] = useState(false);
@@ -13,7 +14,7 @@ export const RootLayout = () => {
             <div className="min-h-100">
                 <Outlet />
             </div>
-               <Footer />
+               <Footer/>
         </div>
     );
 };

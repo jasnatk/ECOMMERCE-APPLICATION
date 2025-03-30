@@ -21,6 +21,7 @@ const productSchema = new mongoose.Schema({
 
     category: {
         type: String,
+        enum: ["Men", "Women", "Kids"],
         required: true,
     },
 
@@ -35,7 +36,7 @@ const productSchema = new mongoose.Schema({
         required: true,
     },
 
-    seller: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
+    seller: { type: mongoose.Types.ObjectId, ref: "Seller"  }
 
   
 

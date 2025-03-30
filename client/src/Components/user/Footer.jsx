@@ -1,12 +1,15 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export const Footer = () => {
   return (
     <footer className="footer sm:footer-horizontal bg-base-200 text-base-content p-10">
     <aside>
      
-        <div className="mt-[-35px]">
-         <img src="/image/z fashion logo.png" />
+        <div className="mt-[35px]">
+        <Link to="/product" className="hover:text-gray-500 text-4xl tracking-wide" style={{ fontFamily: 'Playfair Display, serif' }}>
+            Z FASHION
+          </Link>
       </div>
     
     </aside>
@@ -21,7 +24,7 @@ export const Footer = () => {
       <h6 className="footer-title">SUPPORT</h6>
       <a className="link link-hover">Contact</a>
       <a className="link link-hover">About Us</a>
-      <a className="link link-hover">Track Your Order</a>
+      <Link to={"/seller/login"}>Sell on Z Fashion </Link>
     
     </nav>
     
