@@ -19,7 +19,7 @@ export const Header = () => {
             <Link to="/product" className="hover:text-gray-500">All</Link>
           </li>
           <li>
-            <Link to="Men" className="hover:text-gray-500">Men</Link>
+            <Link to="/Men" className="hover:text-gray-500">Men</Link>
           </li>
           <li>
             <Link to="/women" className="hover:text-gray-500">Women</Link>
