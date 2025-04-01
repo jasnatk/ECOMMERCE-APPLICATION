@@ -54,66 +54,41 @@ export const sellerSignup = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 export const sellerLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Log incoming email and password
-        console.log("📧 Login Request - Email:", email);
-        console.log("🔑 Login Request - Password:", password);  // Never log the password in production, only for debugging!
-
         if (!email || !password) {
-            return res.status(400).json({ message: "All fields are required" });
+            return res.status(400).json({ message: 'All fields are required' });
         }
 
-        // Find seller by email
         const seller = await Seller.findOne({ email });
-
         if (!seller) {
-            console.log("❌ Seller not found for email:", email);
-            return res.status(400).json({ message: "Invalid credentials" });
-        }
-
-        console.log("✅ Seller found:", seller);
-
-        // Log the stored hash from DB
-        console.log("🔐 Stored Hashed Password (from DB):", seller.password);
+            return res.status(400).json({ message: 'Seller not found' });
+        }      
         
-        // Compare passwords
-        const isMatch = await bcrypt.compare(password, seller.password);
 
-        // Log entered password and comparison result
-        console.log("🔍 Entered Password:", password);
-        console.log("🔐 Stored Hashed Password:", seller.password);
-        console.log("🔄 Password Match Result:", isMatch);
-
+        // Check if password matches
+        const isMatch = await bcrypt.compare(password, seller.password);    
         if (!isMatch) {
-            return res.status(400).json({ message: "Invalid credentials" });
+            return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         // Generate JWT Token
-        const token = generateToken(seller._id, "seller");
+        const token = generateToken(seller._id);        
+        res.cookie('token', token, { httpOnly: true });
 
-        // Set token in HTTP-only cookie
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-        });
+        const sellerWithoutPassword = await Seller.findById(seller._id).select("-password");     
 
-        // Remove password before sending response
-        const sellerWithoutPassword = await Seller.findById(seller._id).select("-password");
-
-        res.status(200).json({
-            success: true,
-            data: sellerWithoutPassword,
-            message: "Seller Login successful",
+        res.status(200).json({ 
+            data: sellerWithoutPassword,            
+            token, 
+            message: 'Login successful' 
         });
 
     } catch (error) {
-        console.error("🚨 Error in sellerLogin:", error.message);
-        res.status(500).json({ message: "Server error", error: error.message });
+        console.error("Error in sellerLogin:", error.message);     
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
