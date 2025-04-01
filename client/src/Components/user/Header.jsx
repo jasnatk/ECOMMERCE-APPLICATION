@@ -43,13 +43,13 @@ export const Header = () => {
       {/* Right Section - Icons */}
       <div className="flex items-center gap-6 text-xl">
         <DarkMode />
-        <Link to="/signup">
+        <Link to="/login">
           <FaUser className="cursor-pointer hover:text-gray-500" />
           </Link>
-        <Link to="/wishlist">
+        <Link to="/login">
           <FaHeart className="cursor-pointer hover:text-gray-500" />
         </Link>
-        <Link to="/cart">
+        <Link to="/login">
           <FaShoppingCart className="cursor-pointer hover:text-gray-500" />
         </Link>
       </div>

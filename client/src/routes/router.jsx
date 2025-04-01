@@ -14,6 +14,7 @@ import { SignupPage } from "../pages/shared/SignupPage";
 import { Men } from "../pages/user/Men";
 import { Women } from "../pages/user/Women";
 import { Kids } from "../pages/user/Kids";
+import { Wishlist } from "../pages/user/Wishlist";
 
 
 
@@ -43,7 +44,7 @@ errorElement: <ErrorPage />,
         element: <LoginPage/>,
         },
         {
-        path: "SignUp",
+        path: "Signup",
         element: <SignupPage/>,
        },
        {
@@ -68,6 +69,7 @@ errorElement: <ErrorPage />,
       },
        
       {
+        path:"user",
         element: <ProtectRoutes />,
         children: [
 
@@ -80,7 +82,7 @@ errorElement: <ErrorPage />,
             element: <h1>Cart</h1>,
           }, {
             path: "wishlist",
-            element: <h1>wishlist</h1>,
+            element: <Wishlist/>,
           },
           {
             path: "review",
