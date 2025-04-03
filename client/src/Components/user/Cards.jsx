@@ -14,7 +14,7 @@ const ProductCard = ({ products }) => {
         <h2 className=" line-clamp-2 card-title font-bold">{products.name}</h2>
         
         {/* Truncated Description */}
-        <p className="line-clamp-3 text-sm text-gray-700">{products.description}</p>  {/* Truncates to 3 lines */}
+        <p className="line-clamp-3 text-sm text-gray-500">{products.description}</p>  {/* Truncates to 3 lines */}
        
         <div className="text-center">
           <p className="font-bold text-xl">Price: ₹ {products.price}</p>

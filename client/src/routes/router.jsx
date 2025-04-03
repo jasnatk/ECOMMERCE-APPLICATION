@@ -15,6 +15,10 @@ import { Men } from "../pages/user/Men";
 import { Women } from "../pages/user/Women";
 import { Kids } from "../pages/user/Kids";
 import { Wishlist } from "../pages/user/Wishlist";
+import { AdminDashboard } from "../Components/admin/AdminDashboard";
+import { AdminLayout } from "../Layout/AdminLayout";
+ import { LogoutPage } from "../pages/shared/LogoutPage";
+import { CartPage } from "../pages/user/CartPage";
 
 
 
@@ -48,6 +52,10 @@ errorElement: <ErrorPage />,
         element: <SignupPage/>,
        },
        {
+        path: "logout",
+        element: <LogoutPage/>,
+       },
+       {
          path: "product",
          element: <Product/>,
        },
@@ -75,12 +83,13 @@ errorElement: <ErrorPage />,
 
           {
             path: "profile",
-            element: <h1><Profile /></h1>,
+            element: <Profile/>,
           },
           {
             path: "cart",
-            element: <h1>Cart</h1>,
-          }, {
+            element: <CartPage/>,
+          }, 
+          {
             path: "wishlist",
             element: <Wishlist/>,
           },
@@ -112,14 +121,34 @@ errorElement: <ErrorPage />,
                 path: "signup",
             element: <h1>sellersignup</h1>,
               },
-              {
-                path: "logout",
-            element: <h1>sellerlogout</h1>,
-              },
+              // {
+              //   path: "seller/logout",
+              //   element: <LogoutPage />,
+              // },
               {
                 path: "profile",
             element: <h1>sellerprofile</h1>,
               },
             ],
             },
+                      
+                  {
+                  path: "admin",
+                  element: <AdminLayout/>,
+                  children:[
+                    {
+                      path: "",
+                  element:<AdminDashboard role ="admin"/>,
+                    },
+
+                    {
+                      path: "login",
+                  element:<LoginPage role ="admin"/>,
+                    },
+                    // {
+                    //   path: "admin/logout",
+                    //   element: <LogoutPage />,
+                    // },
+                  ],
+                },
 ]);

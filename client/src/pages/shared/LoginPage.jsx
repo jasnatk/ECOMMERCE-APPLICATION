@@ -12,20 +12,26 @@ export const LoginPage = ({ role }) => {
     const dispatch = useDispatch();
 
     const user = {
-        role: "user",
+        role: "User",
         loginAPI: "/user/login",
         profileRoute: "/user/profile",
         signupRoute: "/signup",
     };
 
     if (role == "seller") {
-        user.role = "seller";
+        user.role = "Seller";
         user.loginAPI = "/seller/login";
-        (user.profileRoute = "/seller/profile"), (user.signupRoute = "/seller/signup");
+        (user.profileRoute = "/seller/profile"), 
+        (user.signupRoute = "/seller/signup");
+    }else if (role =="admin") {
+        user.role = "Admin";
+        user.loginAPI = "/admin/login";  // Make sure this endpoint exists in your backend
+        user.profileRoute = "/admin/dashboard"; // Redirect admin to dashboard
+        user.signupRoute = "/admin/signup"; // If admins have a signup option
     }
 
     const onSubmit = async (data) => {
-        console.log(data);
+        
 
         try {
             const response = await axiosInstance({
@@ -49,7 +55,7 @@ export const LoginPage = ({ role }) => {
             <div className="flex-col hero-content lg:flex-row-reverse">
                 <div className="text-center lg:text-left">
                     <h1 className="text-5xl font-bold"> {user.role} Login! </h1>
-                    <p className="py-6">
+                    <p className="py-6" style={{ fontFamily: 'Playfair Display, serif' }}>
                     Z Fashion - Your Ultimate Fashion Destination
                     </p>
                 </div>

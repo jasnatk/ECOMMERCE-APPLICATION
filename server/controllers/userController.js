@@ -3,51 +3,50 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import { generateToken } from "../utilities/token.js";
 
+const NODE_ENV = process.env.NODE_ENV;
+
 // 1. User/Admin Registration
-export const userSignUp = async (req, res) => {
+export const userSignUp = async (req, res,next) => {
     try {
+        //collect user data
         const { name, email, password, confirmPassword, address, phoneNumber, profilePic } = req.body;
 
         // Data validation
         if (!name || !email || !password || !confirmPassword || !phoneNumber) {
             return res.status(400).json({ message: "All fields required" });
         }
-        if (password !== confirmPassword) {
-            return res.status(400).json({ message: "Passwords do not match" });
-        }
-        
+
         // Check if the user already exists
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        //compare with confirm password
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords do not match" });
+        }
+        
+        
 
-        // Create a new user
+        // password hashing
+        const hashedPassword = bcrypt.hashSync(password, 10);
+
+        // SAVE TO DB
         const newUser = new User({ name, email, password: hashedPassword, phoneNumber, address, profilePic });
         await newUser.save();
 
         console.log("User created:", newUser);
 
-        // Generate JWT Token
-        if (!process.env.JWT_SECRET_KEY) {
-            throw new Error("JWT_SECRET_KEY is missing in .env file");
-        }
-        // Generate JWT Token
-        
-        const token = jwt.sign(
-            { id: newUser._id, name: newUser.name }, 
-            process.env.JWT_SECRET_KEY,
-            { expiresIn: "1h" }
-        );
-        console.log("Token generated:", token);
-
+        // Generate token using id and role
+        const token = generateToken(newUser._id, "user");
+        res.cookie("token", token,{
+            sameSite: NODE_ENV === "production" ? "None" : "Lax",
+            secure: NODE_ENV === "production",
+            httpOnly: NODE_ENV === "production",
+        });
         // Select all fields except the password
         const userWithoutPassword = await User.findById(newUser._id).select("-password");
-
-
         res.status(201).json({ data: userWithoutPassword, message: "Signup successful" });
     } catch (error) {
         console.log("Error in Signup:", error.message);
@@ -80,7 +79,15 @@ export const loginUser = async (req, res) => {
 
         // Generate token
         const token = generateToken(user._id, 'user');
-        res.cookie('token', token, { httpOnly: true });
+
+        // res.cookie("token", token, {httpOnly:true});
+        
+         //store token
+        res.cookie("token", token, {
+            sameSite: NODE_ENV === "production" ? "None" : "Lax",
+            secure: NODE_ENV === "production",
+            httpOnly: NODE_ENV === "production",
+        });
 
         
         
@@ -93,7 +100,11 @@ export const loginUser = async (req, res) => {
 // 3. User Logout
 export const logoutUser = async (req, res) => {
     try {
-        res.clearCookie("token");
+        res.clearCookie("token",{
+            sameSite: NODE_ENV === "production" ? "None" : "Lax",
+            secure: NODE_ENV === "production",
+            httpOnly: NODE_ENV === "production",
+        });
         res.json({ message: "User logged out successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message });

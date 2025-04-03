@@ -15,7 +15,7 @@ import { authAdmin } from '../middleware/authAdmin.js'; // Authentication middle
 
 const router = express.Router();
 // Admin registration
-router.post('/register', adminSignUp);
+router.post('/signup', adminSignUp);
 
 // Admin login
 router.post('/login', adminLogin);
