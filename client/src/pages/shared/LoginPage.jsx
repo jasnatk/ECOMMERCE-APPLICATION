@@ -2,114 +2,112 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { axiosInstance } from "../../config/axiosInstance";
 import { Link, useNavigate } from "react-router-dom";
- import { useDispatch } from "react-redux";
- import { clearUser, saveUser } from "../../redux/features/userSlice";
-// import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { clearUser, saveUser } from "../../redux/features/userSlice";
+import toast from "react-hot-toast";
 
 export const LoginPage = ({ role }) => {
-    const { register, handleSubmit } = useForm();
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+  const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    const user = {
-        role: "User",
-        loginAPI: "/user/login",
-        profileRoute: "/user/profile",
-        signupRoute: "/signup",
-    };
+  const user = {
+    role: "User",
+    loginAPI: "/user/login",
+    profileRoute: "/user/profile",
+    signupRoute: "/signup",
+  };
 
-    if (role == "seller") {
-        user.role = "Seller";
-        user.loginAPI = "/seller/login";
-        (user.profileRoute = "/seller/profile"), 
-        (user.signupRoute = "/seller/signup");
-    }else if (role =="admin") {
-        user.role = "Admin";
-        user.loginAPI = "/admin/login";  // Make sure this endpoint exists in your backend
-        user.profileRoute = "/admin/dashboard"; // Redirect admin to dashboard
-        user.signupRoute = "/admin/signup"; // If admins have a signup option
+  if (role === "seller") {
+    user.role = "Seller";
+    user.loginAPI = "/seller/login";
+    user.profileRoute = "/seller/profile";
+    user.signupRoute = "/seller/signup";
+  } else if (role === "admin") {
+    user.role = "Admin";
+    user.loginAPI = "/admin/login";
+    user.profileRoute = "/admin/dashboard";
+    user.signupRoute = "/admin/signup";
+  }
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await axiosInstance.post(user.loginAPI, data);
+      dispatch(saveUser(response?.data?.data));
+      toast.success("Login successful");
+      navigate("/");
+    } catch (error) {
+      dispatch(clearUser());
+      toast.error("Login Failed");
+      console.error(error);
     }
+  };
 
-    const onSubmit = async (data) => {
+  return (
+    
+    <div className=" flex items-center justify-center bg-base-200 py-6 ">
+      <div className="bg-white shadow-2xl rounded-lg flex flex-col lg:flex-row w-full max-w-4xl overflow-hidden">
         
-
-        try {
-            const response = await axiosInstance({
-                method: "POST",
-                url: user.loginAPI,
-                data: data,
-            });
-            console.log("response====", response);
-            dispatch(saveUser(response?.data?.data));
-            // toast.success("Login success");
-            navigate(user.profileRoute);
-        } catch (error) {
-             dispatch(clearUser());
-            // toast.error("Login Failed");
-            console.log(error);
-        }
-    };
-
-    return (
-        <div className="bg-base-200 hero min-h-screen">
-            <div className="flex-col hero-content lg:flex-row-reverse">
-                <div className="text-center lg:text-left">
-                    <h1 className="text-5xl font-bold"> {user.role} Login! </h1>
-                    <p className="py-6" style={{ fontFamily: 'Playfair Display, serif' }}>
-                    Z Fashion - Your Ultimate Fashion Destination
-                    </p>
-                </div>
-                <div className="card bg-base-100 shadow-2xl w-full max-w-sm shrink-0">
-                    <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text">Email</span>
-                            </label>
-                            <input type="email" placeholder="email" {...register("email")} className="input input-bordered" required />
-                        </div>
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text">Password</span>
-                            </label>
-                            <input
-                                type="password"
-                                placeholder="password"
-                                {...register("password")}
-                                className="input input-bordered"
-                                required
-                            />
-
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text">Confirm Password</span>
-                                </label>
-                                <input
-                                    type="password"
-                                    placeholder="confirm-password"
-                                    {...register("confirmPassword")}
-                                    className="input input-bordered"
-                                    required
-                                />
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <label className="label">
-                                    <a href="#" className="label-text-alt link link-hover">
-                                        Forgot password?
-                                    </a>
-                                </label>
-                                <label className="label">
-                                    <Link to={user.signupRoute} className="label-text-alt link link-hover">
-                                    New User?
-                                    </Link>
-                                </label>
-                            </div>
-                        </div>
-                        <div className="form-control mt-6">
-                            <button className="btn bg-black text-white w-full">Login</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        {/* Left Side - Image */}
+        <div className="hidden lg:flex w-full lg:w-1/2">
+          <img
+            src="/image/cart1.jpg" // Change this to your actual image path
+            alt="Login"
+            className="object-cover w-full h-full"
+          />
         </div>
-    );
+
+        {/* Right Side - Login Form */}
+        <div className="w-full lg:w-1/2 p-8 flex flex-col justify-center items-center space-y-6">
+          <h1 className="text-4xl font-bold text-center">{user.role} Login</h1>
+          <p className="text-center text-gray-600">Z Fashion - Your Ultimate Fashion Destination</p>
+
+          <form className="flex flex-col items-center space-y-6 w-full" onSubmit={handleSubmit(onSubmit)}>
+            <div className="w-full max-w-xs">
+              <input
+                type="email"
+                placeholder="Email"
+                {...register("email")}
+                className="w-full h-12 p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                required
+              />
+            </div>
+
+            <div className="w-full max-w-xs">
+              <input
+                type="password"
+                placeholder="Password"
+                {...register("password")}
+                className="w-full h-12 p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                required
+              />
+            </div>
+
+            <div className="w-full max-w-xs">
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                {...register("confirmPassword")}
+                className="w-full h-12 p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                required
+              />
+            </div>
+
+            <div className="w-full max-w-xs flex justify-between text-sm text-gray-600">
+              <Link to="#" className="hover:underline">
+                Forgot password?
+              </Link>
+              <Link to={user.signupRoute} className="hover:underline">
+                New User?
+              </Link>
+            </div>
+
+            <button className="w-full max-w-xs h-12 bg-black text-white rounded-md mt-4 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };

@@ -1,7 +1,8 @@
  import { Link, } from "react-router-dom";
  import React from "react";
- import { FaSearch, FaUser } from "react-icons/fa";
+ import { FaSearch, } from "react-icons/fa";
  import { DarkMode } from "../shared/DarkMode";
+ import { FaRegUser } from "react-icons/fa";
 
  export const Header = () => {
   
@@ -46,7 +47,7 @@
            Search
          </button>
           <Link to="login">
-                   <FaUser className="cursor-pointer hover:text-gray-500" />
+          <FaRegUser className="cursor-pointer hover:text-gray-500 text-2xl " />
                    </Link>
          <DarkMode />
        </div>

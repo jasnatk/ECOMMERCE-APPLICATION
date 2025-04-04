@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { About } from "../pages/user/About";
+import { AboutUs } from "../pages/user/About";
 import { ContactUs } from "../pages/user/ContactUs";
 import { Home } from "../pages/user/Home";
 import { RootLayout } from "../Layout/RootLayout";
@@ -11,9 +11,6 @@ import { ProductDetails } from "../pages/user/ProductDetails";
 import { LoginPage } from "../pages/shared/LoginPage";
 import { SellerLayout } from "../Layout/SellerLayout";
 import { SignupPage } from "../pages/shared/SignupPage";
-import { Men } from "../pages/user/Men";
-import { Women } from "../pages/user/Women";
-import { Kids } from "../pages/user/Kids";
 import { Wishlist } from "../pages/user/Wishlist";
 import { AdminDashboard } from "../Components/admin/AdminDashboard";
 import { AdminLayout } from "../Layout/AdminLayout";
@@ -36,7 +33,7 @@ errorElement: <ErrorPage />,
 
        {
         path: "about",
-        element: <About />,
+        element: <AboutUs/>,
         },
 
         {
@@ -67,15 +64,7 @@ errorElement: <ErrorPage />,
         path: "product/productList?category=Men",
         element: <Product/>,
       },
-      {
-        path: "women",
-        element: <Women/>,
-      },
-      {
-        path: "kids",
-        element: <Kids/>,
-      },
-       
+     
       {
         path:"user",
         element: <ProtectRoutes />,

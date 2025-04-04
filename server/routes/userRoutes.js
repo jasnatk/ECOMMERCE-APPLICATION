@@ -14,7 +14,7 @@ import { authUser } from '../middleware/authUser.js'; // Authentication middlewa
 const router = express.Router();
 
 // User Routes
-router.post('/register', userSignUp);
+router.post('/signup', userSignUp);
 router.post('/login', loginUser);
 router.post('/logout', logoutUser);
 router.get('/profile', authUser, getUserProfile);

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { axiosInstance } from "../config/axiosInstance";
 import { clearUser } from "../redux/features/userSlice";
+import toast from "react-hot-toast";
 
 export const useLogout = () => {
     const navigate = useNavigate();
@@ -9,7 +10,7 @@ export const useLogout = () => {
 
     const handleLogout = async () => {
         try {
-            await axiosInstance.post("/logout"); // Optional API call
+            await axiosInstance.post("/user/logout"); // Optional API call
         } catch (error) {
             console.error("Logout failed:", error);
         }
@@ -17,6 +18,10 @@ export const useLogout = () => {
         // Remove token and clear user state
         localStorage.removeItem("token");
         dispatch(clearUser());
+
+         // Show success toast
+         toast.success("Logged out successfully!"); // Show success toast
+
 
         // Redirect to login page
         navigate("/login");
