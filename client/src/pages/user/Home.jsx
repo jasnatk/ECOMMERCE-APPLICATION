@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { axiosInstance } from "../../config/axiosInstance";
-import ProductCard from "../../Components/user/Cards";
-import { ProductCardSkeltons } from "../../Components/user/Skeltons";
+import { axiosInstance } from "../../config/axiosInstance";  // Assuming axiosInstance is already set up
+import {ProductCard} from "../../Components/user/Cards";
+import { ProductCardSkeltons } from "../../Components/user/Skeltons";  // Assuming ProductCardSkeltons is the skeleton loader component
 
 export const Home = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // For new arrivals (2 rows of 5)
+  const [currentPageTop, setCurrentPageTop] = useState(1); // Pagination for the top products section
+  const [currentPageNewArrivals, setCurrentPageNewArrivals] = useState(1); // Pagination for new arrivals section
+  const itemsPerPage = 5; // Limit the products per page to 5
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -27,14 +28,26 @@ export const Home = () => {
     fetchProducts();
   }, []);
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const displayedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+  // First 5 products for top product section
+  const topFiveProducts = products.slice(2, 7);
+
+  // New Arrivals starting from the latest 11 products
+  const newArrivalsAll = products.slice(-6);
+  const totalPagesTop = Math.ceil(topFiveProducts.length / itemsPerPage);
+  const totalPagesNewArrivals = Math.ceil(newArrivalsAll.length / itemsPerPage);
+
+  // Paginated top product section
+  const startIndexTop = (currentPageTop - 1) * itemsPerPage;
+  const paginatedTopProducts = topFiveProducts.slice(startIndexTop, startIndexTop + itemsPerPage);
+
+  // Paginated New Arrivals section
+  const startIndexNewArrivals = (currentPageNewArrivals - 1) * itemsPerPage;
+  const paginatedNewArrivals = newArrivalsAll.slice(startIndexNewArrivals, startIndexNewArrivals + itemsPerPage);
 
   return (
     <div className="w-screen">
-      {/*  Full-Width Banner Carousel */}
-      <div className="w-screen h-[500px] overflow-hidden">
+      {/* 🔥 Banner Carousel */}
+      <div className="w-screen h-[500px] overflow-hidden shadow-md shadow-black/20 border rounded">
         <div className="carousel w-full h-full">
           {["B2", "B1", "B3", "B4"].map((img, index) => (
             <div key={index} id={`slide${index + 1}`} className="carousel-item relative w-full h-full">
@@ -52,24 +65,45 @@ export const Home = () => {
         </div>
       </div>
 
-      {/*  View All Products */}
-      <div className="w-full px-4 py-8">
-  <h2 className="text-2xl font-bold text-center mb-6">
-    <Link to="/product" className="text-black hover:underline">
-      View All Products
-    </Link>
-  </h2>
-</div>
+      {/* View All Products */}
+      <div className="w-full  pt-5">
+        <h2 className="text-2xl font-bold text-center mb-6">
+          <Link to="/product" className="text-black hover:underline">
+            View All Products
+          </Link>
+        </h2>
+      </div>
 
-      {/*  First Section of Product Cards */}
+      {/* First Section of Product Cards */}
       {error && <p className="text-red-500 text-center">Error loading products: {error}</p>}
       <div className="w-full px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {isLoading
-          ? [...Array(5)].map((_, index) => <ProductCardSkeltons key={index} />)
-          : products.slice(0, 5).map((product) => (
+          ? [...Array(itemsPerPage)].map((_, index) => <ProductCardSkeltons key={index} />)
+          : paginatedTopProducts.map((product) => (
               <ProductCard products={product} key={product?._id} showDescription={false} />
             ))}
       </div>
+
+      {/* Pagination for Top Product Section */}
+      {totalPagesTop > 1 && (
+        <div className="w-full flex justify-end mt-4 pr-4 items-center gap-4">
+          <button
+            className={`px-3 py-1 text-sm border rounded ${currentPageTop === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"}`}
+            onClick={() => setCurrentPageTop((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPageTop === 1}
+          >
+            ❮ Prev
+          </button>
+          <span className="text-sm">{currentPageTop} / {totalPagesTop}</span>
+          <button
+            className={`px-3 py-1 text-sm border rounded ${currentPageTop === totalPagesTop ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"}`}
+            onClick={() => setCurrentPageTop((prev) => Math.min(prev + 1, totalPagesTop))}
+            disabled={currentPageTop === totalPagesTop}
+          >
+            Next ❯
+          </button>
+        </div>
+      )}
 
       {/* 🏷 Super Saver Offers */}
       <div className="w-full px-4 py-8">
@@ -81,59 +115,53 @@ export const Home = () => {
         />
       </div>
 
-      {/*  Browse by Category */}
-      <div className="w-full px-4 py-8">
+      {/* Browse by Category */}
+      <div className="w-full px-4 py-2">
         <h2 className="text-2xl font-bold text-center mb-6">Browse by Category</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-6xl mx-auto text-center">
-          {[
-            { name: "Men", img: "/image/m1.jpg", path: "/product?category=Men" },
+          {[{ name: "Men", img: "/image/m1.jpg", path: "/product?category=Men" },
             { name: "Kids", img: "/image/k1.jpg", path: "/product?category=Kids" },
-            { name: "Women", img: "/image/jas.png", path: "/product?category=Women" },
-          ].map((cat, idx) => (
-            <Link key={idx} to={cat.path}>
-              <div className="group transition-transform duration-300 transform hover:scale-105 hover:shadow-lg rounded-lg overflow-hidden">
-                <img
-                  src={cat.img}
-                  alt={cat.name}
-                  className="w-full h-[250px] object-cover transition-transform duration-300"
-                />
-                <p className="mt-2 text-lg font-semibold group-hover:underline">{cat.name}</p>
-              </div>
-            </Link>
-          ))}
+            { name: "Women", img: "/image/jas.png", path: "/product?category=Women" }].map((cat, idx) => (
+              <Link key={idx} to={cat.path}>
+                <div className="group transition-transform duration-300 transform hover:scale-105 hover:shadow-lg rounded-lg overflow-hidden">
+                  <img
+                    src={cat.img}
+                    alt={cat.name}
+                    className="w-full h-[250px] object-cover transition-transform duration-300"
+                  />
+                  <p className="mt-2 text-lg font-semibold group-hover:underline">{cat.name}</p>
+                </div>
+              </Link>
+            ))}
         </div>
       </div>
 
-      {/* 🆕 New Arrivals Section */}
-      <div className="w-full px-4 py-8">
+      {/* New Arrivals Section */}
+      <div className="w-full px-4 py-2">
         <h2 className="text-2xl font-bold text-center mb-6">New Arrivals</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="w-full px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {isLoading
             ? [...Array(itemsPerPage)].map((_, index) => <ProductCardSkeltons key={index} />)
-            : displayedProducts.map((product) => (
+            : paginatedNewArrivals.map((product) => (
                 <ProductCard products={product} key={product?._id} showDescription={false} />
               ))}
         </div>
 
         {/* Pagination for New Arrivals */}
-        {totalPages > 1 && (
-          <div className="w-full flex justify-end mt-4 pr-4">
+        {totalPagesNewArrivals > 1 && (
+          <div className="w-full flex justify-end mt-4 pr-4 items-center gap-4">
             <button
-              className={`px-2 py-1 text-sm border rounded ${
-                currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
-              }`}
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
+              className={`px-3 py-1 text-sm border rounded ${currentPageNewArrivals === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"}`}
+              onClick={() => setCurrentPageNewArrivals((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPageNewArrivals === 1}
             >
               ❮ Prev
             </button>
-            <span className="px-3 text-sm">{currentPage} / {totalPages}</span>
+            <span className="text-sm">{currentPageNewArrivals} / {totalPagesNewArrivals}</span>
             <button
-              className={`px-2 py-1 text-sm border rounded ${
-                currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
-              }`}
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
+              className={`px-3 py-1 text-sm border rounded ${currentPageNewArrivals === totalPagesNewArrivals ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"}`}
+              onClick={() => setCurrentPageNewArrivals((prev) => Math.min(prev + 1, totalPagesNewArrivals))}
+              disabled={currentPageNewArrivals === totalPagesNewArrivals}
             >
               Next ❯
             </button>

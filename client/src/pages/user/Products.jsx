@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import ProductCard from '../../Components/user/Cards';
+import {ProductCard} from '../../Components/user/Cards';
 import { ProductCardSkeltons } from '../../Components/user/Skeltons';
 import { axiosInstance } from '../../config/axiosInstance';
 
 export const Product = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
+  
   const category = queryParams.get('category'); // Get category from URL
+  const searchQuery = queryParams.get('search'); // Get search query from URL (new change)
 
   const [productList, setProductList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +19,15 @@ export const Product = () => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await axiosInstance.get(category ? `/product/productList?category=${category}` : "/product/productList");
+        
+        // Modified API call to include search parameter
+        const response = await axiosInstance.get('/product/productList', {
+          params: {
+            category: category,    // Pass category if it exists
+            search: searchQuery    // Pass search query if it exists
+          }
+        });
+
         setProductList(response.data.data);
         setIsLoading(false);
       } catch (err) {
@@ -27,13 +37,15 @@ export const Product = () => {
     };
 
     fetchProducts();
-  }, [category, location.search]); //  Now re-fetches data on category change
+  }, [category, searchQuery, location.search]); // Re-fetch on category or search query change
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold text-center mb-6" style={{ fontFamily: "Playfair Display, serif" }}>
         {category 
           ? `Shop ${category}${category === "Men" || category === "Women" ? "'s" : ""} Fashion` 
+          : searchQuery 
+          ? `Search results for "${searchQuery}"` // Display search query in title
           : "Shop the Latest Fashion Trends"}
       </h1>
 

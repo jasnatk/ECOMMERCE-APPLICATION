@@ -11,14 +11,13 @@ import { ProductDetails } from "../pages/user/ProductDetails";
 import { LoginPage } from "../pages/shared/LoginPage";
 import { SellerLayout } from "../Layout/SellerLayout";
 import { SignupPage } from "../pages/shared/SignupPage";
-import { Wishlist } from "../pages/user/Wishlist";
 import { AdminDashboard } from "../Components/admin/AdminDashboard";
 import { AdminLayout } from "../Layout/AdminLayout";
  import { LogoutPage } from "../pages/shared/LogoutPage";
 import { CartPage } from "../pages/user/CartPage";
-
-
-
+import { ForgotPassword } from "../pages/shared/ForgotPassword";
+import { ResetPassword } from "../pages/shared/ResetPassword";
+import { WishlistPage } from "../Components/user/wishlist";
 
 export const router = createBrowserRouter([
   {
@@ -30,7 +29,6 @@ errorElement: <ErrorPage />,
         path: "",
         element: <Home />,
        },
-
        {
         path: "about",
         element: <AboutUs/>,
@@ -47,25 +45,28 @@ errorElement: <ErrorPage />,
         {
         path: "Signup",
         element: <SignupPage/>,
-       },
-       {
+        },
+        {
         path: "logout",
         element: <LogoutPage/>,
-       },
-       {
+        },
+        {
+        path: "forgot-password",
+        element: <ForgotPassword/>,
+        },
+        {
+          path: "reset-password",
+          element: <ResetPassword/>,
+        },
+        {
          path: "product",
          element: <Product/>,
-       },
-       {
+        },
+        {
         path: "productDetails/:id",
         element: <ProductDetails/>,
-      },
-      {
-        path: "product/productList?category=Men",
-        element: <Product/>,
-      },
-     
-      {
+        },
+        {
         path:"user",
         element: <ProtectRoutes />,
         children: [
@@ -80,7 +81,7 @@ errorElement: <ErrorPage />,
           }, 
           {
             path: "wishlist",
-            element: <Wishlist/>,
+            element: <WishlistPage/>,
           },
           {
             path: "review",

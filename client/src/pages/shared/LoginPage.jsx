@@ -94,8 +94,11 @@ export const LoginPage = ({ role }) => {
             </div>
 
             <div className="w-full max-w-xs flex justify-between text-sm text-gray-600">
-              <Link to="#" className="hover:underline">
+              <Link to="/forgot-password" className="hover:underline">
                 Forgot password?
+              </Link>
+              <Link to="/reset-password" className="hover:underline">
+                Reset password?
               </Link>
               <Link to={user.signupRoute} className="hover:underline">
                 New User?

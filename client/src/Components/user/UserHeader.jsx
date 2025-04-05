@@ -1,10 +1,25 @@
-
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";  // Use useNavigate here
 import { DarkMode } from "../shared/DarkMode";
 import { FaSearch, FaUser, FaHeart, FaShoppingCart } from "react-icons/fa";
 
 export const UserHeader = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();  // useNavigate instead of useHistory
+
+  // Handle search input change
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Handle search submission (e.g., when pressing Enter or clicking search)
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/product?search=${searchQuery}`);  // use navigate to redirect
+    }
+  };
+
   return (
     <div className="flex justify-between items-center px-10 py-5 shadow-2xl">
       {/* Left Section - Logo & Navigation */}
@@ -15,8 +30,7 @@ export const UserHeader = () => {
           </Link>
         </h1>
         <ul className="hidden md:flex gap-8 font-semibold">
-          
-        <li>
+          <li>
             <Link to="/product" className="hover:text-gray-500">All</Link>
           </li>
           <li>
@@ -33,12 +47,16 @@ export const UserHeader = () => {
 
       {/* Middle Section - Search Bar */}
       <div className="relative w-64">
-        <input
-          type="text"
-          placeholder="Search for items..."
-          className="w-full p-2 pl-10 border rounded-md bg-gray-100 dark:bg-gray-800 text-black dark:text-white focus:outline-none"
-        />
-        <FaSearch className="absolute top-3 left-3 text-gray-500" />
+        <form onSubmit={handleSearchSubmit}>
+          <input
+            type="text"
+            placeholder="Search for items..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full p-2 pl-10 border rounded-md bg-gray-100 dark:bg-gray-800 text-black dark:text-white focus:outline-none"
+          />
+          <FaSearch className="absolute top-3 left-3 text-gray-500 cursor-pointer" onClick={handleSearchSubmit} />
+        </form>
       </div>
 
       {/* Right Section - Icons */}
@@ -46,7 +64,7 @@ export const UserHeader = () => {
         <DarkMode />
         <Link to="/user/profile">
           <FaUser className="cursor-pointer hover:text-gray-500" />
-          </Link>
+        </Link>
         <Link to="user/wishlist">
           <FaHeart className="cursor-pointer hover:text-gray-500" />
         </Link>
