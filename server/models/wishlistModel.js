@@ -9,7 +9,6 @@ const WishlistSchema = new Schema(
       ref: 'User',
       required: true,
     },
-
     products: [
       {
         product_id: {

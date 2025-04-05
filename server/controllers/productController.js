@@ -42,7 +42,7 @@ import uploadToCloudinary from "../utilities/imageUpload.js";
 //  Get All Products (Supports Category Filtering)
  export const getAllProducts = async (req, res, next) => {
      try {
-         const { category } = req.query;
+         const { category,search } = req.query;
          let filter = {};
  
          if (category) {
@@ -54,10 +54,14 @@ import uploadToCloudinary from "../utilities/imageUpload.js";
              filter.category = formattedCategory;
          }
  
+             // Handle search filtering
+    if (search) {
+        filter.name = { $regex: search, $options: "i" }; // Case-insensitive regex search on product name
+      }
          const productList = await Product.find(filter).select("-seller");
  
          if (productList.length === 0) {
-             return res.status(404).json({ message: "No products available" });
+             return res.status(404).json({ message: "No products found matching the criteria" });
          }
  
          res.json({ data: productList, message: "Products fetched successfully" });
