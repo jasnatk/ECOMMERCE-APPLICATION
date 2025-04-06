@@ -51,7 +51,7 @@ export const CartPage = () => {
             const session = await axiosInstance({
                 url: "/payment/create-checkout-session",
                 method: "POST",
-                data: { products: cartData?.courses },
+                data: { products: cartData?.products },
             });
 
             console.log(session, "=======session");

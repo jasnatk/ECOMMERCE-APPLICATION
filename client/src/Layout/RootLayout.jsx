@@ -9,7 +9,6 @@ import  {Footer}  from "../Components/user/Footer";
 
 
 
-
 export const RootLayout = () => {
     const user = useSelector((state) => state.user);
     const [isLoading, setIsLoading] = useState(true);

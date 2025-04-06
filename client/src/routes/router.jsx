@@ -18,6 +18,7 @@ import { CartPage } from "../pages/user/CartPage";
 import { ForgotPassword } from "../pages/shared/ForgotPassword";
 import { ResetPassword } from "../pages/shared/ResetPassword";
 import { WishlistPage } from "../Components/user/wishlist";
+import { PaymentStatus } from "../pages/user/Payment";
 
 export const router = createBrowserRouter([
   {
@@ -88,10 +89,17 @@ errorElement: <ErrorPage />,
             element: <h1>review</h1>,
           },
           {
-            path: "payment",
-            element: <h1>payment</h1>,
+            path: "/user/payment",
+            element: <PaymentStatus />,
           },
-
+          // {
+          //   path: "/user/payment/success",
+          //   element: <PaymentSuccess />,
+          // },
+          // {
+          //   path: "/user/payment/success",
+          //   element: <PaymentSuccess />,
+          // },
         ],
       },
 
@@ -109,12 +117,12 @@ errorElement: <ErrorPage />,
               },
               {
                 path: "signup",
-            element: <h1>sellersignup</h1>,
+            element: <SignupPage role ="seller"/>,
               },
-              // {
-              //   path: "seller/logout",
-              //   element: <LogoutPage />,
-              // },
+              { 
+                path: "logout",
+                element: <LogoutPage role ="seller" />,
+              },
               {
                 path: "profile",
             element: <h1>sellerprofile</h1>,
@@ -135,10 +143,10 @@ errorElement: <ErrorPage />,
                       path: "login",
                   element:<LoginPage role ="admin"/>,
                     },
-                    // {
-                    //   path: "admin/logout",
-                    //   element: <LogoutPage />,
-                    // },
+                    {
+                      path: "admin/logout",
+                      element: <LogoutPage role ="admin"/>,
+                    },
                   ],
                 },
 ]);

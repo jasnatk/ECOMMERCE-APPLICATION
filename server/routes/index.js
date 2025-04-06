@@ -8,7 +8,7 @@ import reviewRouter from './reviewRoutes.js'
 import orderRouter from './orderRoutes.js'
 import WishlistRouter from './WishlistRoutes.js'
 import categoryRouter from './categoryRoutes.js'
-// import { paymentRouter } from "./paymentRoutes.js"
+// import  paymentRouter  from "./paymentRoutes.js"
 
 
 
@@ -25,7 +25,7 @@ router.use('/review', reviewRouter);
 router.use('/order', orderRouter);
 router.use('/wishlist', WishlistRouter);
  router.use('/categories', categoryRouter);
-//  router.use('/payment', paymentRouter);
+// router.use('/payment', paymentRouter);
 
 
 
