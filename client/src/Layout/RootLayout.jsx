@@ -17,7 +17,7 @@ export const RootLayout = () => {
     const dispatch = useDispatch();
     const location = useLocation();
 
-    const checkUser = async () => {
+    const checkUser = async () =>  {
         try {
             const response = await axiosInstance({ method: "GET", url: "/user/check-user" });
             console.log(response, "========checkUser response");
