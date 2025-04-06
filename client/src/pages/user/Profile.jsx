@@ -35,7 +35,7 @@ export const Profile = () => {
                     className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md"
                     onClick={() => setShowOrders(!showOrders)}
                 >
-                   Your Orders
+                 Orders
                 </button>
                 <button className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md">Change Password</button>
                 <button 
