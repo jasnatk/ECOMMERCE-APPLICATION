@@ -55,4 +55,4 @@ const client_domain = process.env.CLIENT_DOMAIN;
      }
  });
  
- export { router as paymentRouter };
+ export default router
