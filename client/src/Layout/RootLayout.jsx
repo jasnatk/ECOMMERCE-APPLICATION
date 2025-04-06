@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Footer } from "../components/user/Footer";
 import { Outlet, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance } from "../config/axiosInstance";
 import { clearUser, saveUser } from "../redux/features/userSlice";
 import { Header } from "../Components/user/Header";
 import { UserHeader } from "../Components/user/UserHeader";
+import  {Footer}  from "../Components/user/Footer";
 
 
 
