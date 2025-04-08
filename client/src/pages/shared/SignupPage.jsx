@@ -24,6 +24,7 @@ export const SignupPage = ({ role }) => {
 
     const onSubmit = async (data) => {
         try {
+            const { confirmPassword, ...userData } = data;
             await axiosInstance.post(user.signupAPI, data);
             toast.success("Signup successful!");
             setTimeout(() => navigate("/product"), 1000);

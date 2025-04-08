@@ -19,6 +19,8 @@ import { ForgotPassword } from "../pages/shared/ForgotPassword";
 import { ResetPassword } from "../pages/shared/ResetPassword";
 import { WishlistPage } from "../Components/user/wishlist";
 import { PaymentStatus } from "../pages/user/Payment";
+import { ProtectSellerRoutes } from "./ProtectSellerRoutes";
+
 
 export const router = createBrowserRouter([
   {
@@ -92,14 +94,7 @@ errorElement: <ErrorPage />,
             path: "/user/payment",
             element: <PaymentStatus />,
           },
-          // {
-          //   path: "/user/payment/success",
-          //   element: <PaymentSuccess />,
-          // },
-          // {
-          //   path: "/user/payment/success",
-          //   element: <PaymentSuccess />,
-          // },
+         
         ],
       },
 
@@ -123,12 +118,21 @@ errorElement: <ErrorPage />,
                 path: "logout",
                 element: <LogoutPage role ="seller" />,
               },
-              {
-                path: "profile",
-            element: <h1>sellerprofile</h1>,
-              },
-            ],
-            },
+                      {
+                       element: <ProtectSellerRoutes />,
+                       children: [
+                          {
+                           path: "profile",
+                           element: <h1>sellerprofile</h1>,
+                          },
+                       // {
+                      //   path: "dashboard",
+                      //   element: <SellerDashboard />,
+                       // },
+                        ],
+                      },
+                    ],
+                   },
                       
                   {
                   path: "admin",
@@ -147,6 +151,10 @@ errorElement: <ErrorPage />,
                       path: "admin/logout",
                       element: <LogoutPage role ="admin"/>,
                     },
+                    // {
+                    //   path: "dashboard",
+                    //   element: <SellerDashboard />,
+                    // },
                   ],
                 },
 ]);

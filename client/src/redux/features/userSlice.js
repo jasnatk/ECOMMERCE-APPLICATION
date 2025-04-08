@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     userData: {},
     isUserAuth: false,
+    isSellerAuth: false,
 };
 
 export const userSlice = createSlice({
@@ -21,6 +22,6 @@ export const userSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { saveUser, clearUser } = userSlice.actions;
+export const { saveUser, clearUser, saveSeller, clearSeller} = userSlice.actions;
 
 export default userSlice.reducer;

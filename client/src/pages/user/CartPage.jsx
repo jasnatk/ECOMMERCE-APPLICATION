@@ -46,7 +46,7 @@ export const CartPage = () => {
     };
     const makePayment = async () => {
         try {
-            const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
+            const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
             const session = await axiosInstance({
                 url: "/payment/create-checkout-session",

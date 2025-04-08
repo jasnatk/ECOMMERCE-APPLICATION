@@ -70,21 +70,20 @@ export const WishlistPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {wishlist.map((item) => (
             <div key={item.product_id} className="bg-white shadow-md rounded-lg overflow-hidden">
-              <ProductCard products={item.product_id} showDescription={false} />
-              <div className="p-4">
-                <div className="flex justify-between items-center space-x-2">
-                  
-                  {/* Remove button */}
-                  <button
-  className="flex items-center bg-red-800 text-white py-2 px-4 rounded-lg justify-center hover:bg-red-700 w-full"
-  onClick={() => handleRemove(item.product_id._id)}
->
-  <FaTrashAlt className="mr-2" />
-  Remove
-</button>
+          <ProductCard
+  products={item.product_id}
+  isInWishlist={true}
+  showDescription={false}
+  onToggle={(productId) => {
+    // Remove from state when toggled off
+    setWishlist((prev) =>
+      prev.filter((product) => product.product_id._id !== productId)
+    );
+  }}
+/>
 
-                </div>
-              </div>
+
+            
             </div>
           ))}
         </div>

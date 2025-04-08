@@ -8,7 +8,8 @@ import reviewRouter from './reviewRoutes.js'
 import orderRouter from './orderRoutes.js'
 import WishlistRouter from './WishlistRoutes.js'
 import categoryRouter from './categoryRoutes.js'
- import paymentRouter  from './productRoutes.js'
+import paymentRouter from "./paymentRoutes.js"
+
 
 
 

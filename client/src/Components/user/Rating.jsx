@@ -1,14 +1,28 @@
+import React, { useState } from "react";
+import { FaStar } from "react-icons/fa";
 
-import React from 'react'
+export const Rating = ({ initialRating = 0, onRatingChange }) => {
+  const [rating, setRating] = useState(initialRating);
+  const [reviewCount, setReviewCount] = useState(0); // State to track review count
 
-export const Rating = () => {
+  const handleStarClick = (starRating) => {
+    setRating(starRating);
+    setReviewCount((prev) => prev + 1); // Increment review count on each rating
+    if (onRatingChange) {
+      onRatingChange(starRating, reviewCount + 1); // Pass the updated rating and review count to parent
+    }
+  };
+
   return (
-    <div className="rating">
-  <input type="radio" name="rating-1" className="mask mask-star" aria-label="1 star" />
-  <input type="radio" name="rating-1" className="mask mask-star" aria-label="2 star" defaultChecked />
-  <input type="radio" name="rating-1" className="mask mask-star" aria-label="3 star" />
-  <input type="radio" name="rating-1" className="mask mask-star" aria-label="4 star" />
-  <input type="radio" name="rating-1" className="mask mask-star" aria-label="5 star" />
-</div>
-  )
-}
+    <div className="flex items-center">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <FaStar
+          key={star}
+          className={`cursor-pointer text-lg ${star <= rating ? "text-yellow-500" : "text-gray-300"}`}
+          onClick={() => handleStarClick(star)}
+        />
+      ))}
+      <span className="ml-2 text-sm">{reviewCount} </span> {/* Display review count */}
+    </div>
+  );
+};

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useFetch } from "../../hooks/useFetch";
  import { useLogout } from "../../hooks/useLogout";
-import { Order } from "../../Components/user/order";
+import { Order } from "../../components/user/order";
  
 
 export const Profile = () => {
