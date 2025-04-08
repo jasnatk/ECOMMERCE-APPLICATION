@@ -9,6 +9,6 @@ const router = express.Router();
 router.post("/create-checkout-session", authUser, createCheckoutSession);
 
 // Check payment status
-router.get("/session-status", sessionStatus);
+router.get("/session-status",authUser, sessionStatus);
 
 export default router;
