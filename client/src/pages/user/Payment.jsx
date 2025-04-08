@@ -1,4 +1,3 @@
-
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "../../config/axiosInstance";
@@ -8,35 +7,36 @@ export const PaymentStatus = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const status = queryParams.get("status");
+  const sessionId = queryParams.get("session_id");
+  console.log("Session ID:", sessionId); 
   const [orderDetails, setOrderDetails] = useState(null);
-  const [loading, setLoading] = useState(true);  // Added loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === "success") {
+    if (sessionId) {
       const fetchOrderDetails = async () => {
         try {
-          const response = await axiosInstance.get("/order/my-orders");
+          const response = await axiosInstance.get(`/payment/session-status?session_id=${sessionId}`);
+          console.log("Order Details Response:", response.data);
           setOrderDetails(response.data);
-          await axiosInstance.delete("/cart/clearCart");
-          toast.success("Thank you! Your order was placed and cart is cleared.");
+          toast.success("Payment was successful!");
         } catch (error) {
           console.error("Error fetching order details:", error);
           toast.error("Couldn't fetch order details, please try again.");
         } finally {
-          setLoading(false);  // Set loading to false once the request completes
+          setLoading(false);
         }
       };
 
       fetchOrderDetails();
     }
-  }, [status]);
+  }, [sessionId]);
 
   if (loading) {
-    return <div>Loading...</div>;  // Show loading message until data is fetched
+    return <div>Loading...</div>;
   }
 
-  if (status === "success") {
+  if (orderDetails?.status === "success") {
     return (
       <div className="p-10 text-center">
         <h1 className="text-3xl font-bold mb-4 text-green-700">Payment Successful!</h1>
@@ -45,9 +45,9 @@ export const PaymentStatus = () => {
         {orderDetails && (
           <div className="bg-gray-100 p-4 rounded-lg mb-6">
             <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
-            <p><strong>Order Number:</strong> {orderDetails.orderNumber}</p>
-            <p><strong>Total Amount:</strong> ${orderDetails.totalAmount}</p>
-            <p><strong>Items:</strong> {orderDetails.items.length} items</p>
+            <p><strong>Order Number:</strong> {orderDetails.session_data.id}</p>
+            <p><strong>Total Amount:</strong> ₹{orderDetails.amount}</p>
+            <p><strong>Items:</strong> {orderDetails.products.length} items</p>
           </div>
         )}
 
@@ -61,7 +61,7 @@ export const PaymentStatus = () => {
     );
   }
 
-  if (status === "cancel") {
+  if (orderDetails?.status === "cancel") {
     return (
       <div className="p-10 text-center">
         <h1 className="text-3xl font-bold mb-4 text-red-700">Payment Cancelled</h1>

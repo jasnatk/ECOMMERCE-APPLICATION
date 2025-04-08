@@ -91,7 +91,7 @@ errorElement: <ErrorPage />,
             element: <h1>review</h1>,
           },
           {
-            path: "/user/payment",
+            path: "/user/payment/success",
             element: <PaymentStatus />,
           },
          
