@@ -1,24 +1,31 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../../config/axiosInstance";
+
 
 export const EditProfile = () => {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
-        phoneNumber: "",
+        phone: "",
         address: "",
         profilePic: "",
     });
+
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch user data
         const fetchData = async () => {
-            const res = await axios.get("/user/editprofile");
-            const { name, email, phoneNumber, address, profilePic } = res.data.data;
-            setFormData({ name, email, phoneNumber, address, profilePic });
+            try {
+                const res = await axiosInstance.get("/user/editprofile");
+                const { name, email, phone, address, profilePic } = res.data.data;
+                setFormData({ name, email, phone, address, profilePic });
+            } catch (err) {
+                console.error("Error fetching profile:", err);
+                alert("Unable to load profile data.");
+            }
         };
+
         fetchData();
     }, []);
 
@@ -30,10 +37,11 @@ export const EditProfile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.put("/user/editprofile", formData);
+            const res = await axiosInstance.put("/user/editprofile", formData);
             alert("Profile updated!");
             navigate("/user/profile");
         } catch (error) {
+            console.error("Error updating profile:", error);
             alert("Error updating profile");
         }
     };
@@ -44,10 +52,9 @@ export const EditProfile = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Name" className="w-full border px-4 py-2 rounded" />
                 <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" className="w-full border px-4 py-2 rounded" />
-                <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Phone Number" className="w-full border px-4 py-2 rounded" />
+                <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" className="w-full border px-4 py-2 rounded" />
                 <input type="text" name="address" value={formData.address} onChange={handleChange} placeholder="Address" className="w-full border px-4 py-2 rounded" />
                 <input type="text" name="profilePic" value={formData.profilePic} onChange={handleChange} placeholder="Profile Picture URL" className="w-full border px-4 py-2 rounded" />
-
                 <button type="submit" className="w-full bg-black text-white py-2 rounded hover:bg-gray-800">Update Profile</button>
             </form>
         </div>

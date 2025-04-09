@@ -9,10 +9,10 @@ const NODE_ENV = process.env.NODE_ENV;
 export const userSignUp = async (req, res,next) => {
     try {
         //collect user data
-        const { name, email, password, confirmPassword, address, phoneNumber, profilePic } = req.body;
+        const { name, email, password, confirmPassword, address, phone, profilePic } = req.body;
 
         // Data validation
-        if (!name || !email || !password || !confirmPassword || !phoneNumber) {
+        if (!name || !email || !password || !confirmPassword || !phone) {
             return res.status(400).json({ message: "All fields required" });
         }
 
@@ -33,7 +33,7 @@ export const userSignUp = async (req, res,next) => {
         const hashedPassword = bcrypt.hashSync(password, 10);
 
         // SAVE TO DB
-        const newUser = new User({ name, email, password: hashedPassword, phoneNumber, address, profilePic });
+        const newUser = new User({ name, email, password: hashedPassword, phone, address, profilePic });
         await newUser.save();
 
         console.log("User created:", newUser);
@@ -142,7 +142,7 @@ export const updateUserProfile = async (req, res) => {
         user.name = req.body.name || user.name;
         user.email = req.body.email || user.email;
         user.address = req.body.address || user.address;
-        user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+        user.phone = req.body.phone || user.phone;
         user.profilePic = req.body.profilePic || user.profilePic;
 
         if (req.body.password) {
