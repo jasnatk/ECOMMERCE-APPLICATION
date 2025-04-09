@@ -79,8 +79,6 @@ export const loginUser = async (req, res) => {
 
         // Generate token
         const token = generateToken(user._id, 'user');
-
-        // res.cookie("token", token, {httpOnly:true});
         
          //store token
         res.cookie("token", token, {
@@ -152,7 +150,10 @@ export const updateUserProfile = async (req, res) => {
         }
 
         const updatedUser = await user.save();
-        res.json(updatedUser);
+        res.status(200).json({
+            data: updatedUser,
+            message: "Profile updated successfully"
+          });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { useFetch } from "../../hooks/useFetch";
  import { useLogout } from "../../hooks/useLogout";
 import { Order } from "../../components/user/order";
+import { useNavigate } from "react-router-dom";
  
 
 export const Profile = () => {
+    const navigate = useNavigate();
     const [userDetails, isLoading, error] = useFetch("/user/profile");
     const handleLogout = useLogout(); // Get logout function
      const [showOrders, setShowOrders] = useState(false);
@@ -30,7 +32,12 @@ export const Profile = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3 mt-6 w-full max-w-xs">
-                <button className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md">Edit Profile</button>
+            <button 
+                className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md"
+                onClick={() => navigate("/user/edit-profile")}
+            >
+                Edit Profile
+            </button>
                 <button
                     className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md"
                     onClick={() => setShowOrders(!showOrders)}

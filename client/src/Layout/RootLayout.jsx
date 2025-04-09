@@ -5,7 +5,7 @@ import { axiosInstance } from "../config/axiosInstance";
 import { clearUser, saveUser } from "../redux/features/userSlice";
 import { Header } from "../components/user/Header.jsx";
 import { UserHeader } from "../components/user/UserHeader";
-import  {Footer}  from "../components/user/Footer";
+import  {Footer}  from "../components/user/Footer.jsx";
 
 
 

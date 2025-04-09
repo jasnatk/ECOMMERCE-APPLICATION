@@ -20,6 +20,7 @@ import { ResetPassword } from "../pages/shared/ResetPassword";
 import { WishlistPage } from "../Components/user/wishlist";
 import { PaymentStatus } from "../pages/user/Payment";
 import { ProtectSellerRoutes } from "./ProtectSellerRoutes";
+import { EditProfile } from "../components/user/EditProfile";
 
 
 export const router = createBrowserRouter([
@@ -77,6 +78,10 @@ errorElement: <ErrorPage />,
           {
             path: "profile",
             element: <Profile/>,
+          },
+          {
+            path: "edit-profile",
+            element: <EditProfile/>,
           },
           {
             path: "cart",

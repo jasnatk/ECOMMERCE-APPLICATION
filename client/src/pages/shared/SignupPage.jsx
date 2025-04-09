@@ -25,7 +25,7 @@ export const SignupPage = ({ role }) => {
     const onSubmit = async (data) => {
         try {
             const { confirmPassword, ...userData } = data;
-            await axiosInstance.post(user.signupAPI, data);
+            await axiosInstance.post(user.signupAPI, userData);
             toast.success("Signup successful!");
             setTimeout(() => navigate("/product"), 1000);
         } catch (error) {
@@ -39,12 +39,12 @@ export const SignupPage = ({ role }) => {
                 {/* Left Side - Image */}
                 <div className="hidden lg:flex w-full lg:w-1/2">
                     <img
-                        src="/image/s1.jpg" // Change this to your actual image path
+                        src="/image/s1.jpg"
                         alt="Signup"
                         className="object-cover w-full h-full"
                     />
                 </div>
-                
+
                 {/* Right Side - Signup Form */}
                 <div className="w-full lg:w-1/2 p-8 flex flex-col justify-center items-center space-y-6">
                     <h1 className="text-4xl font-bold text-center">{user.role} Signup</h1>
@@ -56,18 +56,24 @@ export const SignupPage = ({ role }) => {
                         <input type="email" placeholder="Email" {...register("email", { required: "Email is required" })} className="input input-bordered w-full max-w-xs" />
                         {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
 
-                        <input type="text" placeholder="Phone Number" {...register("phoneNumber", { required: "Phone number is required" })} className="input input-bordered w-full max-w-xs" />
-                        {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber.message}</p>}
+                        <input type="text" placeholder="Phone Number" {...register("phone", { required: "Phone number is required" })} className="input input-bordered w-full max-w-xs" />
+                        {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
 
                         <input type="text" placeholder="Address" {...register("address", { required: "Address is required" })} className="input input-bordered w-full max-w-xs" />
                         {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
 
                         <input type="text" placeholder="Profile Picture URL" {...register("profilePic")} className="input input-bordered w-full max-w-xs" />
 
-                        <input type="password" placeholder="Password" {...register("password", { required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters" } })} className="input input-bordered w-full max-w-xs" />
+                        <input type="password" placeholder="Password" {...register("password", {
+                            required: "Password is required",
+                            minLength: { value: 6, message: "Password must be at least 6 characters" }
+                        })} className="input input-bordered w-full max-w-xs" />
                         {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
 
-                        <input type="password" placeholder="Confirm Password" {...register("confirmPassword", { required: "Confirm password is required", validate: value => value === password || "Passwords do not match" })} className="input input-bordered w-full max-w-xs" />
+                        <input type="password" placeholder="Confirm Password" {...register("confirmPassword", {
+                            required: "Confirm password is required",
+                            validate: value => value === password || "Passwords do not match"
+                        })} className="input input-bordered w-full max-w-xs" />
                         {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
 
                         <button className="w-full max-w-xs h-12 bg-black text-white rounded-md mt-4 hover:bg-gray-800">Signup</button>
