@@ -1,12 +1,12 @@
-// src/Layout/SellerLayout.jsx
+
 
 import React, { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance } from "../config/axiosInstance";
 import { clearUser, saveUser } from "../redux/features/userSlice";
-import { SellerHeader } from "../components/seller/SellerHeader";
-import { Footer } from "../components/user/Footer";
+import { Footer } from "../Components/user/Footer";
+import { SellerHeader } from "../Components/seller/SellerHeader";
 
 export const SellerLayout = () => {
   const user = useSelector((state) => state.user); // Can rename to seller if you separate seller state

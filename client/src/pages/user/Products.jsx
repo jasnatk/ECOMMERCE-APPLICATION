@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ProductCard } from '../../components/user/Cards';
+import { ProductCard } from '../../Components/user/Cards';
 import { ProductCardSkeltons } from '../../Components/user/Skeltons';
 import { axiosInstance } from '../../config/axiosInstance';
-import { FilterSidebar } from '../../components/user/Filter';
+import { FilterSidebar } from '../../Components/user/Filter';
 
 export const Product = () => {
   const location = useLocation();
