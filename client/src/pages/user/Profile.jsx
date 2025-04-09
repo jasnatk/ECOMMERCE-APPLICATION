@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useFetch } from "../../hooks/useFetch";
  import { useLogout } from "../../hooks/useLogout";
-import { Order } from "../../Components/user/order";
+
 import { useNavigate } from "react-router-dom";
  
 
@@ -56,7 +56,7 @@ export const Profile = () => {
             </div>
 
          {/* Orders Section */}
-            {showOrders && <Order/>} 
+            {showOrders && <div>order</div>} 
         </div>
     );
 };
