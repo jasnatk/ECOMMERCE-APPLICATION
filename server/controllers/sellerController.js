@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import { generateToken } from "../utilities/token.js";
 import Seller from "../models/sellerModel.js";
 
