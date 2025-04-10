@@ -1,25 +1,28 @@
 import React, { useState } from "react";
 import { useFetch } from "../../hooks/useFetch";
- import { useLogout } from "../../hooks/useLogout";
-
+import { useLogout } from "../../hooks/useLogout";
 import { useNavigate } from "react-router-dom";
- 
 
 export const Profile = () => {
     const navigate = useNavigate();
     const [userDetails, isLoading, error] = useFetch("/user/profile");
-    const handleLogout = useLogout(); // Get logout function
-     const [showOrders, setShowOrders] = useState(false);
+    const handleLogout = useLogout();
+    const [showOrders, setShowOrders] = useState(false);
+
+    // Mock online status (you can replace this with real-time status later)
+    const isOnline = true;
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-6">
-            {/* Profile Picture */}
-            <div className="mb-4">
-                <img
-                    src={userDetails?.profilePic}
-                    alt="Profile"
-                    className="w-40 h-40 rounded-full object-cover border-4 border-gray-300 shadow-lg"
-                />
+            {/* Profile Picture with Presence Indicator */}
+            <div className={`avatar mb-4 ${isOnline ? "avatar-online" : "avatar-offline"}`}>
+                <div className="w-40 rounded-full ring ring-gray-300 ring-offset-base-100 ring-offset-2">
+                    <img
+                        src={userDetails?.profilePic}
+                        alt="Profile"
+                        className="object-cover"
+                    />
+                </div>
             </div>
 
             {/* User Details */}
@@ -32,31 +35,32 @@ export const Profile = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3 mt-6 w-full max-w-xs">
-            <button 
-                className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md"
-                onClick={() => navigate("/user/edit-profile")}
-            >
-                Edit Profile
-            </button>
+                <button 
+                    className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md"
+                    onClick={() => navigate("/user/edit-profile")}
+                >
+                    Edit Profile
+                </button>
                 <button
                     className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md"
                     onClick={() => setShowOrders(!showOrders)}
                 >
-                 Orders
+                    Orders
                 </button>
-                <button className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md">Change Password</button>
+                <button className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md">
+                    Change Password
+                </button>
                 <button 
-    type="button"  
-    className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md"
-    onClick={handleLogout} 
->
-    Logout
-</button>
-
+                    type="button"  
+                    className="w-full py-2 px-4 bg-black text-white rounded-lg shadow-md"
+                    onClick={handleLogout} 
+                >
+                    Logout
+                </button>
             </div>
 
-         {/* Orders Section */}
-            {showOrders && <div>order</div>} 
+            {/* Orders Section */}
+            {showOrders && <div className="mt-6">order</div>}
         </div>
     );
 };

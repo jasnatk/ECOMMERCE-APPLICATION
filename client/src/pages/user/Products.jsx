@@ -63,6 +63,17 @@ export const Product = () => {
 
       {/* Right side for products */}
       <div className="flex-1 p-8">
+        {/* Add a banner image */}
+        {filters.category === "Kids" && (
+          <div className="mb-6">
+            <img
+              src="/image/k1.jpg" 
+              alt="Kids Fashion Banner"
+              className="w-full h-[300px] object-cover rounded-lg shadow-md"
+            />
+          </div>
+        )}
+
         <h1
           className="text-2xl font-bold text-center mb-6"
           style={{ fontFamily: 'Playfair Display, serif' }}

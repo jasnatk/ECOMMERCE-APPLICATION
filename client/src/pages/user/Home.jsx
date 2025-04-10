@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosInstance } from "../../config/axiosInstance";  // Assuming axiosInstance is already set up
-import {ProductCard} from "../../Components/user/Cards";
+import { ProductCard } from "../../Components/user/Cards";
 import { ProductCardSkeltons } from "../../Components/user/Skeltons";  // Assuming ProductCardSkeltons is the skeleton loader component
 
 export const Home = () => {
@@ -10,6 +10,7 @@ export const Home = () => {
   const [error, setError] = useState(null);
   const [currentPageTop, setCurrentPageTop] = useState(1); // Pagination for the top products section
   const [currentPageNewArrivals, setCurrentPageNewArrivals] = useState(1); // Pagination for new arrivals section
+  const [currentSlide, setCurrentSlide] = useState(0); // State to track current carousel slide
   const itemsPerPage = 5; // Limit the products per page to 5
 
   useEffect(() => {
@@ -26,6 +27,15 @@ export const Home = () => {
     };
 
     fetchProducts();
+
+    // Automatic carousel movement every 3 seconds
+    const intervalId = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % 4); // Assuming 4 slides in total
+    }, 3000); // Change slide every 3 seconds
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
+
   }, []);
 
   // First 5 products for top product section
@@ -44,21 +54,30 @@ export const Home = () => {
   const startIndexNewArrivals = (currentPageNewArrivals - 1) * itemsPerPage;
   const paginatedNewArrivals = newArrivalsAll.slice(startIndexNewArrivals, startIndexNewArrivals + itemsPerPage);
 
+  // Handlers for the left and right buttons
+  const handlePrevSlide = () => {
+    setCurrentSlide((prevSlide) => (prevSlide === 0 ? 3 : prevSlide - 1)); // Loop to the last slide when on the first one
+  };
+
+  const handleNextSlide = () => {
+    setCurrentSlide((prevSlide) => (prevSlide + 1) % 4); // Loop to the first slide when on the last one
+  };
+
   return (
     <div className="w-screen">
       {/* 🔥 Banner Carousel */}
       <div className="w-screen h-[500px] overflow-hidden shadow-md shadow-black/20 border rounded">
         <div className="carousel w-full h-full">
           {["B2", "B1", "B3", "B4"].map((img, index) => (
-            <div key={index} id={`slide${index + 1}`} className="carousel-item relative w-full h-full">
+            <div key={index} id={`slide${index + 1}`} className={`carousel-item relative w-full h-full ${currentSlide === index ? 'block' : 'hidden'}`}>
               <img
                 src={`/image/${img}.jpg`}
                 className="absolute inset-0 w-full h-full object-cover"
                 alt={`Slide ${index + 1}`}
               />
               <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 justify-between">
-                <a href={`#slide${index === 0 ? 4 : index}`} className="btn btn-circle bg-white text-black">❮</a>
-                <a href={`#slide${index === 3 ? 1 : index + 2}`} className="btn btn-circle bg-white text-black">❯</a>
+                <button onClick={handlePrevSlide} className="btn btn-circle bg-white text-black">❮</button>
+                <button onClick={handleNextSlide} className="btn btn-circle bg-white text-black">❯</button>
               </div>
             </div>
           ))}
@@ -66,9 +85,9 @@ export const Home = () => {
       </div>
 
       {/* View All Products */}
-      <div className="w-full  pt-5">
-        <h2 className="text-2xl font-bold text-center mb-6">
-          <Link to="/product" className="text-black hover:underline">
+      <div className="w-full pt-5">
+        <h2 className="text-2xl font-bold text-center mb-6 hover:underline">
+          <Link to="/product">
             View All Products
           </Link>
         </h2>
