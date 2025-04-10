@@ -20,7 +20,7 @@ import { ResetPassword } from "../pages/shared/ResetPassword";
 import { WishlistPage } from "../Components/user/wishlist";
 import { PaymentStatus } from "../pages/user/Payment";
 import { ProtectSellerRoutes } from "./ProtectSellerRoutes";
-import { EditProfile } from "../components/user/EditProfile";
+import { EditProfile } from "../Components/user/EditProfile";
 
 
 
