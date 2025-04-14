@@ -1,22 +1,22 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";  // Use useNavigate here
+import { Link, useNavigate } from "react-router-dom"; 
 import { DarkMode } from "../shared/DarkMode";
 import { FaSearch, FaUser, FaHeart, FaShoppingCart } from "react-icons/fa";
 
 export const UserHeader = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();  // useNavigate instead of useHistory
+  const navigate = useNavigate();  
 
   // Handle search input change
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
 
-  // Handle search submission (e.g., when pressing Enter or clicking search)
+  // Handle search submission
   const handleSearchSubmit = (event) => {
     event.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/product?search=${searchQuery}`);  // use navigate to redirect
+      navigate(`/product?search=${searchQuery}`);  
     }
   };
 

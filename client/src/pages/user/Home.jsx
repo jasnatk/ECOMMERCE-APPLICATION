@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { axiosInstance } from "../../config/axiosInstance";  // Assuming axiosInstance is already set up
+import { axiosInstance } from "../../config/axiosInstance";  
+import { ProductCardSkeltons } from "../../Components/user/Skeltons"; 
 import { ProductCard } from "../../Components/user/Cards";
-import { ProductCardSkeltons } from "../../Components/user/Skeltons";  // Assuming ProductCardSkeltons is the skeleton loader component
+
 
 export const Home = () => {
   const [products, setProducts] = useState([]);
@@ -65,7 +66,7 @@ export const Home = () => {
 
   return (
     <div className="w-screen">
-      {/* 🔥 Banner Carousel */}
+      {/*  Banner Carousel */}
       <div className="w-screen h-[500px] overflow-hidden shadow-md shadow-black/20 border rounded">
         <div className="carousel w-full h-full">
           {["B2", "B1", "B3", "B4"].map((img, index) => (
@@ -83,6 +84,7 @@ export const Home = () => {
           ))}
         </div>
       </div>
+      
 
       {/* View All Products */}
       <div className="w-full pt-5">

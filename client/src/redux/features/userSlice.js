@@ -4,6 +4,7 @@ const initialState = {
     userData: {},
     isUserAuth: false,
     isSellerAuth: false,
+    isAdminAuth: false,
 };
 
 export const userSlice = createSlice({
@@ -18,10 +19,32 @@ export const userSlice = createSlice({
             state.isUserAuth = false;
             state.userData = {};
         },
+        saveSeller: (state, action) => {
+            state.isSellerAuth = true;
+            state.userData = action.payload;
+        },
+        clearSeller: (state) => {
+            state.isSellerAuth = false;
+            state.userData = {};
+        },
+        saveAdmin: (state, action) => {
+            state.isAdminAuth = true;
+            state.userData = action.payload;
+        },
+        clearAdmin: (state) => {
+            state.isAdminAuth = false;
+            state.userData = {};
+        },
     },
 });
 
-// Action creators are generated for each case reducer function
-export const { saveUser, clearUser, saveSeller, clearSeller} = userSlice.actions;
+export const {
+    saveUser,
+    clearUser,
+    saveSeller,
+    clearSeller,
+    saveAdmin,
+    clearAdmin
+} = userSlice.actions;
 
 export default userSlice.reducer;

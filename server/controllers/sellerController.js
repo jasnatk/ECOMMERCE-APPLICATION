@@ -1,5 +1,7 @@
 import { generateToken } from "../utilities/token.js";
 import Seller from "../models/sellerModel.js";
+import Product from "../models/productModel.js";
+import Order from "../models/orderModel.js";
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -81,10 +83,9 @@ export const sellerLogin = async (req, res, next) => {
 // Get Seller Profile
 export const sellerProfile = async (req, res, next) => {
     try {
-        const { user } = req;
+        const { seller } = req; // 
 
-        // Fetch the seller data without the password
-        const userData = await Seller.findById(user.id).select("-password");
+        const userData = await Seller.findById(seller.id).select("-password");
 
         res.json({ success: true, message: "Seller profile fetched", userData });
     } catch (error) {
@@ -92,6 +93,7 @@ export const sellerProfile = async (req, res, next) => {
         res.status(error.statusCode || 500).json(error.message || "Internal server error");
     }
 };
+
 
 // Seller Logout
 export const sellerLogout = async (req, res, next) => {
@@ -118,3 +120,44 @@ export const checkSeller = async (req, res, next) => {
         res.status(error.statusCode || 500).json(error.message || "Internal server error");
     }
 };
+
+export const getSellerStats = async (req, res) => {
+  try {
+    const sellerId = req.seller.id;
+
+    // Get total products added by this seller
+    const totalProducts = await Product.countDocuments({ seller: sellerId });
+
+    // Get total orders related to this seller's products
+    const orders = await Order.find({ "products.seller": sellerId });
+
+    const totalOrders = orders.length;
+
+    // Calculate revenue from these orders
+    const totalRevenue = orders.reduce((acc, order) => acc + order.totalAmount, 0);
+
+    res.json({
+      success: true,
+      stats: {
+        totalProducts,
+        totalOrders,
+        totalRevenue,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Failed to fetch seller stats" });
+  }
+};
+export const getProductsBySeller = async (req, res) => {
+    try {
+      const sellerId = req.seller.id; 
+      const products = await Product.find({ seller: sellerId });
+  
+      res.status(200).json({ products, message: "Products fetched successfully" });
+    } catch (error) {
+      console.error("Error fetching products by seller:", error);
+      res.status(500).json({ message: "Failed to fetch products" });
+    }
+  };
+  

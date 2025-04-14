@@ -12,14 +12,23 @@ export const SignupPage = ({ role }) => {
         role: "user",
         signupAPI: "/user/signup",
         loginRoute: "/login",
+        redirectRoute: "/product",
     };
-
+    
     if (role === "seller") {
         user.role = "seller";
         user.signupAPI = "/seller/signup";
         user.loginRoute = "/seller/login";
+        user.redirectRoute = "/seller/login";
     }
-
+    
+    if (role === "admin") {
+        user.role = "admin";
+        user.signupAPI = "/admin/signup";
+        user.loginRoute = "/admin/login";
+        user.redirectRoute = "/admin/login";
+    }
+    
     const password = watch("password");
 
     const onSubmit = async (data) => {
@@ -27,11 +36,15 @@ export const SignupPage = ({ role }) => {
             const { confirmPassword, ...userData } = data;
             await axiosInstance.post(user.signupAPI, userData);
             toast.success("Signup successful!");
-            setTimeout(() => navigate("/product"), 1000);
+    
+            setTimeout(() => {
+                navigate(user.redirectRoute);
+            }, 1000);
         } catch (error) {
             toast.error(error.response?.data?.message || "Signup failed. Try again.");
         }
     };
+    
 
     return (
         <div className="flex items-center justify-center bg-base-200 py-6 min-h-screen">

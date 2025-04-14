@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { FaTrashAlt, FaShoppingCart } from 'react-icons/fa';
 import { axiosInstance } from '../../config/axiosInstance';
 import { useNavigate } from 'react-router-dom';
-import { ProductCard } from './Cards';  // Importing your ProductCard component
+import {ProductCard } from './Cards';
+
 
 export const WishlistPage = () => {
   const [wishlist, setWishlist] = useState([]);

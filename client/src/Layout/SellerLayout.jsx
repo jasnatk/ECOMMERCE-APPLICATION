@@ -7,9 +7,10 @@ import { axiosInstance } from "../config/axiosInstance";
 import { clearUser, saveUser } from "../redux/features/userSlice";
 import { Footer } from "../Components/user/Footer";
 import { SellerHeader } from "../Components/seller/SellerHeader";
+import { Header } from "../Components/user/Header";
 
 export const SellerLayout = () => {
-  const user = useSelector((state) => state.user); // Can rename to seller if you separate seller state
+  const user = useSelector((state) => state.user); 
   const [isLoading, setIsLoading] = useState(true);
 
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ export const SellerLayout = () => {
     try {
       const response = await axiosInstance.get("/seller/check-seller");
       console.log("Seller check:", response);
-      dispatch(saveUser({ ...response.data })); // You can use a separate saveSeller if needed
+      dispatch(saveUser({ ...response.data })); 
       setIsLoading(false);
     } catch (error) {
       console.log("Seller not authenticated:", error);
@@ -34,7 +35,8 @@ export const SellerLayout = () => {
 
   return isLoading ? null : (
     <div>
-      <SellerHeader />
+      
+      {user.isSellerAuth ? <SellerHeader />: <Header />}
       <div className="min-h-96">
         <Outlet />
       </div>

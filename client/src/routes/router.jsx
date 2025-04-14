@@ -18,9 +18,19 @@ import { CartPage } from "../pages/user/CartPage";
 import { ForgotPassword } from "../pages/shared/ForgotPassword";
 import { ResetPassword } from "../pages/shared/ResetPassword";
 import { WishlistPage } from "../Components/user/wishlist";
-import { PaymentStatus } from "../pages/user/Payment";
 import { ProtectSellerRoutes } from "./ProtectSellerRoutes";
 import { EditProfile } from "../Components/user/EditProfile";
+import ChangePassword from "../pages/shared/ChangePassword";
+import  OrderPage from "../Components/user/order";
+import PaymentSuccess from "../pages/user/PaymentSuccess";
+import PaymentCancel from "../pages/user/PaymentCancel";
+import SellerDashboard from "../pages/seller/SellerDashboard";
+import SellerProfile from "../pages/seller/SellerProfile";
+import NewProduct from "../pages/shared/NewProduct";
+import SellerProducts from "../Components/seller/SellerProduct";
+import EditProductForm from "../Components/seller/EditProduct";
+// import SellerProductList from "../Components/seller/SellerProductList";
+
 
 
 
@@ -64,6 +74,10 @@ errorElement: <ErrorPage />,
           element: <ResetPassword/>,
         },
         {
+          path: "change-password",
+          element: <ChangePassword/>,
+        },
+        {
          path: "product",
          element: <Product/>,
         },
@@ -97,10 +111,18 @@ errorElement: <ErrorPage />,
             element: <h1>review</h1>,
           },
           {
-            path: "/user/payment/success",
-            element: <PaymentStatus />,
+            path: "payment-success",
+            element: <PaymentSuccess/>,
           },
-         
+          
+          {
+            path: "payment-cancel",
+            element: <PaymentCancel/>,
+          },
+          {
+            path: "order/my-orders",
+            element: <OrderPage/>,
+          },
         ],
       },
 
@@ -129,12 +151,29 @@ errorElement: <ErrorPage />,
                        children: [
                           {
                            path: "profile",
-                           element: <h1>sellerprofile</h1>,
+                           element: <SellerProfile/>
                           },
-                       // {
-                      //   path: "dashboard",
-                      //   element: <SellerDashboard />,
-                       // },
+                           {
+                           path: "sellerdashboard",
+                           element: <SellerDashboard />,
+                           },
+                           {
+                            path: "products/new",
+                            element: <NewProduct/>,
+                            },
+                            {
+                            path: "products",
+                            element: <SellerProducts/>,
+                             },
+                            {
+                            path: "products/edit/:id",
+                            element: <EditProductForm/>,
+                            },
+                            // {
+                            // path: "products",
+                            // element: <SellerProductList/>,
+                            // },
+                            
                         ],
                       },
                     ],
@@ -154,13 +193,10 @@ errorElement: <ErrorPage />,
                   element:<LoginPage role ="admin"/>,
                     },
                     {
-                      path: "admin/logout",
+                      path: "logout",
                       element: <LogoutPage role ="admin"/>,
                     },
-                    // {
-                    //   path: "dashboard",
-                    //   element: <SellerDashboard />,
-                    // },
+                    
                   ],
                 },
 ]);

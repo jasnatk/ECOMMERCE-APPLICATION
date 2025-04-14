@@ -1,28 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { ProductCard } from '../../Components/user/Cards';
-import { ProductCardSkeltons } from '../../Components/user/Skeltons';
-import { axiosInstance } from '../../config/axiosInstance';
-import { FilterSidebar } from '../../Components/user/Filter';
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { ProductCardSkeltons } from "../../Components/user/Skeltons";
+import { axiosInstance } from "../../config/axiosInstance";
+import { FilterSidebar } from "../../Components/user/Filter";
+import {ProductCard} from "../../Components/user/Cards";
 
 export const Product = () => {
   const location = useLocation();
-
   const [productList, setProductList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
-    category: '',
-    search: '',
-    minPrice: '',
-    maxPrice: '',
+    category: "",
+    search: "",
+    minPrice: "",
+    maxPrice: "",
   });
 
-  // ✅ Update filters whenever the URL query string changes
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const category = queryParams.get('category') || '';
-    const search = queryParams.get('search') || '';
+    const category = queryParams.get("category") || "";
+    const search = queryParams.get("search") || "";
 
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -31,15 +29,15 @@ export const Product = () => {
     }));
   }, [location.search]);
 
-  // ✅ Fetch products when filters change
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await axiosInstance.get('/product/productList', {
+        const response = await axiosInstance.get("/product/productList", {
           params: filters,
         });
-        setProductList(response.data.data);
+        console.log("Fetched products:", response.data.data); // Debug log
+        setProductList(response.data.data || []);
         setIsLoading(false);
       } catch (err) {
         setError(err.message);
@@ -56,18 +54,15 @@ export const Product = () => {
 
   return (
     <div className="container mx-auto p-4 flex">
-      {/* Left sidebar for filters */}
       <div className="p-4 bg-gray-100 shadow-md">
         <FilterSidebar onFilterChange={handleFilterChange} />
       </div>
 
-      {/* Right side for products */}
       <div className="flex-1 p-8">
-        {/* Add a banner image */}
         {filters.category === "Kids" && (
           <div className="mb-6">
             <img
-              src="/image/k1.jpg" 
+              src="/image/k1.jpg"
               alt="Kids Fashion Banner"
               className="w-full h-[300px] object-cover rounded-lg shadow-md"
             />
@@ -76,13 +71,13 @@ export const Product = () => {
 
         <h1
           className="text-2xl font-bold text-center mb-6"
-          style={{ fontFamily: 'Playfair Display, serif' }}
+          style={{ fontFamily: "Playfair Display, serif" }}
         >
           {filters.category
-            ? `Shop ${filters.category}${filters.category === 'Men' || filters.category === 'Women' ? "'s" : ""} Fashion`
+            ? `Shop ${filters.category}${filters.category === "Men" || filters.category === "Women" ? "'s" : ""} Fashion`
             : filters.search
             ? `Search results for "${filters.search}"`
-            : 'Shop the Latest Fashion Trends'}
+            : "Shop the Latest Fashion Trends"}
         </h1>
 
         {error && <p className="text-red-500 text-center">Error loading products: {error}</p>}

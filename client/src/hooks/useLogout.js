@@ -1,31 +1,35 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { axiosInstance } from "../config/axiosInstance";
-import { clearUser } from "../redux/features/userSlice";
 import toast from "react-hot-toast";
+import { clearUser } from "../redux/features/userSlice";
+import { clearSeller } from "../redux/features/userSlice";
+import { clearAdmin } from "../redux/features/userSlice";
 
-export const useLogout = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+export const useLogout = (role = "user") => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    const handleLogout = async () => {
-        try {
-            await axiosInstance.post("/user/logout"); // Optional API call
-        } catch (error) {
-            console.error("Logout failed:", error);
-        }
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.get(`/${role}/logout`); // Dynamically hits /user/logout, /seller/logout, etc.
+    } catch (error) {
+      console.error(`${role} logout failed:`, error);
+    }
 
-        // Remove token and clear user state
-        localStorage.removeItem("token");
-        dispatch(clearUser());
+    // Remove token
+    localStorage.removeItem("token");
 
-         // Show success toast
-         toast.success("Logged out successfully!"); // Show success toast
+    // Clear Redux state based on role
+    if (role === "user") dispatch(clearUser());
+    if (role === "seller") dispatch(clearSeller());
+    if (role === "admin") dispatch(clearAdmin());
 
+    toast.success("Logged out successfully");
 
-        // Redirect to login page
-        navigate("/login");
-    };
+    // Redirect to login
+    navigate("/login");
+  };
 
-    return handleLogout;
+  return handleLogout;
 };

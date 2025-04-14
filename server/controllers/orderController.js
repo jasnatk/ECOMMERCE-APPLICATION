@@ -24,15 +24,20 @@ export const createOrder = async (req, res) => {
     }
 };
 
+
 // Get all orders for the logged-in user
 export const getMyOrders = async (req, res) => {
     try {
-        const orders = await Order.find({ user: req.user.id }).sort({ createdAt: -1 });
-        res.status(200).json(orders);
+      const orders = await Order.find({ user: req.user.id })
+        .sort({ createdAt: -1 })
+        .populate("products.productId"); // if you want product details like image/name
+  
+      res.status(200).json({ orders }); //  wrap in object
     } catch (error) {
-        res.status(500).json({ message: "Error fetching orders", error: error.message });
+      res.status(500).json({ message: "Error fetching orders", error: error.message });
     }
-};
+  };
+  
 
 // Get a specific order by ID (User/Admin)
 export const getOrderById = async (req, res) => {

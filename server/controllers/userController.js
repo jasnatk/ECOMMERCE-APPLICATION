@@ -5,48 +5,51 @@ import { generateToken } from "../utilities/token.js";
 
 const NODE_ENV = process.env.NODE_ENV;
 
-// 1. User/Admin Registration
-export const userSignUp = async (req, res,next) => {
-    try {
-        //collect user data
-        const { name, email, password, confirmPassword, address, phone, profilePic } = req.body;
+// Utility: Set cookie options
+const setTokenCookie = (res, token) => {
+    res.cookie("token", token, {
+        sameSite: NODE_ENV === "production" ? "None" : "Lax",
+        secure: NODE_ENV === "production",
+        httpOnly: NODE_ENV === "production",
+    });
+};
 
-        // Data validation
-        if (!name || !email || !password || !confirmPassword || !phone) {
+// 1. User Signup
+export const userSignUp = async (req, res) => {
+    try {
+        const { name, email, password, confirmPassword, address, phoneNumber, profilePic } = req.body;
+
+        if (!name || !email || !password || !confirmPassword || !phoneNumber) {
             return res.status(400).json({ message: "All fields required" });
         }
 
-        // Check if the user already exists
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({ message: "User already exists" });
-        }
-
-        //compare with confirm password
         if (password !== confirmPassword) {
             return res.status(400).json({ message: "Passwords do not match" });
         }
-        
-        
 
-        // password hashing
-        const hashedPassword = bcrypt.hashSync(password, 10);
+        const existingUser = await User.findOne({ email: email.toLowerCase() });
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
+        }
 
-        // SAVE TO DB
-        const newUser = new User({ name, email, password: hashedPassword, phone, address, profilePic });
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new User({
+            name,
+            email: email.toLowerCase(),
+            password: hashedPassword,
+            phoneNumber,
+            address,
+            profilePic
+        });
+
         await newUser.save();
 
-        console.log("User created:", newUser);
-
-        // Generate token using id and role
         const token = generateToken(newUser._id, "user");
-        res.cookie("token", token,{
-            sameSite: NODE_ENV === "production" ? "None" : "Lax",
-            secure: NODE_ENV === "production",
-            httpOnly: NODE_ENV === "production",
-        });
-        // Select all fields except the password
+        setTokenCookie(res, token);
+
         const userWithoutPassword = await User.findById(newUser._id).select("-password");
+
         res.status(201).json({ data: userWithoutPassword, message: "Signup successful" });
     } catch (error) {
         console.log("Error in Signup:", error.message);
@@ -58,16 +61,16 @@ export const userSignUp = async (req, res,next) => {
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
+
         if (!email || !password) {
             return res.status(400).json({ message: "All fields required" });
         }
-        
-        const user = await User.findOne({ email });
+
+        const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
-        
-        // Check password
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: "Invalid credentials" });
@@ -77,19 +80,12 @@ export const loginUser = async (req, res) => {
             return res.status(401).json({ message: "User account is not active" });
         }
 
-        // Generate token
-        const token = generateToken(user._id, 'user');
-        
-         //store token
-        res.cookie("token", token, {
-            sameSite: NODE_ENV === "production" ? "None" : "Lax",
-            secure: NODE_ENV === "production",
-            httpOnly: NODE_ENV === "production",
-        });
+        const token = generateToken(user._id, "user");
+        setTokenCookie(res, token);
 
-        
-        
-        res.json({ data: user, message: "Login successful" });
+        const userWithoutPassword = await User.findById(user._id).select("-password");
+
+        res.json({ data: userWithoutPassword, message: "Login successful" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -98,7 +94,7 @@ export const loginUser = async (req, res) => {
 // 3. User Logout
 export const logoutUser = async (req, res) => {
     try {
-        res.clearCookie("token",{
+        res.clearCookie("token", {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production",
             httpOnly: NODE_ENV === "production",
@@ -108,30 +104,35 @@ export const logoutUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-//check user
-export const checkUser = async(req,res,next)=>{
-    try{
-        res.json({message:"user authorized"});
 
-    }catch(error){
-        res.status(error.statuscode||500).json({message:error.message||"internal server error"})
-    }
-}
-
-// 4. Get User Profile
-export const getUserProfile = async (req, res) => {
+// 4. Check User Authorization
+export const checkUser = async (req, res) => {
     try {
-        const userData = await User.findById(req.user.id);
-        if (!userData) {
+        const user = await User.findById(req.user.id).select("-password");
+        if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        res.json({ data: userData, message: "User profile fetched" });
+        res.json({ data: user, message: "User authorized" });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: error.message || "Internal server error" });
     }
 };
 
-// 5. Update User Profile
+
+// 5. Get User Profile
+export const getUserProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password");
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json({ data: user, message: "User profile fetched" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// 6. Update User Profile
 export const updateUserProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -140,9 +141,9 @@ export const updateUserProfile = async (req, res) => {
         }
 
         user.name = req.body.name || user.name;
-        user.email = req.body.email || user.email;
+        user.email = req.body.email?.toLowerCase() || user.email;
         user.address = req.body.address || user.address;
-        user.phone = req.body.phone || user.phone;
+        user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
         user.profilePic = req.body.profilePic || user.profilePic;
 
         if (req.body.password) {
@@ -150,34 +151,33 @@ export const updateUserProfile = async (req, res) => {
         }
 
         const updatedUser = await user.save();
-        res.status(200).json({
-            data: updatedUser,
-            message: "Profile updated successfully"
-          });
+        const userWithoutPassword = await User.findById(updatedUser._id).select("-password");
+        res.json(userWithoutPassword);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
-// 6. Forgot Password
+// 7. Forgot Password (Stub for email logic)
 export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+        // TODO: Add email service to send reset link/token
         res.json({ message: "Password reset link sent to email" });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
-// 7. Reset Password
+// 8. Reset Password
 export const resetPassword = async (req, res) => {
     try {
         const { email, newPassword } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -185,11 +185,11 @@ export const resetPassword = async (req, res) => {
         await user.save();
         res.json({ message: "Password reset successfully" });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
-// 8. Change Password
+// 9. Change Password
 export const changePassword = async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
@@ -205,6 +205,6 @@ export const changePassword = async (req, res) => {
         await user.save();
         res.json({ message: "Password changed successfully" });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
