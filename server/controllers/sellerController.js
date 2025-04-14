@@ -160,4 +160,6 @@ export const getProductsBySeller = async (req, res) => {
       res.status(500).json({ message: "Failed to fetch products" });
     }
   };
+  // In your Express routes (e.g., routes/seller.js)
+
   

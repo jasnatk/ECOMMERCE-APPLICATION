@@ -12,6 +12,13 @@ router.post('/logout', authSeller, sellerLogout);
 router.get('/check-seller', authSeller, checkSeller);
 router.get("/stats",authSeller, getSellerStats);
 router.get("/me", authSeller, getProductsBySeller );
-
+router.get("/all", async (req, res) => {
+    try {
+      const sellers = await Seller.find().select("-password"); 
+      res.json({ sellers });
+    } catch (err) {
+      res.status(500).json({ error: "Failed to fetch sellers" });
+    }
+  });
 
 export default router;

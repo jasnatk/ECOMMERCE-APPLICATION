@@ -27,8 +27,8 @@ export const useLogout = (role = "user") => {
 
     toast.success("Logged out successfully");
 
-    // Redirect to login
-    navigate("/login");
+   
+    navigate("/");
   };
 
   return handleLogout;

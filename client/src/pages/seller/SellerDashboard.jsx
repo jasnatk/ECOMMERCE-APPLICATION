@@ -51,6 +51,7 @@ const SellerDashboard = () => {
     { name: "Listing", icon: List, path: "/seller/listing" },
     { name: "Order Management", icon: ShoppingCart, path: "/seller/orders" },
     { name: "Product Management", icon: Package, path: "/seller/products" },
+    { name: "All Sellers", icon: Users, path: "/seller/all-sellers" },
   ];
 
   if (!seller) {

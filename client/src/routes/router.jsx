@@ -21,7 +21,6 @@ import { WishlistPage } from "../Components/user/wishlist";
 import { ProtectSellerRoutes } from "./ProtectSellerRoutes";
 import { EditProfile } from "../Components/user/EditProfile";
 import ChangePassword from "../pages/shared/ChangePassword";
-import  OrderPage from "../Components/user/order";
 import PaymentSuccess from "../pages/user/PaymentSuccess";
 import PaymentCancel from "../pages/user/PaymentCancel";
 import SellerDashboard from "../pages/seller/SellerDashboard";
@@ -29,7 +28,12 @@ import SellerProfile from "../pages/seller/SellerProfile";
 import NewProduct from "../pages/shared/NewProduct";
 import SellerProducts from "../Components/seller/SellerProduct";
 import EditProductForm from "../Components/seller/EditProduct";
-// import SellerProductList from "../Components/seller/SellerProductList";
+import OrderPage from "../Components/user/order";
+import { ProtectAdminRoutes } from "./ProtectAdminRoutes";
+import AdminProfile from "../pages/admin/AdminProfile";
+import ManageSellers from "../pages/seller/ManageSellers";
+import { ManageOrders } from "../pages/admin/ManageOrders";
+
 
 
 
@@ -58,7 +62,7 @@ errorElement: <ErrorPage />,
         element: <LoginPage/>,
         },
         {
-        path: "Signup",
+        path: "signup",
         element: <SignupPage/>,
         },
         {
@@ -169,11 +173,7 @@ errorElement: <ErrorPage />,
                             path: "products/edit/:id",
                             element: <EditProductForm/>,
                             },
-                            // {
-                            // path: "products",
-                            // element: <SellerProductList/>,
-                            // },
-                            
+                              
                         ],
                       },
                     ],
@@ -184,8 +184,8 @@ errorElement: <ErrorPage />,
                   element: <AdminLayout/>,
                   children:[
                     {
-                      path: "",
-                  element:<AdminDashboard role ="admin"/>,
+                      path: "admindashboard",
+                  element:<AdminDashboard />,
                     },
 
                     {
@@ -193,10 +193,32 @@ errorElement: <ErrorPage />,
                   element:<LoginPage role ="admin"/>,
                     },
                     {
+                      path: "signup",
+                      element: <SignupPage role ="admin"/>,
+                    },
+                    {
                       path: "logout",
                       element: <LogoutPage role ="admin"/>,
                     },
-                    
+
+                          {   
+                             element: <ProtectAdminRoutes/>,
+                             children: [
+                              {
+                                path: "profile",
+                                element: <AdminProfile/>
+                               },
+                               {
+                                path: "manage-sellers",
+                                element: <ManageSellers/>
+                               },
+
+                               {
+                                path: "manage-orders",
+                                element: <ManageOrders/>
+                               },
+                             ]}
+
                   ],
                 },
 ]);

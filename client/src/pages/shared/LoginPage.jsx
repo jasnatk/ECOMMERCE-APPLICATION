@@ -11,7 +11,7 @@ import {
   saveAdmin,
   clearAdmin,
 } from "../../redux/features/userSlice";
-import toast from "react-hot-toast";
+import {toast} from "react-hot-toast";
 
 export const LoginPage = ({ role }) => {
   const { register, handleSubmit } = useForm();
@@ -35,9 +35,9 @@ export const LoginPage = ({ role }) => {
   } else if (role === "admin") {
     user.role = "Admin";
     user.loginAPI = "/admin/login";
-    user.profileRoute = "/admin/dashboard";
+    user.profileRoute = "/admin/admindashboard";
     user.signupRoute = "/admin/signup";
-    user.image = "/image/admin-login.jpg";
+    user.image = "/image/cart1.jpg";
   }
 
   const onSubmit = async (data) => {

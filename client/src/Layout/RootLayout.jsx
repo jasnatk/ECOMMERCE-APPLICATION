@@ -15,31 +15,35 @@ export const RootLayout = () => {
     const navigate = useNavigate();
 
     const checkUser = async () => {
-        try {
-            const response = await axiosInstance.get("/user/check-user");
-
-            // Save user data in Redux store
-            dispatch(saveUser(response.data.data));
-
-            setIsLoading(false);
-        } catch (error) {
-            console.log("API Error:", error);
-
-            if (error.response) {
-                // If the error is an unauthenticated error (401), redirect to login
-                if (error.response.status === 401) {
-                    navigate("/login");
-                }
-                console.error("Response Data:", error.response.data);
-                console.error("Response Status:", error.response.status);
-            }
-
-            // Clear user data if there's an error or no user data
+        const token = localStorage.getItem("token");
+    
+        if (!token) {
             dispatch(clearUser());
             setIsLoading(false);
+            return;
         }
+    
+        try {
+            const response = await axiosInstance.get("/user/check-user");
+            dispatch(saveUser(response.data.data));
+        } catch (error) {
+            console.log("API Error:", error);
+    
+            if (error.response?.status === 401) {
+                // Optional: only redirect if on protected route
+                const protectedPaths = ["/user"];
+                const isProtected = protectedPaths.some(path => location.pathname.startsWith(path));
+                if (isProtected) {
+                    navigate("/login");
+                }
+            }
+    
+            dispatch(clearUser());
+        }
+    
+        setIsLoading(false);
     };
-
+    
     // Run checkUser only once when the component mounts
     useEffect(() => {
         checkUser();
