@@ -144,11 +144,12 @@ export const CartPage = () => {
                   className="grid grid-cols-[2fr_1fr_1fr_1fr_50px] items-center gap-4 p-4 border-t hover:bg-gray-50 transition-all duration-200"
                 >
                   <div className="flex items-center gap-4">
-                    <img
-                      className="h-20 w-20 object-cover rounded-md shadow-sm"
-                      src={item?.productId?.image}
-                      alt={item?.productId?.name}
-                    />
+                  <img
+                  className="h-20 w-20 object-cover rounded-md shadow-sm"
+                  src={item?.productId?.images?.[0]?.url}
+                  alt={item?.productId?.name}
+                      />
+
                     <span className="font-medium text-gray-800">{item?.productId?.name}</span>
                   </div>
                   <span className="text-gray-700">₹{item?.productId?.price.toLocaleString()}</span>

@@ -38,6 +38,7 @@ import { ManageOrders } from "../pages/admin/ManageOrders";
 
 
 
+
 export const router = createBrowserRouter([
   {
      path: "",
@@ -173,6 +174,7 @@ errorElement: <ErrorPage />,
                             path: "products/edit/:id",
                             element: <EditProductForm/>,
                             },
+                           
                               
                         ],
                       },

@@ -5,6 +5,8 @@ import { LogOut, Home, List, Package, ShoppingCart } from "lucide-react";
 import { axiosInstance } from "../../config/axiosInstance";
 import { useLogout } from "../../hooks/useLogout";
 
+
+
 const SellerDashboard = () => {
   const [seller, setSeller] = useState(null);
   const [stats, setStats] = useState({
@@ -47,11 +49,13 @@ const SellerDashboard = () => {
 
   // Sidebar navigation items
   const menuItems = [
-    { name: "Dashboard", icon: Home, path: "/seller/dashboard" },
-    { name: "Listing", icon: List, path: "/seller/listing" },
-    { name: "Order Management", icon: ShoppingCart, path: "/seller/orders" },
+    { name: "Dashboard", icon: Home, path: "/seller/sellerdashboard" },
     { name: "Product Management", icon: Package, path: "/seller/products" },
-    { name: "All Sellers", icon: Users, path: "/seller/all-sellers" },
+    { name: "Order Management", icon: ShoppingCart, path: "/seller/orders" },
+    { name: "Listing", icon: List, path: "/seller/products" },
+    
+    
+    
   ];
 
   if (!seller) {
@@ -65,7 +69,7 @@ const SellerDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="fixed  left-0 w-64 h-full bg-gradient-to-b from-blue-400 to-blue-400 text-white shadow-xl transition-all duration-300">
+      <div className="fixed  left-0 w-64 h-full bg-gradient-to-b from-blue-400 to-blue-900 text-white shadow-xl transition-all duration-300">
         
         <nav className="mt-4">
           {menuItems.map((item) => (
