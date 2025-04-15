@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 // Ensure uploads folder exists
-const uploadDir = path.resolve("uploads");
+const uploadDir = path.join("/tmp", "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
