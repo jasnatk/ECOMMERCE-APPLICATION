@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 // Ensure uploads folder exists
-const uploadDir = "uploads/";
+const uploadDir = path.resolve("uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -13,25 +13,28 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    cb(null, `${Date.now()}-${file.originalname}`);
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const extension = path.extname(file.originalname).toLowerCase();
+    cb(null, `${uniqueSuffix}${extension}`);
   },
 });
 
-const upload = multer({
-  storage: storage,
-  fileFilter: (req, file, cb) => {
-    // Validate file types (e.g., images only)
-    const filetypes = /jpeg|jpg|png/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = /jpeg|jpg|png/;
+  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = allowedTypes.test(file.mimetype);
 
-    if (extname && mimetype) {
-      return cb(null, true);
-    } else {
-      cb(new Error("Only JPEG, JPG, and PNG images are allowed"));
-    }
-  },
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  if (extname && mimetype) {
+    cb(null, true);
+  } else {
+    cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE", "Only JPEG, JPG, and PNG images are allowed"));
+  }
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
 export default upload;
