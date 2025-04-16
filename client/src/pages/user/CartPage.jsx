@@ -50,7 +50,7 @@ export const CartPage = () => {
 
       const session = await axiosInstance.post("/payment/create-checkout-session", {
         products,
-        success_url: `${window.location.origin}/payment-success`,
+        success_url: `${window.location.origin}/payment-success`, 
         cancel_url: `${window.location.origin}/payment-cancel`,
       });
 

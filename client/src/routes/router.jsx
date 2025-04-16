@@ -125,7 +125,7 @@ errorElement: <ErrorPage />,
             element: <PaymentCancel/>,
           },
           {
-            path: "order/my-orders",
+            path: "order",
             element: <OrderPage/>,
           },
         ],

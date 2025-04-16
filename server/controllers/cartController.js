@@ -90,6 +90,7 @@ export const removeFromCart = async (req, res) => {
 // Clear the entire cart
 export const clearCart = async (req, res) => {
   try {
+
     let cart = await Cart.findOne({ userId: req.user.id });
     if (!cart) return res.status(404).json({ message: "Cart not found" });
 

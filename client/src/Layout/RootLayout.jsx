@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { UserHeader } from "../Components/user/UserHeader";
-import { Header } from "../Components/user/Header";
-import { Footer } from "../Components/user/Footer";
+import { Header } from "../components/user/Header";
+import { Footer } from "../components/user/Footer";
+import { Outlet, useLocation } from "react-router-dom";
+import { UserHeader } from "../components/user/UserHeader";
 import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance } from "../config/axiosInstance";
 import { clearUser, saveUser } from "../redux/features/userSlice";
@@ -10,51 +10,32 @@ import { clearUser, saveUser } from "../redux/features/userSlice";
 export const RootLayout = () => {
     const user = useSelector((state) => state.user);
     const [isLoading, setIsLoading] = useState(true);
+    console.log("user===", user);
+
     const dispatch = useDispatch();
     const location = useLocation();
-    const navigate = useNavigate();
 
     const checkUser = async () => {
-        const token = localStorage.getItem("token");
-    
-        if (!token) {
-            dispatch(clearUser());
-            setIsLoading(false);
-            return;
-        }
-    
         try {
-            const response = await axiosInstance.get("/user/check-user");
-            dispatch(saveUser(response.data.data));
+            const response = await axiosInstance({ method: "GET", url: "/user/check-user" });
+            console.log(response, "========checkUser response");
+            dispatch(saveUser());
+            setIsLoading(false);
         } catch (error) {
-            console.log("API Error:", error);
-    
-            if (error.response?.status === 401) {
-                // Optional: only redirect if on protected route
-                const protectedPaths = ["/user"];
-                const isProtected = protectedPaths.some(path => location.pathname.startsWith(path));
-                if (isProtected) {
-                    navigate("/login");
-                }
-            }
-    
+            console.log(error);
             dispatch(clearUser());
+            setIsLoading(false)
         }
-    
-        setIsLoading(false);
     };
-    
-    // Run checkUser only once when the component mounts
+
     useEffect(() => {
         checkUser();
-    }, []); // 
+    }, [location.pathname]);
 
-    return isLoading ? (
-        <div>Loading...</div> 
-    ) : (
+    return isLoading ? null : (
         <div>
             {user.isUserAuth ? <UserHeader /> : <Header />}
-            <div className="min-h-100">
+            <div className="min-h-96">
                 <Outlet />
             </div>
             <Footer />
