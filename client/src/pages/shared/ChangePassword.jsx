@@ -31,7 +31,7 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 shadow-lg rounded-xl bg-white">
+    <div className="max-w-md mx-auto mt-10 p-6 shadow-lg rounded-xl font-bold text-base-content mb-4 font-playfair">
       <h2 className="text-2xl font-bold mb-4 text-center">Change Password</h2>
       
       {message && <p className="text-green-600 mb-4">{message}</p>}
@@ -64,7 +64,7 @@ const ChangePassword = () => {
 
         <button
   type="submit"
-  className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition"
+  className="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white text-sm p-4 rounded-md hover:from-teal-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center"
 >
   Update Password
 </button>

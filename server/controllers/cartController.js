@@ -41,12 +41,13 @@ export const addToCart = async (req, res) => {
     );
 
     if (existingProduct) {
-      // ✅ Add to existing quantity
+      //  Add to existing quantity
       existingProduct.quantity += quantity;
     } else {
-      // ✅ Add as new item
+      //  Add as new item
       cart.products.push({
         productId,
+        sellerId: product.seller,
         quantity,
         price: product.price,
       });

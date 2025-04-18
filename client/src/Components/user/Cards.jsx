@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Rating } from "./Rating";
 import { axiosInstance } from "../../config/axiosInstance";
@@ -18,7 +18,6 @@ export const ProductCard = ({
   const [reviewCount, setReviewCount] = useState(0);
   const navigate = useNavigate();
   const fallbackImage = "https://placehold.co/300x300?text=No+Image&font=roboto";
-
 
   useEffect(() => {
     setIsWishlisted(isInWishlist);
@@ -59,64 +58,63 @@ export const ProductCard = ({
     setReviewCount(newReviewCount);
   };
 
-  // Use the first image's URL or fallback
   const imageUrl = products?.images?.[0]?.url || fallbackImage;
 
   return (
-    <div className="card bg-base-100 shadow-xl w-full max-w-xs h-auto relative">
-      <div
-        className="absolute top-2 right-2 z-10 cursor-pointer"
-        onClick={handleWishlistToggle}
-      >
-        {isWishlisted ? (
-          <IoMdHeart className="text-black text-2xl" />
-        ) : (
-          <IoMdHeartEmpty className="text-black text-2xl" />
-        )}
-      </div>
-
-      <figure>
+    <div className="card bg-base-100 shadow-sm group transform hover:scale-102 transition-transform duration-300 w-full max-w-xs ">
+      <div className="relative bg-base-200 w-full">
         <img
           src={imageUrl}
           alt={products?.name || "Product"}
-          className="w-full object-cover cursor-pointer"
+          className="w-full max-h-80 object-contain transform group-hover:scale-105 transition-transform duration-300"
           onClick={() => navigate(`/productDetails/${products?._id}`)}
           onError={(e) => {
             console.warn(`Failed to load image for ${products?.name}: ${imageUrl}`);
             e.target.src = fallbackImage;
           }}
         />
-      </figure>
+        <div
+          className="absolute top-2 right-2 p-1 bg-base-100 rounded-full shadow-sm cursor-pointer"
+          onClick={handleWishlistToggle}
+        >
+          {isWishlisted ? (
+            <IoMdHeart className="text-teal-500 text-xl" />
+          ) : (
+            <IoMdHeartEmpty className="text-base-content/50 text-xl" />
+          )}
+        </div>
+      </div>
 
-      <div className="card-body space-y-2">
+      <div className="p-3 space-y-2">
         <h2
-          className="line-clamp-2 card-title font-medium cursor-pointer"
-          style={{ fontFamily: "Playfair Display, serif" }}
+          className="card-title text-sm font-semibold text-base-content line-clamp-2 cursor-pointer font-playfair"
           onClick={() => navigate(`/productDetails/${products?._id}`)}
         >
           {products?.name}
         </h2>
 
         {showDescription && (
-          <p className="line-clamp-3 text-sm text-gray-500">{products?.description}</p>
+          <p className="text-xs text-base-content/70 line-clamp-2">{products?.description}</p>
         )}
 
-        <div className="text-center">
-          <p className="font-bold text-xl">₹{products?.price?.toLocaleString()}</p>
-        </div>
+      <div className="flex flex-col items-center justify-center space-y-1">
+       <p className="text-teal-600 font-bold text-lg">
+        ₹{products?.price?.toLocaleString()}
+      </p>
+     <Rating
+        initialRating={rating}
+         onRatingChange={handleRatingChange}
+         className="text-xs"
+        />
+      </div>
 
-        <div className="card-actions justify-center space-y-2">
-          <Rating
-            initialRating={rating}
-            onRatingChange={handleRatingChange}
-          />
-          <button
-            className="btn bg-black text-white w-full flex items-center justify-center"
-            onClick={handleAddToCart}
-          >
-            <FaShoppingCart className="mr-2" /> Add to Cart
-          </button>
-        </div>
+
+        <button
+          className="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white text-sm py-2 rounded-md hover:from-teal-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center"
+          onClick={handleAddToCart}
+        >
+          <FaShoppingCart className="mr-2 text-sm" /> Add to Cart
+        </button>
       </div>
     </div>
   );

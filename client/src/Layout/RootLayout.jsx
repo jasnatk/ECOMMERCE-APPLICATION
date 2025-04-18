@@ -35,7 +35,7 @@ export const RootLayout = () => {
     return isLoading ? null : (
         <div>
             {user.isUserAuth ? <UserHeader/> : <Header/>}
-            <div className="min-h-96">
+            <div className="min-h-96 ">
                 <Outlet />
             </div>
             <Footer />

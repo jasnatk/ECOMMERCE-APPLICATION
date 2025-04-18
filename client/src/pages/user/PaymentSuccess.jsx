@@ -1,59 +1,36 @@
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Add useNavigate
-import { FaCheckCircle } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import { axiosInstance } from "../../config/axiosInstance";
 
 const PaymentSuccess = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [order, setOrder] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const clearUserCart = async () => {
-      try {
-        console.log("📡 Sending clearCart request...");
-        await axiosInstance.delete("/cart/clearCart");
-        console.log("✅ Cart cleared on payment success.");
-      } catch (err) {
-        console.error("❌ Error clearing cart:", err.response?.data || err);
-      }
-    };
-  
-    clearUserCart();
-  
-    const redirectTimeout = setTimeout(() => {
-      navigate("/user/order");
-    }, 3000);
-  
-    return () => clearTimeout(redirectTimeout);
-  }, [navigate]);
-  
-  
+    const sessionId = new URLSearchParams(window.location.search).get("session_id");
+
+    if (sessionId) {
+      axiosInstance
+        .get(`/payment/session/${sessionId}`)
+        .then((res) => setOrder(res.data.session))
+        .catch((err) => setError(err.response?.data?.message || "Failed to fetch order"));
+    }
+  }, []);
+
+  if (error) return <div className="text-red-500">{error}</div>;
+  if (!order) return <div>Loading...</div>;
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="relative bg-white p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md w-full sm:max-w-lg border-2 border-green-100 transform transition hover:scale-105">
-        <div className="flex justify-center">
-          <FaCheckCircle
-            className="text-green-500 transition-transform duration-500 group-hover:scale-125"
-            size={72}
-          />
-        </div>
-        <h1 className="mt-6 text-3xl sm:text-4xl font-bold text-green-600 text-center">
-          Payment Successful!
-        </h1>
-        <p className="mt-4 text-lg text-gray-600 text-center leading-relaxed">
-          Your payment has been processed successfully. Thank you for your order!
-        </p>
-        <p className="mt-2 text-sm text-gray-500 text-center">
-          Redirecting to your orders in a few seconds...
-        </p>
-        <div className="mt-8 flex justify-center">
-          <Link
-            to="/user/order"
-            className="px-8 py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-200"
-          >
-            View Order Details
-          </Link>
-        </div>
-      </div>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">🎉 Payment Successful</h1>
+      <p><strong>Payment ID:</strong> {order.payment_intent}</p>
+      <p><strong>Status:</strong> {order.payment_status}</p>
+      <p><strong>Total Paid:</strong> ₹{(order.amount_total / 100).toLocaleString()}</p>
+      <h3 className="text-xl mt-4">🛒 Items:</h3>
+      <ul className="list-disc ml-6">
+        {order.line_items?.data?.map((item, idx) => (
+          <li key={idx}>{item.quantity} x {item.description}</li>
+        ))}
+      </ul>
     </div>
   );
 };

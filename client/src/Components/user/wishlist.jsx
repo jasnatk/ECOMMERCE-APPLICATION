@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { FaTrashAlt, FaShoppingCart } from 'react-icons/fa';
-import { axiosInstance } from '../../config/axiosInstance';
-import { useNavigate } from 'react-router-dom';
-import {ProductCard } from './Cards';
-
+import React, { useEffect, useState } from "react";
+import { axiosInstance } from "../../config/axiosInstance";
+import { useNavigate } from "react-router-dom";
+import { ProductCard } from "./Cards";
+import { WishlistCardSkeltons } from "./WishlistCardSkeltons";
+import { toast } from "react-hot-toast";
 
 export const WishlistPage = () => {
   const [wishlist, setWishlist] = useState([]);
@@ -13,17 +13,17 @@ export const WishlistPage = () => {
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
-        // API call to backend for wishlist data
-        const res = await axiosInstance.get('/wishlist/getAll', {
+        const res = await axiosInstance.get("/wishlist/getAll", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
-        const products = res.data.data?.products || [];
+        const products = (res.data.data?.products || []).filter(
+          (item) => item?.product_id?._id
+        );
         setWishlist(products);
       } catch (error) {
-        console.error('Error fetching wishlist:', error);
+        toast.error(error?.response?.data?.message || "Failed to fetch wishlist");
       } finally {
         setLoading(false);
       }
@@ -36,57 +36,78 @@ export const WishlistPage = () => {
     try {
       await axiosInstance.delete(`/wishlist/remove/${productId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      setWishlist(wishlist.filter((product) => product.product_id._id !== productId));
+      setWishlist((prev) =>
+        prev.filter((item) => item?.product_id?._id !== productId)
+      );
+      toast.success("Product removed from wishlist");
     } catch (error) {
-      console.error('Error removing product from wishlist:', error);
+      toast.error(error?.response?.data?.message || "Failed to remove product");
     }
   };
 
   const handleAddToCart = async (productId) => {
     try {
-      // Assuming your backend has an API to add products to the cart
-      await axiosInstance.post('/cart/add', { productId }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      console.log('Product added to cart!');
+      await axiosInstance.post(
+        "/cart/add",
+        { productId },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      toast.success("Product added to cart");
     } catch (error) {
-      console.error('Error adding product to cart:', error);
+      toast.error(error?.response?.data?.message || "Failed to add to cart");
     }
   };
 
-  if (loading) return <p className="text-center text-xl">Loading...</p>;
+  if (loading) {
+    return (
+      <div className="container mx-auto px-2 lg:px-0 py-4">
+        <h1 className="text-2xl lg:text-3xl font-extrabold text-base-content text-center mb-4 tracking-tight font-playfair">
+          Your Wishlist
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(8)].map((_, index) => (
+            <WishlistCardSkeltons key={index} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Your Wishlist</h1>
-
+    <div className="container mx-auto px-2 lg:px-0 py-4">
+      <h1 className="text-2xl lg:text-3xl font-extrabold text-base-content text-center mb-4 tracking-tight font-playfair">
+        Your Wishlist
+      </h1>
       {wishlist.length === 0 ? (
-        <p className="text-center text-xl"> is empty!</p>
+        <p className="text-center text-base text-base-content/70 py-8">
+          Your wishlist is empty!
+        </p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-          {wishlist.map((item) => (
-            <div key={item.product_id} className="bg-white shadow-md rounded-lg overflow-hidden">
-          <ProductCard
-  products={item.product_id}
-  isInWishlist={true}
-  showDescription={false}
-  onToggle={(productId) => {
-    // Remove from state when toggled off
-    setWishlist((prev) =>
-      prev.filter((product) => product.product_id._id !== productId)
-    );
-  }}
-/>
-
-
-            
-            </div>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {wishlist
+            .filter((item) => item?.product_id?._id)
+            .map((item) => (
+              <ProductCard
+                key={item.product_id._id}
+                products={item.product_id}
+                isInWishlist={true}
+                showDescription={false}
+                onToggle={(productId) => {
+                  setWishlist((prev) =>
+                    prev.filter(
+                      (product) => product?.product_id?._id !== productId
+                    )
+                  );
+                }}
+              />
+            ))}
         </div>
       )}
     </div>

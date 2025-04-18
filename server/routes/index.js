@@ -9,6 +9,9 @@ import orderRouter from './orderRoutes.js'
 import WishlistRouter from './WishlistRoutes.js'
 import categoryRouter from './categoryRoutes.js'
 import paymentRouter from "./payment.js";
+import { authUser } from "../middleware/authUser.js";
+import paymentWebhookRouter from "../routes/paymentWebhook.js"
+
 
 
 const router = express.Router();
@@ -22,7 +25,11 @@ router.use('/review', reviewRouter);
 router.use('/order', orderRouter);
 router.use('/wishlist', WishlistRouter);
 router.use('/categories', categoryRouter);
-router.use("/payment", paymentRouter);
+router.use("/webhook", paymentWebhookRouter);
+router.use("/payment", authUser, paymentRouter);     
+
+
+
 
 
 

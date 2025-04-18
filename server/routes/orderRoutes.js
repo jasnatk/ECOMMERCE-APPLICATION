@@ -15,7 +15,7 @@ const router = express.Router();
 // User routes
 router.post("/create-order", authUser, createOrder);
 router.get("/my-orders", authUser, getMyOrders);
-router.get("/:id", authUser, getOrderById);
+router.get("/:orderId", authUser, getOrderById);
 router.put("/:id/cancel", authUser, cancelOrder);
 
 // Admin routes

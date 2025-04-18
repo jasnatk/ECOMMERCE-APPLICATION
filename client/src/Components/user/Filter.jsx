@@ -1,27 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export const FilterSidebar = ({ onFilterChange }) => {
-  const [category, setCategory] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [search, setSearch] = useState('');
+export const FilterSidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [category, setCategory] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    setCategory(queryParams.get("category") || "");
+    setMinPrice(queryParams.get("minPrice") || "");
+    setMaxPrice(queryParams.get("maxPrice") || "");
+    setSearch(queryParams.get("search") || "");
+  }, [location.search]);
 
   const handleFilterChange = () => {
-    // Trigger the onFilterChange function with the updated filter values
-    onFilterChange({ category, minPrice, maxPrice, search });
+    const queryParams = new URLSearchParams();
+    if (category) queryParams.set("category", category);
+    if (minPrice) queryParams.set("minPrice", minPrice);
+    if (maxPrice) queryParams.set("maxPrice", maxPrice);
+    if (search) queryParams.set("search", search);
+    navigate(`/product?${queryParams.toString()}`);
+  };
+
+  const handleResetFilters = () => {
+    setCategory("");
+    setMinPrice("");
+    setMaxPrice("");
+    setSearch("");
+    navigate("/product");
   };
 
   return (
-    <div className="w-64 p-4 bg-gray-100 shadow-md">
-      <h2 className="text-xl font-bold mb-4">Filters</h2>
-
-      {/* Category Filter */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium">Category</label>
+    <div className="space-y-4">
+      <h2 className="text-base font-semibold text-base-content">Filters</h2>
+      <div>
+        <label className="block text-xs font-medium text-base-content/70 mb-1">
+          Search
+        </label>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search products..."
+          className="input input-bordered input-sm w-full bg-base-100 text-base-content"
+        />
+      </div>
+      <div>
+        <label className="block text-xs font-medium text-base-content/70 mb-1">
+          Category
+        </label>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
+          className="select select-bordered select-sm w-full bg-base-100 text-base-content"
         >
           <option value="">All Categories</option>
           <option value="Men">Men</option>
@@ -29,45 +65,41 @@ export const FilterSidebar = ({ onFilterChange }) => {
           <option value="Kids">Kids</option>
         </select>
       </div>
-
-      {/* Price Range Filter */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium">Price Range</label>
-        <input
-          type="number"
-          placeholder="Min Price"
-          value={minPrice}
-          onChange={(e) => setMinPrice(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded mb-2"
-        />
-        <input
-          type="number"
-          placeholder="Max Price"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-        />
+      <div>
+        <label className="block text-xs font-medium text-base-content/70 mb-1">
+          Price Range
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="number"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+            placeholder="Min"
+            className="input input-bordered input-sm w-1/2 bg-base-100 text-base-content"
+          />
+          <input
+            type="number"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            placeholder="Max"
+            className="input input-bordered input-sm w-1/2 bg-base-100 text-base-content"
+          />
+        </div>
       </div>
-
-      {/* Search Filter */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium">Search</label>
-        <input
-          type="text"
-          placeholder="Search Products"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-        />
+      <div className="flex gap-2">
+        <button
+          onClick={handleFilterChange}
+          className="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white text-sm py-2 rounded-md hover:from-teal-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center"
+        >
+          Apply
+        </button>
+        <button
+          onClick={handleResetFilters}
+          className="btn btn-ghost btn-sm flex-1"
+        >
+          Reset
+        </button>
       </div>
-
-      {/* Apply Filters Button */}
-      <button
-        onClick={handleFilterChange}
-        className="w-full bg-black text-white py-2 rounded mt-4"
-      >
-        Apply Filters
-      </button>
     </div>
   );
 };
