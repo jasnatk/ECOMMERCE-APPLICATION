@@ -32,8 +32,8 @@ import { ProtectAdminRoutes } from "./ProtectAdminRoutes";
 import AdminProfile from "../pages/admin/AdminProfile";
 import ManageSellers from "../pages/seller/ManageSellers";
 import { ManageOrders } from "../pages/admin/ManageOrders";
-import OrderDetails from "../Components/user/order";
 import SellerOrders from "../pages/seller/SellerOrders";
+import OrderDetails from "../Components/user/order";
 
 
 
