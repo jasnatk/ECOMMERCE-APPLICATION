@@ -43,7 +43,7 @@ export const Home = () => {
   const topFiveProducts = products.slice(2, 7);
 
   // New Arrivals starting from the latest 11 products
-  const newArrivalsAll = products.slice(-6);
+  const newArrivalsAll = products.slice(-11);
   const totalPagesTop = Math.ceil(topFiveProducts.length / itemsPerPage);
   const totalPagesNewArrivals = Math.ceil(newArrivalsAll.length / itemsPerPage);
 
@@ -65,7 +65,7 @@ export const Home = () => {
   };
 
   return (
-    <div className="w-screen">
+    <div className="w-screen ">
       {/*  Banner Carousel */}
       <div className="w-screen h-[500px] overflow-hidden shadow-md shadow-black/20 border rounded">
         <div className="carousel w-full h-full">
@@ -88,11 +88,12 @@ export const Home = () => {
 
       {/* View All Products */}
       <div className="w-full pt-5">
-        <h2 className="text-2xl font-bold text-center mb-6 hover:underline">
+        <h2 className="text-3xl font-bold text-center mb-6 hover:underline">
           <Link to="/product">
-            View All Products
+            Featured Products
           </Link>
         </h2>
+
       </div>
 
       {/* First Section of Product Cards */}
@@ -169,25 +170,127 @@ export const Home = () => {
         </div>
 
         {/* Pagination for New Arrivals */}
-        {totalPagesNewArrivals > 1 && (
-          <div className="w-full flex justify-end mt-4 pr-4 items-center gap-4">
+        
+        {/* Pagination for New Arrivals */}
+{totalPagesNewArrivals > 1 && (
+  <div className="w-full flex justify-end mt-6 pr-4">
+    <nav aria-label="Pagination" className="flex items-center gap-2">
+      {/* Previous Button */}
+      <button
+        className={`px-4 py-2 text-sm font-medium rounded-full border border-gray-300 transition-all duration-200 ${
+          currentPageNewArrivals === 1
+            ? "opacity-50 cursor-not-allowed bg-gray-100"
+            : "hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200"
+        }`}
+        onClick={() => setCurrentPageNewArrivals((prev) => Math.max(prev - 1, 1))}
+        disabled={currentPageNewArrivals === 1}
+        aria-label="Previous page"
+      >
+        ❮
+      </button>
+
+      {/* Page Numbers */}
+      {(() => {
+        const pages = [];
+        const maxPagesToShow = 5; // Adjust this to control how many page numbers to display
+        const halfRange = Math.floor(maxPagesToShow / 2);
+        let startPage = Math.max(1, currentPageNewArrivals - halfRange);
+        let endPage = Math.min(totalPagesNewArrivals, startPage + maxPagesToShow - 1);
+
+        // Adjust startPage if endPage is at the maximum
+        if (endPage - startPage + 1 < maxPagesToShow) {
+          startPage = Math.max(1, endPage - maxPagesToShow + 1);
+        }
+
+        // Add first page and ellipsis if needed
+        if (startPage > 1) {
+          pages.push(
             <button
-              className={`px-3 py-1 text-sm border rounded ${currentPageNewArrivals === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"}`}
-              onClick={() => setCurrentPageNewArrivals((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPageNewArrivals === 1}
+              key={1}
+              className={`px-4 py-2 text-sm font-medium rounded-full border border-gray-300 transition-all duration-200 ${
+                currentPageNewArrivals === 1
+                  ? "bg-gray-800 text-white border-gray-800"
+                  : "hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200"
+              }`}
+              onClick={() => setCurrentPageNewArrivals(1)}
+              aria-label={`Page 1${currentPageNewArrivals === 1 ? ", current" : ""}`}
             >
-              ❮ Prev
+              1
             </button>
-            <span className="text-sm">{currentPageNewArrivals} / {totalPagesNewArrivals}</span>
+          );
+          if (startPage > 2) {
+            pages.push(
+              <span key="start-ellipsis" className="px-2 text-sm text-gray-500">
+                ...
+              </span>
+            );
+          }
+        }
+
+        // Add page numbers
+        for (let i = startPage; i <= endPage; i++) {
+          pages.push(
             <button
-              className={`px-3 py-1 text-sm border rounded ${currentPageNewArrivals === totalPagesNewArrivals ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"}`}
-              onClick={() => setCurrentPageNewArrivals((prev) => Math.min(prev + 1, totalPagesNewArrivals))}
-              disabled={currentPageNewArrivals === totalPagesNewArrivals}
+              key={i}
+              className={`px-4 py-2 text-sm font-medium rounded-full border border-gray-300 transition-all duration-200 ${
+                currentPageNewArrivals === i
+                  ? "bg-gray-800 text-white border-gray-800"
+                  : "hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200"
+              }`}
+              onClick={() => setCurrentPageNewArrivals(i)}
+              aria-label={`Page ${i}${currentPageNewArrivals === i ? ", current" : ""}`}
             >
-              Next ❯
+              {i}
             </button>
-          </div>
-        )}
+          );
+        }
+
+        // Add last page and ellipsis if needed
+        if (endPage < totalPagesNewArrivals) {
+          if (endPage < totalPagesNewArrivals - 1) {
+            pages.push(
+              <span key="end-ellipsis" className="px-2 text-sm text-gray-500">
+                ...
+              </span>
+            );
+          }
+          pages.push(
+            <button
+              key={totalPagesNewArrivals}
+              className={`px-4 py-2 text-sm font-medium rounded-full border border-gray-300 transition-all duration-200 ${
+                currentPageNewArrivals === totalPagesNewArrivals
+                  ? "bg-gray-800 text-white border-gray-800"
+                  : "hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200"
+              }`}
+              onClick={() => setCurrentPageNewArrivals(totalPagesNewArrivals)}
+              aria-label={`Page ${totalPagesNewArrivals}${
+                currentPageNewArrivals === totalPagesNewArrivals ? ", current" : ""
+              }`}
+            >
+              {totalPagesNewArrivals}
+            </button>
+          );
+        }
+
+        return pages;
+      })()}
+
+      {/* Next Button */}
+      <button
+        className={`px-4 py-2 text-sm font-medium rounded-full border border-gray-300 transition-all duration-200 ${
+          currentPageNewArrivals === totalPagesNewArrivals
+            ? "opacity-50 cursor-not-allowed bg-gray-100"
+            : "hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200"
+        }`}
+        onClick={() => setCurrentPageNewArrivals((prev) => Math.min(prev + 1, totalPagesNewArrivals))}
+        disabled={currentPageNewArrivals === totalPagesNewArrivals}
+        aria-label="Next page"
+      >
+        ❯
+      </button>
+    </nav>
+  </div>
+)}
       </div>
     </div>
   );

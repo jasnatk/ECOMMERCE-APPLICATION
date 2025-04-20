@@ -1,39 +1,46 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";  // Use useNavigate here
-import { FaSearch } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { FaSearch, FaBars, FaTimes, FaRegUser } from "react-icons/fa";
 import { DarkMode } from "../shared/DarkMode";
-import { FaRegUser } from "react-icons/fa";
 
 export const Header = () => {
-  const [searchQuery, setSearchQuery] = useState("");  // manage search query state
-  const navigate = useNavigate();  // use navigate to programmatically navigate on search
+  const [searchQuery, setSearchQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Handle search input change
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  // Handle search submission (e.g., when pressing Enter or clicking search)
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/product?search=${searchQuery}`);  // navigate to search results page
+      navigate(`/product?search=${searchQuery}`);
+      setSearchQuery("");
+      setMenuOpen(false); // Optional: close menu on mobile after search
     }
   };
 
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
   return (
-    <div className="flex justify-between items-center px-10 py-5 shadow-2xl dark:bg-gray-800 dark:text-white">
-      {/* Left Section - Logo & Navigation */}
-      <nav className="flex items-center gap-20">
-        <h1 className="text-3xl font-bold">
-          <Link
-            to=""
-            className="hover:text-gray-500 dark:hover:text-gray-300 text-4xl tracking-wide"
-            style={{ fontFamily: "Playfair Display, serif" }}>
-            Z FASHION
-          </Link>
-        </h1>
-        <ul className="hidden md:flex gap-8 font-semibold text-xl dark:bg-black dark:text-white">
+    <header className="w-full shadow-md px-4 py-4 md:px-10 dark:bg-gray-800 dark:text-white">
+      <div className="flex justify-between items-center">
+        {/* Logo & Hamburger */}
+        <div className="flex items-center gap-4">
+          <h1 className="text-3xl font-bold tracking-wide" style={{ fontFamily: "Playfair Display, serif" }}>
+            <Link
+              to="/"
+              className="hover:text-gray-500 dark:hover:text-gray-300 text-4xl"
+            >
+              Z FASHION
+            </Link>
+          </h1>
+
+          {/* Hamburger Icon (Mobile only) */}
+          <button className="md:hidden text-2xl" onClick={toggleMenu}>
+            {menuOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        </div>
+
+        {/* Desktop Nav */}
+        <ul className="hidden md:flex gap-6 font-semibold text-xl">
           <li>
             <Link to="/product?category=Men" className="hover:text-gray-500 dark:hover:text-gray-300">Men</Link>
           </li>
@@ -44,33 +51,71 @@ export const Header = () => {
             <Link to="/product?category=Kids" className="hover:text-gray-500 dark:hover:text-gray-300">Kids</Link>
           </li>
         </ul>
-      </nav>
 
-      {/* Search Box + Button + Dark Mode */}
-      <div className="flex items-center gap-4">
-        <div className="relative w-80">
-          <form onSubmit={handleSearchSubmit}>  {/* Form to handle search */}
+        {/* Search & Icons */}
+        <div className="hidden md:flex items-center gap-4">
+          <form onSubmit={handleSearchSubmit} className="flex">
             <input
               type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
-              value={searchQuery}  // Bind input value to searchQuery state
-              onChange={handleSearchChange}  // Handle search query change
-              className="w-full p-1 pl-10 border rounded-md bg-gray-100 dark:bg-gray-700 text-black dark:text-white focus:outline-none"
+              className="w-68 p-1 border rounded-l-md bg-gray-100 dark:bg-gray-700 text-black dark:text-white focus:outline-none"
             />
-            <FaSearch className="absolute top-3 left-3 text-gray-500 dark:text-gray-300 cursor-pointer" onClick={handleSearchSubmit} />
+            <button
+              type="submit"
+              className="px-4 bg-black text-white rounded-r-md hover:bg-gray-700 dark:hover:bg-gray-500"
+            >
+              Search
+            </button>
           </form>
+          <Link to="/login">
+            <FaRegUser className="text-2xl cursor-pointer hover:text-gray-500" />
+          </Link>
+          <DarkMode />
         </div>
-        <button
-          className="px-4 py-1 bg-black text-white rounded-md hover:bg-gray-700 dark:hover:bg-gray-500 border border-gray-400"
-          onClick={handleSearchSubmit}  // Trigger search on button click
-        >
-          Search
-        </button>
-        <Link to="login">
-          <FaRegUser className="cursor-pointer hover:text-gray-500 text-2xl" />
-        </Link>
-        <DarkMode />
       </div>
-    </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="md:hidden mt-4 space-y-4">
+          <ul className="flex flex-col gap-4 font-semibold text-lg">
+            <li>
+              <Link to="/product?category=Men" onClick={toggleMenu}>Men</Link>
+            </li>
+            <li>
+              <Link to="/product?category=Women" onClick={toggleMenu}>Women</Link>
+            </li>
+            <li>
+              <Link to="/product?category=Kids" onClick={toggleMenu}>Kids</Link>
+            </li>
+          </ul>
+
+          {/* Mobile Search */}
+          <form onSubmit={handleSearchSubmit} className="flex w-full mt-4">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search..."
+              className="flex-grow p-2 border rounded-l-md bg-gray-100 dark:bg-gray-700 text-black dark:text-white focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-black text-white rounded-r-md hover:bg-gray-700 dark:hover:bg-gray-500"
+            >
+              Search
+            </button>
+          </form>
+
+          <div className="flex items-center gap-4 mt-4">
+            <Link to="/login" onClick={toggleMenu}>
+              <FaRegUser className="text-2xl cursor-pointer hover:text-gray-500" />
+            </Link>
+            <DarkMode />
+          </div>
+        </div>
+      )}
+    </header>
   );
 };

@@ -1,57 +1,37 @@
-import mongoose, { Schema } from "mongoose";
-
-const orderSchema = new Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-
+import mongoose from "mongoose";
+const orderSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   products: [
     {
-      product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        required: true,
-      },
-      seller: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Seller",
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-      },
-      price: {
-        type: Number,
-        required: true,
-      },
-    }
+      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+      name: { type: String, required: true },
+      quantity: { type: Number, required: true },
+      price: { type: Number, required: true },
+      image: { type: String },
+      seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      status: { type: String, default: "pending" },
+    },
   ],
-
-  totalAmount: {
-    type: Number,
-    required: true,
-  },
-
-  status: {
-    type: String,
-    enum: ["pending", "shipped", "delivered", "cancelled"],
-    default: "pending",
-  },
-
-  paymentMethod: {
-    type: String,
-    enum: ["cod", "card", "paypal"],
-    required: true,
-  },
-
   address: {
-    type: String,
-    required: true,
+    name: String,
+    email: String,
+    phone: String,
+    line1: String,
+    line2: String,
+    city: String,
+    state: String,
+    postal_code: String,
+    country: String,
   },
-}, { timestamps: true });
+  paymentMethod: { type: String, required: true },
+  paymentStatus: { type: String, default: "pending" },
+  amountTotal: { type: Number, required: true },
+  currency: { type: String, default: "inr" },
+  stripeSessionId: { type: String },
+  status: { type: String, default: "pending" },
+  createdAt: { type: Date, default: Date.now },
+});
 
 const Order = mongoose.model("Order", orderSchema);
-export default Order;
+
+export default Order ;

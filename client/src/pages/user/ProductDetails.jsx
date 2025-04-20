@@ -107,7 +107,7 @@ export const ProductDetails = () => {
 
   return (
     <div className="container mx-auto px-2 lg:px-0 py-4 ">
-      <div className="card bg-base-100  rounded-xl p-6 my-10">
+      <div className="card bg-base-100  rounded-xl p-6 my-4">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Product Image */}
           <div className="lg:w-1/2">
@@ -159,7 +159,9 @@ export const ProductDetails = () => {
                 readonly
               />
             </div>
-
+            <label className="text-base font-semibold text-base-content">
+                About this item
+              </label>
             <p className="text-base-content/70 text-base">
               {productDetails?.description}
             </p>

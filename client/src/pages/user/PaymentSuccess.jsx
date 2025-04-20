@@ -1,36 +1,72 @@
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaCheckCircle } from "react-icons/fa";
 import { axiosInstance } from "../../config/axiosInstance";
+import toast from "react-hot-toast";
 
 const PaymentSuccess = () => {
-  const [order, setOrder] = useState(null);
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const sessionId = new URLSearchParams(window.location.search).get("session_id");
+  const [orderId, setOrderId] = useState(null);
+  const [isCartCleared, setIsCartCleared] = useState(false);
 
   useEffect(() => {
-    const sessionId = new URLSearchParams(window.location.search).get("session_id");
+    const handlePaymentSuccess = async () => {
+      if (!sessionId) {
+        toast.error("Missing session ID. Cannot process payment.");
+        return;
+      }
+
+      try {
+        // Save order in the database
+        const { data } = await axiosInstance.get(`/payment/paymentsuccess?session_id=${sessionId}`);
+        setOrderId(data.orderId);
+
+        // Clear the cart
+        await axiosInstance.delete("/cart/clearCart");
+        setIsCartCleared(true);
+        toast.success("Cart cleared successfully!");
+
+        // Redirect to order details after 5 seconds
+        setTimeout(() => {
+          navigate(`/user/order/${data.orderId}`);
+        }, 4000);
+      } catch (err) {
+        console.error("Error processing payment success:", err.response?.data || err);
+        toast.error(err.response?.data?.message || "Failed to process payment. Please try again.");
+      }
+    };
 
     if (sessionId) {
-      axiosInstance
-        .get(`/payment/session/${sessionId}`)
-        .then((res) => setOrder(res.data.session))
-        .catch((err) => setError(err.response?.data?.message || "Failed to fetch order"));
+      handlePaymentSuccess();
     }
-  }, []);
-
-  if (error) return <div className="text-red-500">{error}</div>;
-  if (!order) return <div>Loading...</div>;
+  }, [navigate, sessionId]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">🎉 Payment Successful</h1>
-      <p><strong>Payment ID:</strong> {order.payment_intent}</p>
-      <p><strong>Status:</strong> {order.payment_status}</p>
-      <p><strong>Total Paid:</strong> ₹{(order.amount_total / 100).toLocaleString()}</p>
-      <h3 className="text-xl mt-4">🛒 Items:</h3>
-      <ul className="list-disc ml-6">
-        {order.line_items?.data?.map((item, idx) => (
-          <li key={idx}>{item.quantity} x {item.description}</li>
-        ))}
-      </ul>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="relative bg-white p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md w-full sm:max-w-lg border-2 border-green-100 transform transition hover:scale-105">
+        <div className="flex justify-center">
+          <FaCheckCircle className="text-green-500" size={72} />
+        </div>
+        <h1 className="mt-6 text-3xl sm:text-4xl font-bold text-green-600 text-center">
+          Payment Successful!
+        </h1>
+        <p className="mt-4 text-lg text-gray-600 text-center leading-relaxed">
+          Your payment has been processed successfully. Thank you for your order!
+        </p>
+        <p className="mt-2 text-sm text-gray-500 text-center">
+          {isCartCleared ? "Your cart has been cleared." : "Clearing your cart..."} Redirecting to your
+          order details in a few seconds...
+        </p>
+        <div className="mt-8 flex justify-center">
+          <Link
+            to={orderId ? `/user/order/${orderId}` : "/user/order"}
+            className="px-8 py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-200"
+          >
+            View Order Details Now
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };

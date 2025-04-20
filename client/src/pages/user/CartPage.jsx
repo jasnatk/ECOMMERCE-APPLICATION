@@ -41,7 +41,7 @@ export const CartPage = () => {
     try {
       setIsPaying(true);
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-
+  
       const products = cartData?.products
         .filter((item) => item.quantity > 0)
         .map((item) => ({
@@ -50,20 +50,21 @@ export const CartPage = () => {
           description: item.productId.description || "No description",
           price: item.productId.price,
           quantity: item.quantity,
+          image: item.productId.images?.[0]?.url || "https://via.placeholder.com/150", // Use Cloudinary URL with fallback
         }));
-
+  
       const session = await axiosInstance.post("/payment/create-checkout-session", {
         products,
       });
-
+  
       if (!session.data.sessionId) {
         throw new Error("Session ID not received from backend.");
       }
-
+  
       const result = await stripe.redirectToCheckout({
         sessionId: session.data.sessionId,
       });
-
+  
       if (result.error) {
         toast.error(result.error.message);
       }

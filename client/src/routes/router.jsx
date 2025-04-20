@@ -28,11 +28,12 @@ import SellerProfile from "../pages/seller/SellerProfile";
 import NewProduct from "../pages/shared/NewProduct";
 import SellerProducts from "../Components/seller/SellerProduct";
 import EditProductForm from "../Components/seller/EditProduct";
-import OrderPage from "../Components/user/Order";
 import { ProtectAdminRoutes } from "./ProtectAdminRoutes";
 import AdminProfile from "../pages/admin/AdminProfile";
 import ManageSellers from "../pages/seller/ManageSellers";
 import { ManageOrders } from "../pages/admin/ManageOrders";
+import OrderDetails from "../Components/user/order";
+import SellerOrders from "../pages/seller/SellerOrders";
 
 
 
@@ -125,8 +126,8 @@ errorElement: <ErrorPage />,
             element: <PaymentCancel/>,
           },
           {
-            path: "order",
-            element: <OrderPage/>,
+            path: "order/:orderId",
+            element: <OrderDetails/>,
           },
         ],
       },
@@ -174,7 +175,10 @@ errorElement: <ErrorPage />,
                             path: "products/edit/:id",
                             element: <EditProductForm/>,
                             },
-                           
+                            {
+                              path: "orders",
+                              element: <SellerOrders/>,
+                               },
                               
                         ],
                       },

@@ -10,7 +10,7 @@ export const createOrder = async (req, res) => {
         }
 
         const order = new Order({
-            user: req.user.id, // The logged-in user placing the order
+            user: req.user.id, // 
             products,
             address,
             paymentMethod,
@@ -26,37 +26,34 @@ export const createOrder = async (req, res) => {
 
 
 // Get all orders for the logged-in user
+
 export const getMyOrders = async (req, res) => {
     try {
       const orders = await Order.find({ user: req.user.id })
         .sort({ createdAt: -1 })
-        .populate("products.productId"); // if you want product details like image/name
+        .populate("products.product", "name price image") // populate name, price, image
+        .populate("products.seller", "storeName") // optional
+        .lean();
   
-      res.status(200).json({ orders }); //  wrap in object
+      res.status(200).json({ orders });
     } catch (error) {
       res.status(500).json({ message: "Error fetching orders", error: error.message });
     }
   };
   
-
 // Get a specific order by ID (User/Admin)
-
-
 export const getOrderById = async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.orderId)
-      .populate("products.product")
-      .populate("products.seller")
-      .populate("user", "name email");
-
-    if (!order) return res.status(404).json({ message: "Order not found" });
-
-    res.status(200).json({ order });
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching order", error: err });
-  }
-};
-
+    try {
+      const order = await Order.findById(req.params.orderId); 
+      if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+      res.status(200).json(order);
+    } catch (err) {
+      console.error("Error fetching order:", err);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
 
 // Cancel an order (User)
 export const cancelOrder = async (req, res) => {
@@ -95,20 +92,60 @@ export const getAllOrders = async (req, res) => {
 };
 
 // Update order status (Admin)
-export const updateOrderStatus = async (req, res) => {
+export const updateSellerProductStatus = async (req, res) => {
     try {
-        const { status } = req.body;
-        const order = await Order.findById(req.params.id);
-
-        if (!order) {
-            return res.status(404).json({ message: "Order not found" });
-        }
-
-        order.status = status;
-        await order.save();
-
-        res.status(200).json({ message: "Order status updated successfully", order });
+      const { orderId, productIndex, status } = req.body;
+      const sellerId = req.user.id;
+  
+      const order = await Order.findById(orderId);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+  
+      // Verify the product at the given index belongs to the seller
+      const product = order.products[productIndex];
+      if (!product || product.seller.toString() !== sellerId) {
+        return res.status(403).json({ message: "Product not found or unauthorized" });
+      }
+  
+      // Update the product status
+      order.products[productIndex].status = status;
+      await order.save();
+  
+      res.status(200).json({ message: "Product status updated successfully", order });
     } catch (error) {
-        res.status(500).json({ message: "Error updating order status", error: error.message });
+      res.status(500).json({ message: "Error updating product status", error: error.message });
     }
+  };
+// Get orders that include products sold by the logged-in seller
+export const getSellerOrders = async (req, res) => {
+  try {
+    const sellerId = req.seller.id;
+
+    const allOrders = await Order.find().sort({ createdAt: -1 });
+
+    // Filter products by seller ID
+    const sellerOrders = allOrders
+      .map((order) => {
+        // Ensure products is an array
+        const products = Array.isArray(order.products) ? order.products : [];
+        const sellerProducts = products.filter(
+          (product) => product.seller?.toString() === sellerId
+        );
+
+        if (sellerProducts.length > 0) {
+          return {
+            ...order.toObject(),
+            products: sellerProducts,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    res.status(200).json(sellerOrders);
+  } catch (error) {
+    console.error("Error fetching seller orders:", error);
+    res.status(500).json({ message: "Failed to fetch seller orders" });
+  }
 };

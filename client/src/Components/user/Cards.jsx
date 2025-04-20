@@ -66,7 +66,7 @@ export const ProductCard = ({
         <img
           src={imageUrl}
           alt={products?.name || "Product"}
-          className="w-full max-h-80 object-contain transform group-hover:scale-105 transition-transform duration-300"
+          className="w-full max-h-80 object-contain rounded-md transform group-hover:scale-105 transition-transform duration-300"
           onClick={() => navigate(`/productDetails/${products?._id}`)}
           onError={(e) => {
             console.warn(`Failed to load image for ${products?.name}: ${imageUrl}`);

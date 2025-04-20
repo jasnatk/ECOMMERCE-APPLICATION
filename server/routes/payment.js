@@ -4,10 +4,9 @@ import Stripe from "stripe";
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// Create Stripe Checkout Session
+// POST /api/payment/create-checkout-session
 router.post("/create-checkout-session", async (req, res) => {
   try {
-    // Check if user is authenticated
     if (!req.user?.id) {
       return res.status(401).json({ message: "User authentication failed" });
     }
@@ -24,30 +23,47 @@ router.post("/create-checkout-session", async (req, res) => {
         product_data: {
           name: product.name,
           description: product.description || "No description",
+          images: [product.image],
+          metadata: {
+            sellerId: product.sellerId, // Seller reference for later use
+            mongoProductId: product._id, // MongoDB Product ID for later populate
+          },
         },
         unit_amount: Math.round(parseFloat(product.price) * 100),
       },
       quantity: product.quantity || 1,
     }));
 
+    // 🧠 Store original products array in session metadata to retrieve later
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       line_items,
       success_url: `${process.env.CLIENT_DOMAIN}/user/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-
       cancel_url: `${process.env.CLIENT_DOMAIN}/user/payment-cancel`,
+      shipping_address_collection: {
+        allowed_countries: ["IN", "US", "CA"],
+      },
+      billing_address_collection: "required",
+      customer_email: req.user.email,
       metadata: {
-        userId: req.user.id, // Add user ID
+        userId: req.user.id,
         shouldClearCartFrontend: true,
+        products: JSON.stringify(
+          products.map((p) => ({
+            _id: p._id,
+            sellerId: p.sellerId,
+          }))
+        ), // ✅ Save for later use during order saving
       },
     });
-    
 
     return res.status(200).json({ sessionId: session.id });
   } catch (error) {
     console.error("Stripe session creation error:", error.message);
-    return res.status(500).json({ message: "Failed to create Stripe session", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to create Stripe session", error: error.message });
   }
 });
 
@@ -57,17 +73,14 @@ router.get("/session/:sessionId", async (req, res) => {
     const { sessionId } = req.params;
 
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ["line_items", "customer_details"],
+      expand: ["line_items.data.price.product", "customer_details"],
     });
 
-    return res.status(200).json({
-      session,
-    });
+    return res.status(200).json({ session });
   } catch (error) {
     console.error("Stripe session fetch error:", error.message);
     res.status(500).json({ message: "Failed to fetch session", error: error.message });
   }
 });
-
 
 export default router;

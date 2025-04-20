@@ -10,7 +10,7 @@ import WishlistRouter from './WishlistRoutes.js'
 import categoryRouter from './categoryRoutes.js'
 import paymentRouter from "./payment.js";
 import { authUser } from "../middleware/authUser.js";
-import paymentWebhookRouter from "../routes/paymentWebhook.js"
+import orderSaveRouter from "./orderSave.js"
 
 
 
@@ -25,7 +25,7 @@ router.use('/review', reviewRouter);
 router.use('/order', orderRouter);
 router.use('/wishlist', WishlistRouter);
 router.use('/categories', categoryRouter);
-router.use("/webhook", paymentWebhookRouter);
+router.use("/payment", orderSaveRouter);
 router.use("/payment", authUser, paymentRouter);     
 
 
