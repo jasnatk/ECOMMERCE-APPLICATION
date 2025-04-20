@@ -33,7 +33,7 @@ import AdminProfile from "../pages/admin/AdminProfile";
 import ManageSellers from "../pages/seller/ManageSellers";
 import { ManageOrders } from "../pages/admin/ManageOrders";
 import SellerOrders from "../pages/seller/SellerOrders";
-import OrderDetails from "../Components/user/order";
+import OrderDetails from "../Components/user/Order";
 
 
 
