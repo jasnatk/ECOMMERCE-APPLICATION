@@ -34,6 +34,8 @@ import ManageSellers from "../pages/seller/ManageSellers";
 import { ManageOrders } from "../pages/admin/ManageOrders";
 import SellerOrders from "../pages/seller/SellerOrders";
 import OrderDetails from "../Components/user/Order";
+import Stock from "../Components/seller/StockManagement";
+import EditStock from "../pages/seller/EditStock";
 
 
 
@@ -179,6 +181,14 @@ errorElement: <ErrorPage />,
                               path: "orders",
                               element: <SellerOrders/>,
                                },
+                               {
+                                path: "products/edit-stock/:id",
+                                element: <Stock/>,
+                                 },
+                                 {
+                                  path: "products/edit-stock/:id/update",
+                                  element: <EditStock/>,
+                                   },
                               
                         ],
                       },

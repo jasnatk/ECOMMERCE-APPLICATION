@@ -12,7 +12,7 @@ export const SignupPage = ({ role }) => {
         role: "user",
         signupAPI: "/user/signup",
         loginRoute: "/login",
-        redirectRoute: "/product",
+        redirectRoute: "/login",
     };
     
     if (role === "seller") {

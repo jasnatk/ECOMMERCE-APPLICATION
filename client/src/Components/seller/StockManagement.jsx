@@ -4,7 +4,7 @@ import { axiosInstance } from "../../config/axiosInstance";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
-const SellerProducts = () => {
+const Stock = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const fallbackImage = "https://via.placeholder.com/100?text=No+Image";
@@ -86,26 +86,15 @@ const SellerProducts = () => {
       className="min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 p-6 flex items-center justify-center"
     >
       <div className="max-w-6xl w-full bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 border border-white/20">
-        <div className="flex justify-between items-center mb-8">
-          <motion.h2
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-4xl font-bold text-white"
-            style={{ fontFamily: "Poppins, sans-serif" }}
-          >
-            Your Products
-          </motion.h2>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate("/seller/products/new")}
-            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 text-sm font-medium"
-            aria-label="Add new product"
-          >
-            + Add Product
-          </motion.button>
-        </div>
+        <motion.h2
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-4xl font-bold text-center text-white mb-8"
+          style={{ fontFamily: "Poppins, sans-serif" }}
+        >
+          Stock Management
+        </motion.h2>
 
         {products.length === 0 ? (
           <motion.div
@@ -159,15 +148,18 @@ const SellerProducts = () => {
                   <p className="text-white/80 mt-2">
                     <span className="font-medium">Price:</span> ₹{product.price?.toLocaleString()}
                   </p>
+                  <p className="text-white/80">
+                    <span className="font-medium">Stock:</span> {product.stock}
+                  </p>
                   <div className="mt-4 flex gap-3 flex-wrap">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => navigate(`/seller/products/edit/${product._id}`)}
-                      className="flex-1 px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white rounded-full hover:from-yellow-600 hover:to-orange-700 transition-all duration-300 text-sm font-medium"
-                      aria-label={`Edit ${product.name}`}
+                      onClick={() => navigate("update")}
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full hover:from-green-600 hover:to-teal-600 transition-all duration-300 text-sm font-medium"
+                      aria-label={`Update stock for ${product.name}`}
                     >
-                      Edit
+                      Update Stock
                     </motion.button>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
@@ -189,4 +181,4 @@ const SellerProducts = () => {
   );
 };
 
-export default SellerProducts;
+export default Stock;

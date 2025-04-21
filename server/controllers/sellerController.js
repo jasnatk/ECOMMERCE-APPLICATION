@@ -122,33 +122,42 @@ export const checkSeller = async (req, res, next) => {
 };
 
 export const getSellerStats = async (req, res) => {
-  try {
-    const sellerId = req.seller.id;
-
-    // Get total products added by this seller
-    const totalProducts = await Product.countDocuments({ seller: sellerId });
-
-    // Get total orders related to this seller's products
-    const orders = await Order.find({ "products.seller": sellerId });
-
-    const totalOrders = orders.length;
-
-    // Calculate revenue from these orders
-    const totalRevenue = orders.reduce((acc, order) => acc + order.totalAmount, 0);
-
-    res.json({
-      success: true,
-      stats: {
-        totalProducts,
-        totalOrders,
-        totalRevenue,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Failed to fetch seller stats" });
-  }
-};
+    try {
+      const sellerId = req.seller.id;
+  
+      const totalProducts = await Product.countDocuments({ seller: sellerId });
+  
+      const orders = await Order.find({ "products.seller": sellerId });
+  
+      const totalOrders = orders.length;
+  
+      const totalRevenue = orders.reduce((acc, order) => {
+        const sellerProducts = order.products.filter(
+          product => product.seller.toString() === sellerId
+        );
+  
+        const sellerTotal = sellerProducts.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+  
+        return acc + sellerTotal;
+      }, 0);
+  
+      res.json({
+        success: true,
+        stats: {
+          totalProducts,
+          totalOrders,
+          totalRevenue,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Failed to fetch seller stats" });
+    }
+  };
+  
 export const getProductsBySeller = async (req, res) => {
     try {
       const sellerId = req.seller.id; 

@@ -1,27 +1,45 @@
 import Order from "../models/orderModel.js";
+import Product from "../models/productModel.js";
 
-// Create a new order
 export const createOrder = async (req, res) => {
-    try {
-        const { products, address, paymentMethod, totalAmount } = req.body;
+  try {
+    const { products, address, paymentMethod, totalAmount } = req.body;
 
-        if (!products || products.length === 0) {
-            return res.status(400).json({ message: "No products provided" });
+    if (!products || products.length === 0) {
+      return res.status(400).json({ message: "No products provided" });
+    }
+
+    // Fetch name and price from Product model for each product
+    const enrichedProducts = await Promise.all(
+      products.map(async (item) => {
+        const productDoc = await Product.findById(item.product).select("name price");
+        if (!productDoc) {
+          throw new Error(`Product not found with ID: ${item.product}`);
         }
 
-        const order = new Order({
-            user: req.user.id, // 
-            products,
-            address,
-            paymentMethod,
-            totalAmount,
-        });
+        return {
+          product: item.product,
+          seller: item.seller,
+          quantity: item.quantity,
+          name: productDoc.name,
+          price: productDoc.price,
+        };
+      })
+    );
 
-        const createdOrder = await order.save();
-        res.status(201).json({ message: "Order created successfully", order: createdOrder });
-    } catch (error) {
-        res.status(500).json({ message: "Error creating order", error: error.message });
-    }
+    const order = new Order({
+      user: req.user.id,
+      products: enrichedProducts,
+      address,
+      paymentMethod,
+      amountTotal: totalAmount,
+    });
+
+    const createdOrder = await order.save();
+    res.status(201).json({ message: "Order created successfully", order: createdOrder });
+  } catch (error) {
+    res.status(500).json({ message: "Error creating order", error: error.message });
+  }
 };
 
 

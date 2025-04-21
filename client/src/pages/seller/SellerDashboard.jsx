@@ -28,6 +28,7 @@ const SellerDashboard = () => {
 
         const statsRes = await axiosInstance.get("/seller/stats");
         setStats(statsRes.data.stats);
+        
       } catch (err) {
         console.error(err);
         toast.error("Failed to load dashboard data");
@@ -52,7 +53,7 @@ const SellerDashboard = () => {
     { name: "Dashboard", icon: Home, path: "/seller/sellerdashboard" },
     { name: "Product Management", icon: Package, path: "/seller/products" },
     { name: "Order Management", icon: ShoppingCart, path: "/seller/orders" },
-    { name: "Listing", icon: List, path: "/seller/products" },
+    { name: "Stock Mnagement", icon: List, path: "/seller/products/edit-stock/:id" },
     
     
     
@@ -69,7 +70,7 @@ const SellerDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="fixed  left-0 w-64 h-full bg-gradient-to-b from-blue-400 to-blue-900 text-white shadow-xl transition-all duration-300">
+      <div className="fixed  left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600 text-white shadow-xl transition-all duration-300">
         
         <nav className="mt-4">
           {menuItems.map((item) => (
@@ -162,7 +163,7 @@ const SellerDashboard = () => {
               View Orders
             </button>
             <button
-              onClick={() => navigate("/seller/listing")}
+              onClick={() => navigate("/seller/products")}
               className="p-4 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition-all duration-200"
             >
               Manage Listings

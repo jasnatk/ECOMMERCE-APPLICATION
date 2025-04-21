@@ -8,7 +8,9 @@ import {
   createMultipleProducts,
   getAllProducts,
   getProductDetails,
+  updateProductStock,
 } from "../controllers/productController.js";
+import { authUser } from "../middleware/authUser.js";
 
 const router = express.Router();
 
@@ -21,5 +23,7 @@ router.post("/create-product", authSeller, upload.array("images", 5), createProd
 router.post("/create-products", authSeller, upload.any(), createMultipleProducts);
 router.put("/update-product/:productId", authSeller, upload.array("images", 5), updateProduct);
 router.delete("/remove-product/:productId", authSeller, deleteProduct);
+router.put("/update-stock/:id", authUser, updateProductStock);
+
 
 export default router;
