@@ -16,10 +16,12 @@ export const Product = () => {
     maxPrice: "",
   });
 
+  // Updated categoryBannerMap to include "All" category
   const categoryBannerMap = {
     Men: "/image/men1.jpg",
     Women: "/image/one1.jpg",
     Kids: "/image/Kids11.jpg",
+    All: "/image/simple.jpg", 
   };
 
   useEffect(() => {
@@ -55,6 +57,9 @@ export const Product = () => {
     fetchProducts();
   }, [location.search]);
 
+ 
+  const bannerKey = filters.category || "All";
+
   return (
     <div className="min-h-screen bg-base-100">
       <div className="container mx-auto px-2 lg:px-0 py-4 flex flex-col lg:flex-row gap-4">
@@ -64,16 +69,17 @@ export const Product = () => {
           </div>
         </div>
         <div className="flex-1">
-          {filters.category && categoryBannerMap[filters.category] && (
+          {/* Render banner for both specific categories and "All" */}
+          {categoryBannerMap[bannerKey] && (
             <div className="relative mb-4 overflow-hidden rounded-lg shadow-md group">
               <img
-                src={categoryBannerMap[filters.category]}
-                alt={`${filters.category} Fashion Banner`}
+                src={categoryBannerMap[bannerKey]}
+                alt={`${bannerKey === "All" ? "All Products" : filters.category} Fashion Banner`}
                 className="w-full h-[280px] object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
               <h2 className="absolute bottom-4 left-4 text-xl font-bold text-white drop-shadow-md font-playfair">
-                {filters.category} Collection
+                {bannerKey === "All" ? "All Products Collection" : `${filters.category} Collection`}
               </h2>
             </div>
           )}
@@ -116,7 +122,7 @@ export const Product = () => {
           className="w-5 h-5"
           fill="none"
           stroke="currentColor"
-          viewBox="0 0 24 24"
+          viewBox="0 24 24"
         >
           <path
             strokeLinecap="round"

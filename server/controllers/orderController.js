@@ -136,34 +136,37 @@ export const updateSellerProductStatus = async (req, res) => {
     }
   };
 // Get orders that include products sold by the logged-in seller
+
+
 export const getSellerOrders = async (req, res) => {
   try {
     const sellerId = req.seller.id;
 
-    const allOrders = await Order.find().sort({ createdAt: -1 });
-
-    // Filter products by seller ID
-    const sellerOrders = allOrders
-      .map((order) => {
-        // Ensure products is an array
-        const products = Array.isArray(order.products) ? order.products : [];
-        const sellerProducts = products.filter(
-          (product) => product.seller?.toString() === sellerId
+    const allOrders = await Order.find({ 'products.seller': sellerId })
+      .sort({ createdAt: -1 })
+      .lean();
+      
+      
+    const filteredOrders = allOrders
+      .map(order => {
+        const sellerProducts = order.products.filter(
+          p => p?.seller?.toString() === sellerId
         );
+        
+        
+        // Only return the order if there are matching products
+        if (sellerProducts.length === 0) return null;
 
-        if (sellerProducts.length > 0) {
-          return {
-            ...order.toObject(),
-            products: sellerProducts,
-          };
-        }
-        return null;
+        return {
+          ...order,
+          products: sellerProducts,
+        };
       })
-      .filter(Boolean);
+      .filter(order => order !== null); // remove nulls
 
-    res.status(200).json(sellerOrders);
+    res.status(200).json(filteredOrders);
   } catch (error) {
     console.error("Error fetching seller orders:", error);
-    res.status(500).json({ message: "Failed to fetch seller orders" });
+    res.status(500).json({ message: "Server error fetching seller orders", error: error.message });
   }
 };

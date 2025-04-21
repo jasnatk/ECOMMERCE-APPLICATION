@@ -20,7 +20,7 @@ export const AdminHeader = () => {
         <h1 className="text-3xl font-bold">
           <Link
             to="/admin/dashboard"
-            className="hover:text-gray-300"
+            className="hover:text-gray-300 pl-40"
             style={{ fontFamily: "Playfair Display, serif" }}
           >
             ADMIN PANEL
@@ -30,9 +30,7 @@ export const AdminHeader = () => {
         <Link to="/admin/manage-sellers" className="hover:text-gray-300">
             Sellers
             </Link>
-          <Link to="/admin/manage-orders" className="hover:text-gray-300">
-            Orders
-          </Link>
+        
           <Link to="/admin/profile">
             <FiUser className="cursor-pointer hover:text-gray-300 text-2xl" />
           </Link>

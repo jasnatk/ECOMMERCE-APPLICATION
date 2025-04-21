@@ -13,14 +13,16 @@ const SellerOrders = () => {
     const fetchSellerOrders = async () => {
       try {
         const response = await axiosInstance.get("order/sellerorders");
-        // Sanitize orders to ensure products is always an array
-        const sanitizedOrders = Array.isArray(response.data.orders)
-          ? response.data.orders.map((order) => ({
+        console.log("API Response:", response.data); // Debug
+        // Handle direct array response
+        const sanitizedOrders = Array.isArray(response.data)
+          ? response.data.map((order) => ({
               ...order,
               products: Array.isArray(order.products) ? order.products : [],
             }))
           : [];
         setOrders(sanitizedOrders);
+        console.log("Sanitized Orders:", sanitizedOrders); // Debug
       } catch (err) {
         console.error("Error fetching seller orders:", err);
         setError("Failed to load orders. Please try again.");
@@ -45,7 +47,6 @@ const SellerOrders = () => {
         status,
       });
       toast.success("Product status updated successfully");
-      // Update local state
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId
@@ -130,7 +131,6 @@ const SellerOrders = () => {
                 {expandedOrder === order._id && (
                   <div className="p-6 bg-white animate-fadeIn">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Order Details */}
                       <div>
                         <h4 className="text-md font-semibold text-gray-800 mb-2">Order Details</h4>
                         <p className="text-sm text-gray-600">
@@ -145,7 +145,6 @@ const SellerOrders = () => {
                           {order.paymentMethod}
                         </p>
                       </div>
-                      {/* Shipping Address */}
                       <div>
                         <h4 className="text-md font-semibold text-gray-800 mb-2">Shipping Address</h4>
                         <p className="text-sm text-gray-600">{order.address?.name || "N/A"}</p>
@@ -160,7 +159,6 @@ const SellerOrders = () => {
                         <p className="text-sm text-gray-600">{order.address?.phone || "N/A"}</p>
                       </div>
                     </div>
-                    {/* Products */}
                     <div className="mt-6">
                       <h4 className="text-md font-semibold text-gray-800 mb-4">Your Products</h4>
                       <div className="space-y-4">
@@ -214,19 +212,6 @@ const SellerOrders = () => {
           </div>
         )}
       </div>
-
-      {/* Inline CSS for Animations */}
-      <style>
-        {`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          .animate-fadeIn {
-            animation: fadeIn 0.3s ease-out;
-          }
-        `}
-      </style>
     </div>
   );
 };

@@ -107,12 +107,12 @@ const OrderDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-orange-50 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-green-600 mb-10 text-center tracking-wide">
           Order Details
         </h2>
-        <div className="bg-black bg-opacity-50 backdrop-blur-lg rounded-2xl p-6 sm:p-8 inset-shadow-zinc-700 ">
+        <div className="bg-black bg-opacity-50 backdrop-blur-lg rounded-2xl p-2 sm:p-8 inset-shadow-zinc-700 ">
           {/* Order Summary */}
           <div className="mb-6">
             <button

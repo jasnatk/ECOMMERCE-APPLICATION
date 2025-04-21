@@ -50,7 +50,7 @@ export const CartPage = () => {
           description: item.productId.description || "No description",
           price: item.productId.price,
           quantity: item.quantity,
-          image: item.productId.images?.[0]?.url || "https://via.placeholder.com/150", // Use Cloudinary URL with fallback
+          image: item.productId.images?.[0]?.url || "https://via.placeholder.com/150",
         }));
   
       const session = await axiosInstance.post("/payment/create-checkout-session", {
@@ -86,8 +86,59 @@ export const CartPage = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-2 lg:px-0 py-4 bg-base-100">
-        <p className="text-xl font-semibold text-gray-600 animate-pulse">Loading cart...</p>
+      <div className="min-h-screen bg-base-100 p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Skeleton for Title and Clear Cart Button */}
+          <div className="flex flex-col items-center mb-6">
+            <div className="h-8 w-48 bg-base-200 rounded animate-pulse mb-4"></div>
+            <div className="h-10 w-32 bg-base-200 rounded animate-pulse self-end"></div>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Skeleton for Cart Items */}
+            <div className="w-full lg:w-2/3">
+              <div className="card bg-base-100 shadow-sm">
+                <div className="grid grid-cols-[2fr_1fr_1fr_1fr_50px] bg-base-200 p-4">
+                  {["Item", "Price", "Quantity", "Total", ""].map((_, index) => (
+                    <div key={index} className="h-6 bg-base-200 rounded animate-pulse"></div>
+                  ))}
+                </div>
+                {/* Skeleton for 2-3 cart items */}
+                {[1, 2, 3].map((_, index) => (
+                  <div
+                    key={index}
+                    className="grid grid-cols-[2fr_1fr_1fr_1fr_50px] items-center gap-4 p-4 border-t border-base-200"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="h-20 w-20 bg-base-200 rounded-md animate-pulse"></div>
+                      <div className="h-6 w-32 bg-base-200 rounded animate-pulse"></div>
+                    </div>
+                    <div className="h-6 w-16 bg-base-200 rounded animate-pulse"></div>
+                    <div className="h-6 w-12 bg-base-200 rounded animate-pulse"></div>
+                    <div className="h-6 w-16 bg-base-200 rounded animate-pulse"></div>
+                    <div className="h-6 w-6 bg-base-200 rounded-full animate-pulse"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Skeleton for Payment Summary */}
+            <div className="w-full lg:w-1/3">
+              <div className="card bg-base-100 shadow-sm p-6 sticky top-4">
+                <div className="h-8 w-40 bg-base-200 rounded animate-pulse mb-4"></div>
+                <div className="flex justify-between mb-3">
+                  <div className="h-6 w-24 bg-base-200 rounded animate-pulse"></div>
+                  <div className="h-6 w-12 bg-base-200 rounded animate-pulse"></div>
+                </div>
+                <div className="flex justify-between mb-6">
+                  <div className="h-6 w-24 bg-base-200 rounded animate-pulse"></div>
+                  <div className="h-8 w-20 bg-base-200 rounded animate-pulse"></div>
+                </div>
+                <div className="h-12 w-full bg-base-200 rounded-md animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -101,7 +152,7 @@ export const CartPage = () => {
         <p className="text-lg text-base-content/70 mb-6">Looks like you haven't added any items yet.</p>
         <button
           onClick={() => navigate("/product")}
-          className=" bg-gradient-to-r from-teal-500 to-teal-600 text-white text-sm p-4 rounded-md hover:from-teal-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center"
+          className="bg-gradient-to-r from-teal-500 to-teal-600 text-white text-sm p-4 rounded-md hover:from-teal-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center"
         >
           Continue Shopping
         </button>
@@ -120,8 +171,8 @@ export const CartPage = () => {
           {cartData?.products?.length > 0 && (
             <button
               onClick={handleClearCart}
-              className="flex items-center gap-2  bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">
-
+              className="flex items-center gap-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
+            >
               <FaTrashAlt />
               Clear Cart
             </button>
@@ -190,9 +241,7 @@ export const CartPage = () => {
               <button
                 onClick={makePayment}
                 disabled={isPaying || cartData?.products?.length === 0}
-                className={`btn btn-success btn-md w-full ${
-                  isPaying ? "btn-disabled" : ""
-                }`}
+                className={`btn btn-success btn-md w-full ${isPaying ? "btn-disabled" : ""}`}
               >
                 {isPaying ? "Processing..." : "Proceed to Checkout"}
               </button>

@@ -25,8 +25,8 @@ router.post("/create-checkout-session", async (req, res) => {
           description: product.description || "No description",
           images: [product.image],
           metadata: {
-            sellerId: product.sellerId, // Seller reference for later use
-            mongoProductId: product._id, // MongoDB Product ID for later populate
+            sellerId: product.sellerId, 
+            mongoProductId: product._id, 
           },
         },
         unit_amount: Math.round(parseFloat(product.price) * 100),
@@ -34,7 +34,7 @@ router.post("/create-checkout-session", async (req, res) => {
       quantity: product.quantity || 1,
     }));
 
-    // 🧠 Store original products array in session metadata to retrieve later
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -54,7 +54,7 @@ router.post("/create-checkout-session", async (req, res) => {
             _id: p._id,
             sellerId: p.sellerId,
           }))
-        ), // ✅ Save for later use during order saving
+        ), // 
       },
     });
 
