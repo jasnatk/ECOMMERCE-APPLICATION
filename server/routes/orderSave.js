@@ -46,7 +46,7 @@ router.get("/paymentsuccess", async (req, res) => {
       const mongoInfo = metadataProducts[index]; 
 
       return {
-        productId: mongoInfo?._id, //
+        productId: mongoInfo?._id, 
         name: productData.name,
         quantity: item.quantity,
         price: item.price.unit_amount / 100,

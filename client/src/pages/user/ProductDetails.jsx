@@ -106,16 +106,16 @@ export const ProductDetails = () => {
   }
 
   return (
-    <div className="container mx-auto px-2 lg:px-0 py-4 ">
+    <div className="container mx-auto px-2 lg:px-0 py-4 pt-24">
       <div className="card bg-base-100  rounded-xl p-6 my-4">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Product Image */}
           <div className="lg:w-1/2">
-            <div className="relative group">
+            <div className="relative group ">
               <img
                 src={currentImage}
                 alt={productDetails?.name || "Product"}
-                className="w-full h-96 object-contain  transform group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-96 object-contain transform group-hover:scale-105 transition-transform duration-300"
                 onError={(e) => {
                   e.target.src = fallbackImage;
                 }}
@@ -131,7 +131,7 @@ export const ProductDetails = () => {
                   alt={`thumbnail-${index}`}
                   className={`w-16 h-16 object-cover rounded-xl cursor-pointer border-2 ${
                     currentImage === img.url ? "border-green-900" : "border-base-200"
-                  } transform hover:scale-110 transition-transform duration-200`}
+                  } transform hover:scale-110 transition-transform duration-200 `}
                   onClick={() => setCurrentImage(img.url)}
                   onError={(e) => {
                     e.target.src = fallbackImage;

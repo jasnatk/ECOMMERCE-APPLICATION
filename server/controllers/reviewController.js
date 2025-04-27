@@ -1,4 +1,4 @@
-
+// backend/controllers/reviewController.js
 import mongoose from "mongoose";
 import Product from "../models/productModel.js";
 import { Review } from "../models/reviewModel.js";

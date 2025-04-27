@@ -50,6 +50,7 @@ const OrderDetails = () => {
       const rating = ratings[index] || 0;
       if (rating < 1 || rating > 5) {
         toast.error("Please select a rating between 1 and 5.");
+
         return;
       }
       const payload = {
@@ -60,11 +61,12 @@ const OrderDetails = () => {
       console.log("Submitting review with payload:", payload);
       const response = await axiosInstance.post("/review/add-review", payload);
       console.log("Review response:", response.data);
-     toast.success("Review submitted successfully!");
+      toast.success("Review submitted successfully!");
       toggleReviewBox(index);
     } catch (err) {
       console.error("Failed to submit review:", err.response?.data || err);
       toast.error(err.response?.data?.message || "Failed to submit review.");
+
     }
   };
 
@@ -306,4 +308,4 @@ const OrderDetails = () => {
   );
 };
 
-export default OrderDetails;
+export default OrderDetails;   

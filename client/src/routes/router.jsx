@@ -36,6 +36,7 @@ import SellerOrders from "../pages/seller/SellerOrders";
 import OrderDetails from "../Components/user/Order";
 import Stock from "../Components/seller/StockManagement";
 import EditStock from "../pages/seller/EditStock";
+import MyOrders from "../Components/user/MyOrders";
 
 
 
@@ -114,10 +115,7 @@ errorElement: <ErrorPage />,
             path: "wishlist",
             element: <WishlistPage/>,
           },
-          {
-            path: "review",
-            element: <h1>review</h1>,
-          },
+          
           {
             path: "payment-success",
             element: <PaymentSuccess/>,
@@ -130,6 +128,10 @@ errorElement: <ErrorPage />,
           {
             path: "order/:orderId",
             element: <OrderDetails/>,
+          },
+          {
+            path: "order/my-orders",
+            element: <MyOrders/>,
           },
         ],
       },

@@ -25,6 +25,13 @@ const PaymentSuccess = () => {
         // Clear the cart
         await axiosInstance.delete("/cart/clearCart");
         setIsCartCleared(true);
+
+        // Update localStorage to reflect empty cart
+        localStorage.setItem("cart", JSON.stringify({ products: [] }));
+
+        // Dispatch cartUpdated event to notify UserHeader
+        window.dispatchEvent(new Event("cartUpdated"));
+
         toast.success("Cart cleared successfully!");
 
         // Redirect to order details after 5 seconds

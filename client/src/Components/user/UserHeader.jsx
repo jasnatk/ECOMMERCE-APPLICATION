@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion"; // For animations
 import { DarkMode } from "../shared/DarkMode";
 import { FaSearch, FaUser, FaHeart, FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 
@@ -19,120 +20,189 @@ export const UserHeader = () => {
     }
   };
 
-  // Update cart count from localStorage
   const updateCartCount = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || { products: [] };
     setCartCount(cart.products.length);
   };
 
-  // Initial cart count and listen for updates
   useEffect(() => {
-    updateCartCount(); // Initial load
-
-    // Listen for custom cart update event
-    const cartUpdatedListener = () => updateCartCount(); // Fixed: listen to custom event
-    window.addEventListener("cartUpdated", cartUpdatedListener); // Fixed: added event listener
-
-    // Cleanup
-    return () => window.removeEventListener("cartUpdated", cartUpdatedListener); // Fixed: cleanup event listener
+    updateCartCount();
+    const cartUpdatedListener = () => updateCartCount();
+    window.addEventListener("cartUpdated", cartUpdatedListener);
+    return () => window.removeEventListener("cartUpdated", cartUpdatedListener);
   }, []);
 
+  // Animation variants for mobile menu
+  const menuVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.2 } },
+  };
+
   return (
-   
-      <header className="fixed top-0 left-0 right-0 z-50 px-9 py-4 shadow-2xl dark:bg-gray-800 dark:text-white">
-        <div className="flex justify-between items-center">
-          {/* Logo + Nav */}
-          <div className="flex items-center gap-20">
-            <h1 className="text-3xl font-bold tracking-wide" style={{ fontFamily: 'Playfair Display, serif' }}>
-              <Link to="/" className="hover:text-gray-500">Z FASHION</Link>
-            </h1>
-  
-            {/* Desktop Nav */}
-            <ul className="hidden md:flex gap-8 font-semibold text-lg">
-              <li><Link to="/product" className="hover:text-gray-500">All</Link></li>
-              <li><Link to="/product?category=Men" className="hover:text-gray-500">Men</Link></li>
-              <li><Link to="/product?category=Women" className="hover:text-gray-500">Women</Link></li>
-              <li><Link to="/product?category=Kids" className="hover:text-gray-500">Kids</Link></li>
-            </ul>
-          </div>
-  
-          {/* Mobile Hamburger Icon */}
-          <div className="md:hidden">
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}
-            </button>
-          </div>
-  
-          {/* Search + Icons (inline on desktop) */}
-          <div className="hidden md:flex items-center gap-4">
-            <form onSubmit={handleSearchSubmit} className="flex max-w-xs w-full">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Search..."
-                className="flex-grow p-1 border rounded-l-md bg-gray-100 dark:bg-gray-700 text-black dark:text-white focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="px-3 py-1 bg-black text-white rounded-r-md hover:bg-gray-700 dark:hover:bg-gray-500"
-              >
-                <FaSearch />
-              </button>
-            </form>
-            <Link to="/user/profile"><FaUser className="text-xl text-teal-800 hover:text-teal-500" /></Link>
-            <Link to="/user/wishlist"><FaHeart className="text-xl text-teal-800 hover:text-teal-500" /></Link>
-            <Link to="/user/cart" className="relative">
-              <FaShoppingCart className="text-xl text-teal-800 hover:text-teal-500" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-[10px] w-4 h-4 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
+    <header className="bg-base-100 fixed top-0 left-0 right-0 z-50 px-6 py-4 shadow-lg transition-all duration-300">
+      <div className="container mx-auto flex justify-between items-center">
+        {/* Logo + Nav */}
+        <div className="flex items-center gap-12">
+          <motion.h1
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            <Link to="/" className="hover:text-teal-500 text-base-content transition-colors duration-200">
+              Z FASHION
             </Link>
-            <DarkMode />
-          </div>
-        </div>
-  
-        {/* Search bar and nav in mobile view */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-4 space-y-4 text-center text-lg font-semibold">
-            <form onSubmit={handleSearchSubmit} className="flex w-[90%] mx-auto">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Search..."
-                className="flex-grow p-2 border rounded-l-md bg-gray-100 dark:bg-gray-700 text-black dark:text-white focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 bg-black text-white rounded-r-md hover:bg-gray-700 dark:hover:bg-gray-500"
+          </motion.h1>
+
+          {/* Desktop Nav */}
+          <ul className=" hidden md:flex gap-8 font-medium  text-gray-700 dark:text-gray-200">
+            {["All", "Men", "Women", "Kids"].map((category) => (
+              <motion.li
+                key={category}
+                whileHover={{ scale: 1.05, color: "#14b8a6" }}
+                transition={{ duration: 0.2 }}
               >
-                Search
-              </button>
-            </form>
-  
-            <Link to="/product" className="block hover:text-gray-500" onClick={() => setIsMenuOpen(false)}>All</Link>
-            <Link to="/product?category=Men" className="block hover:text-gray-500" onClick={() => setIsMenuOpen(false)}>Men</Link>
-            <Link to="/product?category=Women" className="block hover:text-gray-500" onClick={() => setIsMenuOpen(false)}>Women</Link>
-            <Link to="/product?category=Kids" className="block hover:text-gray-500" onClick={() => setIsMenuOpen(false)}>Kids</Link>
-  
-            <div className="flex justify-center gap-6 text-xl mt-3">
-              <Link to="/user/profile"><FaUser className="text-xl text-teal-800 hover:text-teal-500" /></Link>
-              <Link to="/user/wishlist"><FaHeart className="text-xl text-teal-800 hover:text-teal-500" /></Link>
-              <Link to="/user/cart" className="relative">
-                <FaShoppingCart className="text-xl text-teal-800 hover:text-teal-500" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-[10px] w-4 h-4 flex items-center justify-center">
+                <Link
+                  to={category === "All" ? "/product" : `/product?category=${category}`}
+                  className="hover:text-teal-500 transition-colors duration-200 text-base-content "
+                >
+                  {category}
+                </Link>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Mobile Hamburger Icon */}
+        <div className="md:hidden">
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="text-2xl text-gray-900 dark:text-white"
+          >
+            {isMenuOpen ? <FaTimes /> : <FaBars />}
+          </motion.button>
+        </div>
+
+        {/* Search + Icons (Desktop) */}
+        <div className="hidden md:flex items-center gap-6">
+          <form onSubmit={handleSearchSubmit} className="relative flex max-w-xs w-full">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search products..."
+              className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-200"
+            />
+            <button
+              type="submit"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-teal-500"
+            >
+              <FaSearch />
+            </button>
+          </form>
+          {[
+            { to: "/user/profile", icon: <FaUser /> },
+            { to: "/user/wishlist", icon: <FaHeart /> },
+            { to: "/user/cart", icon: <FaShoppingCart />, hasBadge: true },
+          ].map((item, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="relative"
+            >
+              <Link to={item.to} className="text-xl text-teal-600 dark:text-teal-300 hover:text-teal-500 dark:hover:text-teal-500">
+                {item.icon}
+                {item.hasBadge && cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
               </Link>
+            </motion.div>
+          ))}
+          <DarkMode />
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            variants={menuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="md:hidden mt-4 bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 space-y-6 text-center"
+          >
+            <form onSubmit={handleSearchSubmit} className="relative flex w-full">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search products..."
+                className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+              <button
+                type="submit"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-teal-500"
+              >
+                <FaSearch />
+              </button>
+            </form>
+
+            <ul className="space-y-4 font-medium text-gray-700 dark:text-gray-200">
+              {["All", "Men", "Women", "Kids"].map((category) => (
+                <motion.li
+                  key={category}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link
+                    to={category === "All" ? "/product" : `/product?category=${category}`}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block hover:text-teal-500 transition-colors duration-200"
+                  >
+                    {category}
+                  </Link>
+                </motion.li>
+              ))}
+            </ul>
+
+            <div className="flex justify-center gap-8 text-xl">
+              {[
+                { to: "/user/profile", icon: <FaUser /> },
+                { to: "/user/wishlist", icon: <FaHeart /> },
+                { to: "/user/cart", icon: <FaShoppingCart />, hasBadge: true },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="relative"
+                >
+                  <Link
+                    to={item.to}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-teal-600 dark:text-teal-300 hover:text-teal-500 dark:hover:text-teal-500"
+                  >
+                    {item.icon}
+                    {item.hasBadge && cartCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                        {cartCount}
+                      </span>
+                    )}
+                  </Link>
+                </motion.div>
+              ))}
               <DarkMode />
             </div>
-          </div>
+          </motion.div>
         )}
-      </header>
-    );
-  };
+      </AnimatePresence>
+    </header>
+  );
+};

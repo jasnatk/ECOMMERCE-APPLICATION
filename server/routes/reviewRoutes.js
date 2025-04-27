@@ -16,7 +16,7 @@ router.post("/add-review", authUser, addReview);
 router.delete("/delete-review/:reviewId", authUser, deleteReview);
 
 // Get product reviews
-router.get("/product-reviews/:productId", getProductReviews);
+router.get("/product/:productId", getProductReviews);
 
 // Get product average rating
 router.get("/avg-rating/:productId", getAverageRating);
