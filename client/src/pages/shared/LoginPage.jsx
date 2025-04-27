@@ -70,7 +70,7 @@ export const LoginPage = ({ role }) => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-base-200 py-6">
+    <div className="flex items-center justify-center bg-base-200 py-24">
       <div className="bg-white shadow-2xl rounded-lg flex flex-col lg:flex-row w-full max-w-4xl overflow-hidden">
         {/* Left Side - Image */}
         <div className="hidden lg:flex w-full lg:w-1/2">

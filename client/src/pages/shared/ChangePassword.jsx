@@ -31,6 +31,7 @@ const ChangePassword = () => {
   };
 
   return (
+    <div className="pt-24 mb-16">
     <div className="max-w-md mx-auto mt-10 p-6 shadow-lg rounded-xl font-bold text-base-content mb-4 font-playfair">
       <h2 className="text-2xl font-bold mb-4 text-center">Change Password</h2>
       
@@ -70,7 +71,7 @@ const ChangePassword = () => {
 </button>
 
       </form>
-    </div>
+    </div></div>
   );
 };
 

@@ -68,17 +68,17 @@ const SellerDashboard = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className=" flex-1  p-8 pt-17 flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="fixed  left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600 text-white shadow-xl transition-all duration-300">
         
-        <nav className="mt-4">
+        <nav className="pt-8">
           {menuItems.map((item) => (
             <button
               key={item.name}
               onClick={() => navigate(item.path)}
               className={`flex items-center w-full px-6 py-3 text-left text-sm font-medium transition-all duration-200 hover:bg-blue-700 hover:text-white ${
-                location.pathname === item.path ? "bg-gray-700" : ""
+                location.pathname === item.path ? " hover:bg-blue-700" : ""
               }`}
             >
               <item.icon className="w-5 h-5 mr-3" />

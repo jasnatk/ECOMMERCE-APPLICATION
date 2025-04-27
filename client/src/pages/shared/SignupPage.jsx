@@ -51,7 +51,7 @@ export const SignupPage = ({ role }) => {
     
 
     return (
-        <div className="flex items-center justify-center bg-base-200 py-6 min-h-screen">
+        <div className="flex items-center justify-center bg-base-200 py-24 min-h-screen">
             <div className="bg-white shadow-2xl rounded-lg flex flex-col lg:flex-row w-full max-w-4xl overflow-hidden">
                 {/* Left Side - Image */}
                 <div className="hidden lg:flex w-full lg:w-1/2">
@@ -73,8 +73,8 @@ export const SignupPage = ({ role }) => {
                         <input type="email" placeholder="Email" {...register("email", { required: "Email is required" })} className="input input-bordered w-full max-w-xs" />
                         {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
 
-                        <input type="text" placeholder="Phone Number" {...register("phoneNumber", { required: "Phone number is required" })} 
- className="input input-bordered w-full max-w-xs" />
+                        <input type="text" placeholder="Phone Number" {...register("phone", { required: "Phone number is required" })} 
+                        className="input input-bordered w-full max-w-xs" />
                         {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
 
                         <input type="text" placeholder="Address" {...register("address", { required: "Address is required" })} className="input input-bordered w-full max-w-xs" />

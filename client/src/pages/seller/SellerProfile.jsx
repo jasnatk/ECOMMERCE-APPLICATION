@@ -29,7 +29,7 @@ const SellerProfile = () => {
   }
 
   return (
-    <div className="p-6 bg-base-200 min-h-screen">
+    <div className="p-6 bg-base-200 min-h-screen pt-24">
       <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-center">
         <img
           src={seller.profilePic || "/image/seller1.jpg"}

@@ -43,7 +43,7 @@ const PaymentSuccess = () => {
   }, [navigate, sessionId]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 pt-22">
       <div className="relative bg-white p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md w-full sm:max-w-lg border-2 border-green-100 transform transition hover:scale-105">
         <div className="flex justify-center">
           <FaCheckCircle className="text-green-500" size={72} />

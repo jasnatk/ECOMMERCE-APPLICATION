@@ -47,7 +47,7 @@ export const EditProfile = () => {
     };
 
     return (
-        <div className="min-h-screen  flex items-center justify-center p-6 ">
+        <div className="min-h-screen  flex items-center justify-center p-6 pt-24 ">
             <div className="bg-gradient-to-tr from-teal-400  to-teal-600 card w-full max-w-md bg-white/30 backdrop-blur-xl shadow-xl border border-gray-300/50 hover:shadow-2xl hover:border-white transition-all duration-500 p-6 rounded-2xl">
                 {/* Subtle Background Glow */}
                 <div className="absolute inset-0 bg-gradient-to-t from-teal-800/20 to-transparent rounded-3xl -z-10 animate-fadeIn"></div>

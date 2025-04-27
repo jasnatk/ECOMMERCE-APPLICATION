@@ -12,7 +12,7 @@ export const Profile = () => {
     const isOnline = true;
 
     return (
-        <div className="min-h-screen  p-6 flex items-center justify-center">
+        <div className="min-h-screen  p-6 flex items-center justify-center pt-24">
             {/* Card Container */}
             <div className="bg-gradient-to-tr from-teal-400  to-teal-200 card w-full max-w-md bg-white/30 backdrop-blur-xl shadow-xl border border-gray-300/50 hover:shadow-2xl hover:border-white transition-all duration-500 p-6 rounded-2xl">
                 {/* Profile Picture */}

@@ -73,6 +73,7 @@ const EditProduct = () => {
 
   if (isLoading)
     return (
+     
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -92,12 +93,13 @@ const EditProduct = () => {
       </motion.div>
     );
 
-  return (
+  return (  
+    
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 p-6 flex items-center justify-center"
+      className="min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 p-6 pt-24 flex items-center justify-center"
     >
       <div className="max-w-4xl w-full bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 border border-white/20">
         <motion.h1

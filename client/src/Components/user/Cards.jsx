@@ -25,10 +25,14 @@ export const ProductCard = ({
 
   const handleAddToCart = async () => {
     try {
-      await axiosInstance.post("/cart/addToCart", {
+      const response = await axiosInstance.post("/cart/addToCart", {
         productId: products?._id,
         quantity,
       });
+      // Update localStorage with the backend cart data
+      localStorage.setItem("cart", JSON.stringify({ products: response.data.data.products }));
+      // Dispatch cartUpdated event to notify UserHeader
+      window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Product added to cart");
     } catch (error) {
       toast.error(
@@ -61,7 +65,7 @@ export const ProductCard = ({
   const imageUrl = products?.images?.[0]?.url || fallbackImage;
 
   return (
-    <div className="card bg-base-100 shadow-sm group transform hover:scale-102 transition-transform duration-300 w-full max-w-xs ">
+    <div className="card bg-base-100 shadow-sm group transform hover:scale-102 transition-transform duration-300 w-full ">
       <div className="relative bg-base-200 w-full">
         <img
           src={imageUrl}
@@ -97,17 +101,16 @@ export const ProductCard = ({
           <p className="text-xs text-base-content/70 line-clamp-2">{products?.description}</p>
         )}
 
-      <div className="flex flex-col items-center justify-center space-y-1">
-       <p className="text-teal-600 font-bold text-lg">
-        ₹{products?.price?.toLocaleString()}
-      </p>
-     <Rating
-        initialRating={rating}
-         onRatingChange={handleRatingChange}
-         className="text-xs"
-        />
-      </div>
-
+        <div className="flex flex-col items-center justify-center space-y-1">
+          <p className="text-teal-600 font-bold text-lg">
+            ₹{products?.price?.toLocaleString()}
+          </p>
+          <Rating
+            initialRating={rating}
+            onRatingChange={handleRatingChange}
+            className="text-xs"
+          />
+        </div>
 
         <button
           className="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white text-sm py-2 rounded-md hover:from-teal-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center"

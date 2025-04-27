@@ -56,14 +56,14 @@ const NewProduct = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 p-6 flex items-center justify-center"
+      className="pt-24 min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 p-8 flex items-center justify-center"
     >
-      <div className="max-w-2xl w-full bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 border border-white/20">
+      <div className="max-w-2xl w-full bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 border border-white/20">
         <motion.h2
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-4xl font-bold text-center text-white mb-8"
+          className="text-3xl font-bold text-center text-white mb-4"
           style={{ fontFamily: "Poppins, sans-serif" }}
         >
           Add New Product

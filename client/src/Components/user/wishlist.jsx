@@ -81,7 +81,7 @@ export const WishlistPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-2 lg:px-0 py-4">
+    <div className="container mx-auto px-2 lg:px-0 py-24">
       <h1 className="text-2xl lg:text-3xl font-extrabold text-base-content text-center mb-4 tracking-tight font-playfair">
         Your Wishlist
       </h1>

@@ -21,7 +21,7 @@ export const Product = () => {
     Men: "/image/men1.jpg",
     Women: "/image/one1.jpg",
     Kids: "/image/Kids11.jpg",
-    All: "/image/simple.jpg", 
+    All: "/image/Allnew.jpg", 
   };
 
   useEffect(() => {
@@ -61,10 +61,12 @@ export const Product = () => {
   const bannerKey = filters.category || "All";
 
   return (
-    <div className="min-h-screen bg-base-100">
-      <div className="container mx-auto px-2 lg:px-0 py-4 flex flex-col lg:flex-row gap-4">
+    <div className="min-h-screen bg-base-100 pt-24">
+      
+      <div className="w-full max-w-6xl mx-auto px-4 py-4 flex flex-col lg:flex-row gap-12">
+
         <div className="w-full lg:w-60">
-          <div className="sticky top-4 card bg-base-200 shadow-md p-4">
+          <div className="sticky top-18 card bg-base-200 shadow-md p-4">
             <FilterSidebar />
           </div>
         </div>
@@ -75,11 +77,11 @@ export const Product = () => {
               <img
                 src={categoryBannerMap[bannerKey]}
                 alt={`${bannerKey === "All" ? "All Products" : filters.category} Fashion Banner`}
-                className="w-full h-[280px] object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out"
+                className="w-full h-[280px] object-cover object-top transform group-hover:scale-105 transition-transform duration-500 ease-out -mt-6"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
               <h2 className="absolute bottom-4 left-4 text-xl font-bold text-white drop-shadow-md font-playfair">
-                {bannerKey === "All" ? "All Products Collection" : `${filters.category} Collection`}
+                {bannerKey === "All" ? "" : `${filters.category} Collection`}
               </h2>
             </div>
           )}
@@ -94,7 +96,8 @@ export const Product = () => {
               ? `Search results for "${filters.search}"`
               : "Discover the Latest Trends"}
           </h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
+
             {isLoading ? (
               [...Array(8)].map((_, index) => (
                 <ProductCardSkeltons key={index} />

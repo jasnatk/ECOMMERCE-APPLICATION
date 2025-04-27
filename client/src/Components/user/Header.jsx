@@ -20,7 +20,7 @@ export const Header = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
-    <header className="w-full shadow-md px-4 py-4 md:px-10 dark:bg-gray-800 dark:text-white">
+    <header className="fixed top-0 left-0 right-0 z-50    w-full shadow-md px-4 py-4 md:px-10 dark:bg-gray-800 dark:text-white">
       <div className="flex justify-between items-center">
         {/* Logo & Hamburger */}
         <div className="flex items-center gap-4">

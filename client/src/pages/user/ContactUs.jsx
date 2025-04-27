@@ -27,7 +27,7 @@ export const ContactUs = () => {
   };
 
   return (
-    <div className="bg-gray-100 text-gray-900 min-h-screen p-6 flex flex-col items-center">
+    <div className="bg-gray-100 text-gray-900 min-h-screen p-6 flex flex-col items-center pt-24">
       <div className="w-full max-w-4xl mb-6">
         <video
           className="w-full h-60 object-cover rounded-xl"

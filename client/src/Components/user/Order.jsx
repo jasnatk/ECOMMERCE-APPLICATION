@@ -61,7 +61,7 @@ const OrderDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 ">
         <div className="max-w-5xl mx-auto">
           <div className="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-2xl p-6 animate-pulse">
             <div className="h-8 bg-gray-700 rounded w-1/4 mb-6"></div>
@@ -91,7 +91,7 @@ const OrderDetails = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center ">
         <div className="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-bold text-red-500 mb-4">Something Went Wrong</h2>
           <p className="text-gray-300 mb-6">{error}</p>
@@ -107,7 +107,7 @@ const OrderDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-orange-50 py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-orange-50 py-6 px-4 sm:px-6 lg:px-8 pt-24">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-green-600 mb-10 text-center tracking-wide">
           Order Details

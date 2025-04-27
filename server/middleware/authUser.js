@@ -5,7 +5,7 @@ export const authUser = (req, res, next) => {
         const { token } = req.cookies;
 
         if (!token) {
-            return res.status(401).json({ message: "User not authorized. Token missing." });
+            return res.status(401).json({ message: "Oops! you're not logged in.\n Please log in to continue" });
         }
 
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
