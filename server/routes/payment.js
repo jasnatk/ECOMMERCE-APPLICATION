@@ -51,7 +51,7 @@ router.post("/create-checkout-session", async (req, res) => {
         shouldClearCartFrontend: true,
         products: JSON.stringify(
           products.map((p) => ({
-            _id: p._id,
+            _id: p.productId,
             sellerId: p.sellerId,
           }))
         ), // 

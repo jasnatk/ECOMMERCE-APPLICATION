@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { axiosInstance } from "../../config/axiosInstance";
+import { toast } from "react-hot-toast";
+
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -45,17 +47,24 @@ const OrderDetails = () => {
 
   const submitReview = async (productId, index) => {
     try {
+      const rating = ratings[index] || 0;
+      if (rating < 1 || rating > 5) {
+        toast.error("Please select a rating between 1 and 5.");
+        return;
+      }
       const payload = {
         productId,
-        rating: ratings[index] || 0,
+        rating,
         comment: reviews[index] || "",
       };
-      await axiosInstance.post("/review/add-review", payload);
-      alert("Review submitted successfully!");
+      console.log("Submitting review with payload:", payload);
+      const response = await axiosInstance.post("/review/add-review", payload);
+      console.log("Review response:", response.data);
+     toast.success("Review submitted successfully!");
       toggleReviewBox(index);
     } catch (err) {
-      console.error("Failed to submit review", err);
-      alert("Failed to submit review.");
+      console.error("Failed to submit review:", err.response?.data || err);
+      toast.error(err.response?.data?.message || "Failed to submit review.");
     }
   };
 
