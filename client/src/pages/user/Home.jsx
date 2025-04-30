@@ -79,7 +79,7 @@ export const Home = () => {
     {isLoading ? (
         <BannerSkeleton />
       ) : (
-        <div className="w-full h-[200px] xs:h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden shadow-md shadow-black/20 border rounded">
+        <div className="w-full h-[200px] xs:h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden shadow-md shadow-black/20 ">
           <div className="carousel w-full h-full relative">
             {["B2", "B1", "B3", "B4"].map((img, index) => (
               <div

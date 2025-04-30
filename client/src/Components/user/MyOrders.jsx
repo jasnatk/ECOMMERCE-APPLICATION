@@ -67,7 +67,7 @@ export const MyOrders = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white p-6 pt-24">
       <div className="max-w-5xl mx-auto">
-        <h2 className="text-4xl font-extrabold text-teal-500 mb-10 text-center tracking-tight">
+        <h2 className="text-4xl font-extrabold text-teal-700 mb-10 text-center tracking-tight">
           Your Order History
         </h2>
         <div className="space-y-8">

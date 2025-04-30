@@ -33,10 +33,13 @@ export const ProductDetails = () => {
   // Handle Add to Cart and navigate to cart page
   const handleAddToCartAndNavigate = async () => {
     try {
-      await axiosInstance.post("/cart/addToCart", {
+      const response = await axiosInstance.post("/cart/addToCart", {
         productId: params?.id,
         quantity,
       });
+      // Update localStorage and dispatch cartUpdated event
+      localStorage.setItem("cart", JSON.stringify({ products: response.data.data.products }));
+      window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Product added to cart");
       navigate("/user/cart");
     } catch (error) {
@@ -156,6 +159,7 @@ export const ProductDetails = () => {
             <div>
               <Rating
                 initialRating={product?.rating || 0}
+                numReviews={product?.numReviews || 0} // Added numReviews
                 className="text-xs"
                 readonly
               />
