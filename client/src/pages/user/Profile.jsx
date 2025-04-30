@@ -1,4 +1,3 @@
-// frontend/src/components/user/Profile.jsx
 import React from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { useLogout } from "../../hooks/useLogout";
@@ -11,12 +10,25 @@ export const Profile = () => {
 
   const isOnline = true;
 
+  // Access user data
+  const user = userDetails?.data || {};
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl font-semibold text-teal-600">Loading...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error?.response?.data?.message || "Failed to load profile"}</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl font-semibold text-error">
+          Error: {error?.response?.data?.message || "Failed to load profile"}
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -27,26 +39,29 @@ export const Profile = () => {
             <span className={`indicator-item badge badge-sm ${isOnline ? "badge-success animate-bounce" : "badge-error"}`}></span>
             <div className="w-36 rounded-full ring ring-offset-4 ring-offset-white ring-accent transition-all duration-300 hover:ring-offset-4 hover:ring-primary hover:scale-105">
               <img
-                src={userDetails?.profilePic}
+                src={user?.profilePic || "https://placehold.co/150x150?text=No+Image"}
                 alt="Profile"
                 className="object-cover rounded-full"
+                onError={(e) => {
+                  e.target.src = "https://placehold.co/150x150?text=No+Image";
+                }}
               />
             </div>
           </div>
         </div>
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-[Playfair Display] font-bold text-green bg-clip-text bg-gradient-to-r from-white via-teal-900 to-teal-500 animate-pulse">
-            {userDetails?.name}
+            {user?.name || "No Name"}
           </h1>
           <div className="space-y-2">
             <p className="text-lg text-black">
-              Email: <span className="text-black font-semibold">{userDetails?.email}</span>
+              Email: <span className="text-black font-semibold">{user?.email || "No Email"}</span>
             </p>
             <p className="text-lg text-black">
-              Phone: <span className="text-black font-semibold">{userDetails?.phoneNumber}</span>
+              Phone: <span className="text-black font-semibold">{user?.phoneNumber || "No Phone"}</span>
             </p>
             <p className="text-lg text-black">
-              Address: <span className="text-black font-semibold">{userDetails?.address}</span>
+              Address: <span className="text-black font-semibold">{user?.address || "No Address"}</span>
             </p>
           </div>
         </div>

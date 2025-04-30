@@ -8,37 +8,52 @@ export const addReview = async (req, res) => {
     const { productId, rating, comment } = req.body;
     const userId = req.user.id;
 
+    // Validate product
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    if (rating < 1 || rating > 5) {
+    // Validate rating
+    if (!rating || rating < 1 || rating > 5) {
       return res.status(400).json({ message: "Please provide a rating between 1 and 5" });
     }
 
+    // Create or update review
     const review = await Review.findOneAndUpdate(
       { user: userId, product: productId },
-      { rating, comment },
+      { rating, comment, updatedAt: new Date() },
       { new: true, upsert: true, runValidators: true }
     );
 
-    // Update product's average rating
+    // Update product's rating and numReviews
     const reviews = await Review.find({ product: productId });
     const totalReviews = reviews.length;
     const averageRating = totalReviews
       ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
       : 0;
+
     product.rating = averageRating;
     product.numReviews = totalReviews;
     await product.save();
 
-    res.status(201).json({ data: review, message: "Review added successfully" });
+    // Debug: Log updated product
+    console.log(`Updated product ${productId}:`, {
+      rating: product.rating,
+      numReviews: product.numReviews,
+    });
+
+    res.status(201).json({
+      message: "Review submitted successfully",
+      data: review,
+      reviewCount: product.numReviews
+    });
+    
   } catch (error) {
+    console.error("Error in addReview:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
-
 export const getProductReviews = async (req, res) => {
   try {
     const { productId } = req.params;

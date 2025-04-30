@@ -14,8 +14,6 @@ export const ProductCard = ({
 }) => {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(isInWishlist);
-  const [rating, setRating] = useState(products?.rating || 0);
-  const [reviewCount, setReviewCount] = useState(0);
   const navigate = useNavigate();
   const fallbackImage = "https://placehold.co/300x300?text=No+Image&font=roboto";
 
@@ -29,9 +27,7 @@ export const ProductCard = ({
         productId: products?._id,
         quantity,
       });
-      // Update localStorage with the backend cart data
       localStorage.setItem("cart", JSON.stringify({ products: response.data.data.products }));
-      // Dispatch cartUpdated event to notify UserHeader
       window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Product added to cart");
     } catch (error) {
@@ -57,15 +53,10 @@ export const ProductCard = ({
     }
   };
 
-  const handleRatingChange = (newRating, newReviewCount) => {
-    setRating(newRating);
-    setReviewCount(newReviewCount);
-  };
-
   const imageUrl = products?.images?.[0]?.url || fallbackImage;
 
   return (
-    <div className="card bg-base-100 shadow-sm group transform hover:scale-102 transition-transform duration-300 w-full ">
+    <div className="card bg-base-100 shadow-sm group transform hover:scale-102 transition-transform duration-300 w-full">
       <div className="relative bg-base-200 w-full">
         <img
           src={imageUrl}
@@ -105,11 +96,15 @@ export const ProductCard = ({
           <p className="text-teal-600 font-bold text-lg">
             ₹{products?.price?.toLocaleString()}
           </p>
-          <Rating
-            initialRating={rating}
-            onRatingChange={handleRatingChange}
-            className="text-xs"
-          />
+          <div className="flex items-center gap-2">
+            <Rating
+              initialRating={products?.rating || 0}
+              numReviews={products?.numReviews || 0}
+              className="text-xs"
+              readonly
+            />
+            
+          </div>
         </div>
 
         <button

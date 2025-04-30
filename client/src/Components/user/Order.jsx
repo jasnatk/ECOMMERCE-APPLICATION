@@ -50,11 +50,10 @@ const OrderDetails = () => {
       const rating = ratings[index] || 0;
       if (rating < 1 || rating > 5) {
         toast.error("Please select a rating between 1 and 5.");
-
         return;
       }
       const payload = {
-        productId,
+        productId: productId, // Ensure productId is the string _id
         rating,
         comment: reviews[index] || "",
       };
@@ -63,10 +62,11 @@ const OrderDetails = () => {
       console.log("Review response:", response.data);
       toast.success("Review submitted successfully!");
       toggleReviewBox(index);
+      console.log("Dispatching reviewSubmitted event");
+      window.dispatchEvent(new Event("reviewSubmitted"));
     } catch (err) {
       console.error("Failed to submit review:", err.response?.data || err);
       toast.error(err.response?.data?.message || "Failed to submit review.");
-
     }
   };
 
@@ -118,7 +118,7 @@ const OrderDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-orange-50 py-6 px-4 sm:px-6 lg:px-8 pt-24">
+    <div className=" min-h-screen bg-base-100  py-6 px-4 sm:px-6 lg:px-8 pt-24">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-green-600 mb-10 text-center tracking-wide">
           Order Details

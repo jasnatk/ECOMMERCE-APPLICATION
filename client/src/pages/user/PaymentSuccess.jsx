@@ -51,24 +51,24 @@ const PaymentSuccess = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 pt-22">
-      <div className="relative bg-white p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md w-full sm:max-w-lg border-2 border-green-100 transform transition hover:scale-105">
+      <div className="relative bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full border-2 border-green-100 transform transition hover:scale-105">
         <div className="flex justify-center">
-          <FaCheckCircle className="text-green-500" size={72} />
+          <FaCheckCircle className="text-green-500" size={48} />
         </div>
-        <h1 className="mt-6 text-3xl sm:text-4xl font-bold text-green-600 text-center">
+        <h1 className="mt-4 text-2xl font-bold text-green-600 text-center">
           Payment Successful!
         </h1>
-        <p className="mt-4 text-lg text-gray-600 text-center leading-relaxed">
+        <p className="mt-3 text-base text-gray-600 text-center leading-relaxed">
           Your payment has been processed successfully. Thank you for your order!
         </p>
-        <p className="mt-2 text-sm text-gray-500 text-center">
+        <p className="mt-2 text-xs text-gray-500 text-center">
           {isCartCleared ? "Your cart has been cleared." : "Clearing your cart..."} Redirecting to your
           order details in a few seconds...
         </p>
-        <div className="mt-8 flex justify-center">
+        <div className="mt-6 flex justify-center">
           <Link
             to={orderId ? `/user/order/${orderId}` : "/user/order"}
-            className="px-8 py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-200"
+            className="px-6 py-2 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-200"
           >
             View Order Details Now
           </Link>

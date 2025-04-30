@@ -24,6 +24,7 @@ const reviewSchema = new Schema(
       trim: true,
       maxlength: 500,
     },
+    
   },
   { timestamps: true }
 );

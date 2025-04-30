@@ -7,7 +7,6 @@ import { FaShoppingCart, FaPlus, FaMinus } from "react-icons/fa";
 import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 import { Rating } from "../../Components/user/Rating";
 
-
 export const ProductDetails = () => {
   const params = useParams();
   const navigate = useNavigate();
@@ -19,14 +18,17 @@ export const ProductDetails = () => {
   const [currentImage, setCurrentImage] = useState("");
   const fallbackImage = "https://placehold.co/300x300?text=No+Image&font=roboto";
 
+  // Access the product data
+  const product = productDetails?.data || {};
+
   // Set the first image URL when product details load
   useEffect(() => {
-    if (productDetails?.images && productDetails.images.length > 0) {
-      setCurrentImage(productDetails.images[0].url);
+    if (product?.images && product.images.length > 0) {
+      setCurrentImage(product.images[0].url);
     } else {
       setCurrentImage(fallbackImage);
     }
-  }, [productDetails]);
+  }, [product]);
 
   // Handle Add to Cart and navigate to cart page
   const handleAddToCartAndNavigate = async () => {
@@ -99,7 +101,7 @@ export const ProductDetails = () => {
     return (
       <div className="flex items-center justify-center min-h-screen bg-base-100">
         <p className="text-xl font-semibold text-error">
-          Error fetching product details: {error}
+          Error fetching product details: {error?.response?.data?.message || "Failed to load product"}
         </p>
       </div>
     );
@@ -107,14 +109,14 @@ export const ProductDetails = () => {
 
   return (
     <div className="container mx-auto px-2 lg:px-0 py-4 pt-24">
-      <div className="card bg-base-100  rounded-xl p-6 my-4">
+      <div className="card bg-base-100 rounded-xl p-6 my-4">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Product Image */}
           <div className="lg:w-1/2">
-            <div className="relative group ">
+            <div className="relative group">
               <img
                 src={currentImage}
-                alt={productDetails?.name || "Product"}
+                alt={product?.name || "Product"}
                 className="w-full h-96 object-contain transform group-hover:scale-105 transition-transform duration-300"
                 onError={(e) => {
                   e.target.src = fallbackImage;
@@ -124,14 +126,14 @@ export const ProductDetails = () => {
             </div>
             {/* Thumbnail Gallery */}
             <div className="flex justify-center space-x-2 mt-4 overflow-x-auto">
-              {productDetails?.images?.map((img, index) => (
+              {product?.images?.map((img, index) => (
                 <img
                   key={index}
                   src={img.url}
                   alt={`thumbnail-${index}`}
                   className={`w-16 h-16 object-cover rounded-xl cursor-pointer border-2 ${
                     currentImage === img.url ? "border-green-900" : "border-base-200"
-                  } transform hover:scale-110 transition-transform duration-200 `}
+                  } transform hover:scale-110 transition-transform duration-200`}
                   onClick={() => setCurrentImage(img.url)}
                   onError={(e) => {
                     e.target.src = fallbackImage;
@@ -145,28 +147,25 @@ export const ProductDetails = () => {
           {/* Product Info */}
           <div className="lg:w-1/2 flex flex-col justify-center space-y-4">
             <h1 className="text-3xl font-bold text-base-content font-playfair">
-              {productDetails?.name}
+              {product?.name || "No Name"}
             </h1>
-            
             <p className="text-2xl text-teal-600 font-semibold">
-              ₹{productDetails?.price?.toLocaleString()}
+              ₹{product?.price?.toLocaleString() || "0"}
             </p>
             {/* Rating */}
             <div>
               <Rating
-                initialRating={productDetails?.rating || 0}
+                initialRating={product?.rating || 0}
                 className="text-xs"
                 readonly
               />
             </div>
             <label className="text-base font-semibold text-base-content">
-                About this item
-              </label>
+              About this item
+            </label>
             <p className="text-base-content/70 text-base">
-              {productDetails?.description}
+              {product?.description || "No description available"}
             </p>
-
-            
 
             {/* Quantity Selector */}
             <div className="flex items-center gap-2">

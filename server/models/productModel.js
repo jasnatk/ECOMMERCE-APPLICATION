@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
@@ -34,9 +35,7 @@ const productSchema = new mongoose.Schema(
       },
     ],
     seller: { type: mongoose.Types.ObjectId, ref: "Seller", required: true },
-    rating: {
-      type: Number,
-      default: 0,
+    rating: {type: Number, default: 0,
     },
     numReviews: { type: Number, default: 0 },
   },

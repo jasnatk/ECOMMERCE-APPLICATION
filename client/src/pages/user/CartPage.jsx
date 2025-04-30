@@ -12,6 +12,9 @@ export const CartPage = () => {
   const [isPaying, setIsPaying] = useState(false);
   const navigate = useNavigate();
 
+  // Access products from cartData?.data?.products
+  const products = cartData?.data?.products || [];
+
   const errorMessage = error?.response?.data?.message || "Unable to fetch cart";
 
   const handleClearCart = async () => {
@@ -19,9 +22,8 @@ export const CartPage = () => {
       await axiosInstance.delete("/cart/clearCart");
       setIsCartEmpty(true);
       refetch();
-      // Update localStorage
       localStorage.setItem("cart", JSON.stringify({ products: [] }));
-      window.dispatchEvent(new Event("cartUpdated")); // Notify header
+      window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Cart cleared successfully!");
     } catch (err) {
       console.error("Failed to clear cart:", err?.response?.data?.message || err.message);
@@ -33,10 +35,9 @@ export const CartPage = () => {
     try {
       await axiosInstance.put("/cart/removeFromCart", { productId });
       refetch();
-      // Update localStorage with current cart data
-      const updatedCart = cartData?.products?.filter(item => item.productId._id !== productId) || [];
+      const updatedCart = products.filter(item => item.productId._id !== productId) || [];
       localStorage.setItem("cart", JSON.stringify({ products: updatedCart }));
-      window.dispatchEvent(new Event("cartUpdated")); // Notify header
+      window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Product removed from cart!");
     } catch (error) {
       console.error("Failed to remove product:", error?.response?.data?.message || error.message);
@@ -49,7 +50,7 @@ export const CartPage = () => {
       setIsPaying(true);
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-      const products = cartData?.products
+      const productsForPayment = products
         .filter((item) => item.quantity > 0)
         .map((item) => ({
           productId: item.productId._id,
@@ -61,7 +62,7 @@ export const CartPage = () => {
         }));
 
       const session = await axiosInstance.post("/payment/create-checkout-session", {
-        products,
+        products: productsForPayment,
       });
 
       if (!session.data.sessionId) {
@@ -130,7 +131,7 @@ export const CartPage = () => {
     );
   }
 
-  if ((cartData?.products?.length === 0 && !isCartEmpty) || isCartEmpty) {
+  if ((products.length === 0 && !isCartEmpty) || isCartEmpty) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-base-100 p-4 ">
         <h2 className="text-3xl md:text-4xl font-bold text-base-content mb-4 font-playfair text-center">
@@ -154,11 +155,11 @@ export const CartPage = () => {
       <div className="min-h-screen bg-base-100 p-4 md:p-8 ">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-extrabold text-base-content text-center mb-4 tracking-tight font-playfair">
-            Your Shopping Cart ({cartData?.products?.length || 0} {cartData?.products?.length === 1 ? "item" : "items"})
+            Your Shopping Cart ({products.length} {products.length === 1 ? "item" : "items"})
           </h2>
 
           <div className="flex justify-end mb-6">
-            {cartData?.products?.length > 0 && (
+            {products.length > 0 && (
               <button
                 onClick={handleClearCart}
                 className="flex items-center gap-2 text-sm md:text-base bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-3 md:px-4 border border-red-500 hover:border-transparent rounded"
@@ -179,7 +180,7 @@ export const CartPage = () => {
                   <span>Total</span>
                   <span></span>
                 </div>
-                {cartData?.products?.map((item) => (
+                {products.map((item) => (
                   <div
                     key={item.productId._id}
                     className="flex md:grid md:grid-cols-[2fr_1fr_1fr_1fr_50px] flex-wrap items-center gap-4 p-4 border-t border-base-200 hover:bg-base-200/50 transition-all duration-200"
@@ -215,20 +216,20 @@ export const CartPage = () => {
                 </h3>
                 <div className="flex justify-between mb-3 text-base-content/70 text-sm md:text-base">
                   <span>Total Items</span>
-                  <span className="font-medium">{cartData?.products?.length || 0}</span>
+                  <span className="font-medium">{products.length}</span>
                 </div>
                 <div className="flex justify-between mb-6 text-base-content/70 text-sm md:text-base">
                   <span>Total Price</span>
                   <span className="text-lg md:text-xl font-bold text-base-content">
                     ₹
-                    {cartData?.products
-                      ?.reduce((total, item) => total + item?.productId?.price * item?.quantity, 0)
+                    {products
+                      .reduce((total, item) => total + item?.productId?.price * item?.quantity, 0)
                       .toLocaleString()}
                   </span>
                 </div>
                 <button
                   onClick={makePayment}
-                  disabled={isPaying || cartData?.products?.length === 0}
+                  disabled={isPaying || products.length === 0}
                   className={`btn btn-success btn-md w-full ${isPaying ? "btn-disabled" : ""}`}
                 >
                   {isPaying ? "Processing..." : "Proceed to Checkout"}
@@ -241,3 +242,4 @@ export const CartPage = () => {
     </div>
   );
 };
+
