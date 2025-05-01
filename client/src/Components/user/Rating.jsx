@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 
-export const Rating = ({ initialRating = 0, numReviews = 0, onRatingChange, readonly = false }) => {
+export const Rating = ({
+  initialRating = 0,
+  numReviews = 0,
+  onRatingChange,
+  readonly = false,
+  showCount = true, // New prop, defaults to true
+}) => {
   const [rating, setRating] = useState(initialRating);
 
   const handleStarClick = (starRating) => {
@@ -24,7 +30,10 @@ export const Rating = ({ initialRating = 0, numReviews = 0, onRatingChange, read
           onClick={() => handleStarClick(star)}
         />
       ))}
-      <span className="ml-2 text-sm">({numReviews})</span> {/* Display numReviews from prop */}
+      {showCount && (
+        <span className="ml-2 text-sm">({numReviews})</span>
+      )}{" "}
+      {/* Conditionally render numReviews */}
     </div>
   );
 };

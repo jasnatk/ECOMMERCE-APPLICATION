@@ -1,4 +1,3 @@
-// backend/models/reviewModel.js
 import { Schema, model } from "mongoose";
 
 const reviewSchema = new Schema(
@@ -24,7 +23,24 @@ const reviewSchema = new Schema(
       trim: true,
       maxlength: 500,
     },
-    
+    helpful: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    }],
+    reported: [{
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      reason: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    }],
   },
   { timestamps: true }
 );

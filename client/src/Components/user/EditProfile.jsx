@@ -66,7 +66,7 @@ export const EditProfile = () => {
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="Name"
-                            className="input input-bordered w-full font-bold bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
+                            className="input input-bordered w-full font-medium  bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
                         />
                     </div>
                     <div className="relative">
@@ -76,7 +76,7 @@ export const EditProfile = () => {
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Email"
-                            className="input input-bordered w-full font-bold bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
+                            className="input input-bordered w-full font-medium bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
                         />
                     </div>
                     <div className="relative">
@@ -86,7 +86,7 @@ export const EditProfile = () => {
                             value={formData.phoneNumber}
                             onChange={handleChange}
                             placeholder="Phone Number"
-                            className="input input-bordered w-full font-bold bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
+                            className="input input-bordered w-full font-medium bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
                         />
                     </div>
                     <div className="relative">
@@ -96,7 +96,7 @@ export const EditProfile = () => {
                             value={formData.address}
                             onChange={handleChange}
                             placeholder="Address"
-                            className="input input-bordered w-full font-bold bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
+                            className="input input-bordered w-full font-medium bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
                         />
                     </div>
                     <div className="relative">
@@ -106,7 +106,7 @@ export const EditProfile = () => {
                             value={formData.profilePic}
                             onChange={handleChange}
                             placeholder="Profile Picture URL"
-                            className="input input-bordered w-full font-bold bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
+                            className="input input-bordered w-full font-medium bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
                         />
                     </div>
                     <button

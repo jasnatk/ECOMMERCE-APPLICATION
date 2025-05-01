@@ -4,8 +4,9 @@ import {
     addReview, 
     deleteReview, 
     getAverageRating, 
-    getProductReviews 
+    getProductReviews ,markHelpful,reportReview
 } from "../controllers/reviewController.js";
+
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.get("/product/:productId", getProductReviews);
 
 // Get product average rating
 router.get("/avg-rating/:productId", getAverageRating);
-
+router.post("/:reviewId/helpful",authUser, markHelpful);
+router.post("/:reviewId/report", authUser,reportReview);
 export default router

@@ -1,4 +1,3 @@
-// backend/controllers/reviewController.js
 import mongoose from "mongoose";
 import Product from "../models/productModel.js";
 import { Review } from "../models/reviewModel.js";
@@ -37,23 +36,17 @@ export const addReview = async (req, res) => {
     product.numReviews = totalReviews;
     await product.save();
 
-    // Debug: Log updated product
-    console.log(`Updated product ${productId}:`, {
-      rating: product.rating,
-      numReviews: product.numReviews,
-    });
-
     res.status(201).json({
       message: "Review submitted successfully",
       data: review,
-      reviewCount: product.numReviews
+      reviewCount: product.numReviews,
     });
-    
   } catch (error) {
     console.error("Error in addReview:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
 export const getProductReviews = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -112,6 +105,83 @@ export const getAverageRating = async (req, res) => {
 
     res.status(200).json({ data: averageRating, message: "Average rating fetched successfully" });
   } catch (error) {
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+export const markHelpful = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const userId = req.user.id; // Assuming user is authenticated
+
+    const review = await Review.findById(reviewId);
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    const hasVoted = review.helpful.includes(userId);
+    if (hasVoted) {
+      // Remove helpful vote
+      review.helpful = review.helpful.filter((id) => id.toString() !== userId.toString());
+      await review.save();
+      return res.status(200).json({
+        success: true,
+        message: "Helpful vote removed",
+        helpfulCount: review.helpful.length,
+      });
+    }
+
+    // Add helpful vote
+    review.helpful.push(userId);
+    await review.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Review marked as helpful",
+      helpfulCount: review.helpful.length,
+    });
+  } catch (error) {
+    console.error("Error in markHelpful:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+export const reportReview = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const { reason } = req.body;
+    const userId = req.user.id;
+
+    if (!reason) {
+      return res.status(400).json({ message: "Please provide a reason for reporting" });
+    }
+
+    const review = await Review.findById(reviewId);
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    // Check if user already reported this review
+    const hasReported = review.reported.some(
+      (report) => report.user.toString() === userId.toString()
+    );
+    if (hasReported) {
+      return res.status(400).json({ message: "You have already reported this review" });
+    }
+
+    // Add report
+    review.reported.push({
+      user: userId,
+      reason,
+    });
+    await review.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Review reported successfully",
+    });
+  } catch (error) {
+    console.error("Error in reportReview:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
