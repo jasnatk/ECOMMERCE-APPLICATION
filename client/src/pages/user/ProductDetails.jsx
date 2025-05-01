@@ -108,7 +108,7 @@ export const ProductDetails = () => {
       const response = await axiosInstance.post(`/review/${reviewId}/helpful`);
       setHelpfulFeedback((prev) => ({
         ...prev,
-        [reviewId]: !prev[reportId],
+        [reviewId]: !prev[reviewId],
       }));
       toast.success(response.data.message);
     } catch (error) {
