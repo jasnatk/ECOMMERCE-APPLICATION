@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema({
       price: { type: Number, required: true },
       image: { type: String },
       seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-      status: { type: String, default: "pending" },
+      status: { type: String, enum: ['pending', 'shipped', 'delivered'], default: 'pending' },
     },
   ],
   address: {
@@ -28,7 +28,7 @@ const orderSchema = new mongoose.Schema({
   amountTotal: { type: Number, required: true },
   currency: { type: String, default: "inr" },
   stripeSessionId: { type: String },
-  status: { type: String, default: "pending" },
+  status: { type: String, enum: ['pending', 'shipped', 'delivered', 'cancelled'], default: 'pending' },
   createdAt: { type: Date, default: Date.now },
 });
 

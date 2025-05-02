@@ -9,7 +9,7 @@ export const SellerHeader = () => {
     <header className=" fixed top-0 left-0 right-0 z-50  bg-gray-900 text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-3xl font-bold ">
-          <Link to="" className="hover:text-gray-500 pl-1" style={{ fontFamily: 'Playfair Display, serif' }}>
+          <Link to="/seller/sellerDashboard" className="hover:text-gray-500 pl-1" style={{ fontFamily: 'Playfair Display, serif' }}>
             Z FASHION
           </Link>
         </h1>

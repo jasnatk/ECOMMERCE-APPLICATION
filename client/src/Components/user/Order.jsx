@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { axiosInstance } from "../../config/axiosInstance";
 import { toast } from "react-hot-toast";
-
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -15,19 +14,22 @@ const OrderDetails = () => {
   const [isOrderOpen, setIsOrderOpen] = useState(true);
   const [isAddressOpen, setIsAddressOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchOrder = async () => {
-      try {
-        const { data } = await axiosInstance.get(`/order/${orderId}`);
-        setOrder(data);
-      } catch (err) {
-        console.error("Failed to fetch order", err);
-        setError("Failed to load order details. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchOrder = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axiosInstance.get(`/order/${orderId}?t=${Date.now()}`);
+      console.log("Fetched Order:", data);
+      setOrder(data);
+      setError("");
+    } catch (err) {
+      console.error("Failed to fetch order:", err);
+      setError("Failed to load order details. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (orderId) {
       fetchOrder();
     }
@@ -53,7 +55,7 @@ const OrderDetails = () => {
         return;
       }
       const payload = {
-        productId: productId, // Ensure productId is the string _id
+        productId: productId._id || productId,
         rating,
         comment: reviews[index] || "",
       };
@@ -72,7 +74,7 @@ const OrderDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 ">
+      <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-2xl p-6 animate-pulse">
             <div className="h-8 bg-gray-700 rounded w-1/4 mb-6"></div>
@@ -102,12 +104,12 @@ const OrderDetails = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center ">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-bold text-red-500 mb-4">Something Went Wrong</h2>
           <p className="text-gray-300 mb-6">{error}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={fetchOrder}
             className="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-full hover:bg-red-600 transition-all duration-300"
           >
             Try Again
@@ -118,12 +120,12 @@ const OrderDetails = () => {
   }
 
   return (
-    <div className=" min-h-screen bg-base-100  py-6 px-4 sm:px-6 lg:px-8 pt-24">
+    <div className="min-h-screen bg-base-100 py-6 px-4 sm:px-6 lg:px-8 pt-24">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-green-600 mb-10 text-center tracking-wide">
           Order Details
         </h2>
-        <div className="bg-black bg-opacity-50 backdrop-blur-lg rounded-2xl p-2 sm:p-8 inset-shadow-zinc-700 ">
+        <div className="bg-black bg-opacity-50 backdrop-blur-lg rounded-2xl p-2 sm:p-8 inset-shadow-zinc-700">
           {/* Order Summary */}
           <div className="mb-6">
             <button
@@ -188,14 +190,32 @@ const OrderDetails = () => {
             </button>
             {isAddressOpen && (
               <div className="mt-4 text-gray-300 space-y-2 animate-slideIn">
-                <p><span className="font-medium">Name:</span> {order.address?.name || "N/A"}</p>
-                <p><span className="font-medium">Email:</span> {order.address?.email || "N/A"}</p>
-                <p><span className="font-medium">Phone:</span> {order.address?.phone || "N/A"}</p>
-                <p><span className="font-medium">Address:</span> {order.address?.line1 || "N/A"}, {order.address?.line2 || ""}</p>
-                <p><span className="font-medium">City:</span> {order.address?.city || "N/A"}</p>
-                <p><span className="font-medium">State:</span> {order.address?.state || "N/A"}</p>
-                <p><span className="font-medium">Postal Code:</span> {order.address?.postal_code || "N/A"}</p>
-                <p><span className="font-medium">Country:</span> {order.address?.country || "N/A"}</p>
+                <p>
+                  <span className="font-medium">Name:</span> {order.address?.name || "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">Email:</span> {order.address?.email || "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">Phone:</span> {order.address?.phone || "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">Address:</span> {order.address?.line1 || "N/A"},{" "}
+                  {order.address?.line2 || ""}
+                </p>
+                <p>
+                  <span className="font-medium">City:</span> {order.address?.city || "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">State:</span> {order.address?.state || "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">Postal Code:</span>{" "}
+                  {order.address?.postal_code || "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">Country:</span> {order.address?.country || "N/A"}
+                </p>
               </div>
             )}
           </div>
@@ -222,6 +242,10 @@ const OrderDetails = () => {
                     </p>
                     <p className="text-gray-300">
                       <span className="font-medium">Price:</span> ₹{item.price.toLocaleString()}
+                    </p>
+                    <p className="text-gray-300">
+                      <span className="font-medium">Status:</span>{" "}
+                      <span className="capitalize">{item.status}</span>
                     </p>
                   </div>
 
@@ -282,6 +306,15 @@ const OrderDetails = () => {
               </div>
             ))}
           </div>
+          <div className="mt-8 text-center">
+            <Link to="/user/order/my-orders">
+              <button
+                className="inline-flex items-center px-6 py-2 bg-emerald-500 text-white font-medium rounded-full hover:bg-emerald-600 transition-all duration-300"
+              >
+                Order History
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -308,4 +341,4 @@ const OrderDetails = () => {
   );
 };
 
-export default OrderDetails;   
+export default OrderDetails;

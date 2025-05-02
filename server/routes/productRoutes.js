@@ -23,7 +23,7 @@ router.post("/create-product", authSeller, upload.array("images", 5), createProd
 router.post("/create-products", authSeller, upload.any(), createMultipleProducts);
 router.put("/update-product/:productId", authSeller, upload.array("images", 5), updateProduct);
 router.delete("/remove-product/:productId", authSeller, deleteProduct);
-router.put("/update-stock/:id", authUser, updateProductStock);
+router.put("/update-stock/:productId", authSeller, updateProductStock);
 
 
 export default router;

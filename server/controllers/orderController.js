@@ -31,6 +31,7 @@ export const createOrder = async (req, res) => {
           name: productDoc.name,
           price: productDoc.price,
           image: productDoc.image,
+          status: "pending", // Explicitly set status
         };
       })
     );
@@ -55,6 +56,7 @@ export const createOrder = async (req, res) => {
     const createdOrder = await order.save();
     res.status(201).json({ message: "Order created successfully", order: createdOrder });
   } catch (error) {
+    console.error("Error creating order:", error);
     res.status(500).json({ message: "Error creating order", error: error.message });
   }
 };
@@ -112,12 +114,13 @@ export const getOrderById = async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
+    console.log("Raw order from DB:", { _id: order._id, status: order.status, products: order.products });
 
     // Filter valid products
     const validProducts = await Promise.all(
       order.products.map(async (product) => {
         if (!mongoose.Types.ObjectId.isValid(product.productId)) {
-         
+          console.warn(`Invalid productId in order ${order._id}: ${product.productId}`);
           return null;
         }
         const productDoc = await Product.findById(product.productId).select("name price image");
@@ -125,10 +128,12 @@ export const getOrderById = async (req, res) => {
           console.warn(`Product not found for ID in order ${order._id}: ${product.productId}`);
           return null;
         }
-        return {
+        const transformedProduct = {
           ...product,
           productId: productDoc,
         };
+        
+        return transformedProduct;
       })
     );
 
@@ -142,6 +147,8 @@ export const getOrderById = async (req, res) => {
       path: "products.seller",
       select: "storeName",
     });
+
+    console.log("Final order sent to frontend:", { _id: populatedOrder._id, status: populatedOrder.status });
 
     res.status(200).json(populatedOrder);
   } catch (err) {
@@ -214,23 +221,64 @@ export const getAllOrders = async (req, res) => {
 export const updateSellerProductStatus = async (req, res) => {
   try {
     const { orderId, productIndex, status } = req.body;
-    const sellerId = req.user.id;
+    const sellerId = req.seller.id;
 
+    // Validate input
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return res.status(400).json({ message: "Invalid order ID" });
+    }
+    if (!["pending", "shipped", "delivered"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+    if (!Number.isInteger(productIndex) || productIndex < 0) {
+      return res.status(400).json({ message: "Invalid product index" });
+    }
+
+    // Find the order
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    // Check if the product exists and belongs to the seller
     const product = order.products[productIndex];
     if (!product || product.seller.toString() !== sellerId) {
       return res.status(403).json({ message: "Product not found or unauthorized" });
     }
 
-    order.products[productIndex].status = status;
-    await order.save();
+    // Log current state
+    console.log("Before update - Order ID:", orderId, "Product Index:", productIndex, "Status:", product.status);
 
-    res.status(200).json({ message: "Product status updated successfully", order });
+    // Update the product status
+    order.products[productIndex].status = status;
+
+    // Determine the top-level order status
+    const allProductsShipped = order.products.every((p) => p.status === "shipped");
+    const allProductsDelivered = order.products.every((p) => p.status === "delivered");
+    const anyProductPending = order.products.some((p) => p.status === "pending");
+
+    let newOrderStatus = order.status; // Default to current status
+    if (allProductsDelivered) {
+      newOrderStatus = "delivered";
+    } else if (allProductsShipped) {
+      newOrderStatus = "shipped";
+    } else if (anyProductPending) {
+      newOrderStatus = "pending";
+    }
+
+    // Update the top-level status
+    order.status = newOrderStatus;
+
+    // Save the updated order
+    const updatedOrder = await order.save();
+
+    // Log after update
+    console.log("After update - Product Status:", updatedOrder.products[productIndex].status);
+    console.log("After update - Order Status:", updatedOrder.status);
+
+    res.status(200).json({ message: "Product status updated successfully", order: updatedOrder });
   } catch (error) {
+    console.error("Error updating product status:", error);
     res.status(500).json({ message: "Error updating product status", error: error.message });
   }
 };

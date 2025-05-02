@@ -40,6 +40,7 @@ const SellerOrders = () => {
 
   const handleStatusChange = async (orderId, productIndex, status) => {
     try {
+      console.log("Updating status:", { orderId, productIndex, status }); // Debug log
       await axiosInstance.put("/order/seller-product-status", {
         orderId,
         productIndex,
@@ -59,7 +60,7 @@ const SellerOrders = () => {
         )
       );
     } catch (err) {
-      console.error(err);
+      console.error("Status update error:", err); // Debug log
       toast.error("Failed to update status");
     }
   };
@@ -210,7 +211,7 @@ const SellerOrders = () => {
                                     onChange={(e) =>
                                       handleStatusChange(order._id, idx, e.target.value)
                                     }
-                                    className="p-1 bg-white/20 rounded-md border border-white/30 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    className="p-1 bg-white/90 rounded-md border border-white/30 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
                                   >
                                     <option value="pending">Pending</option>
                                     <option value="shipped">Shipped</option>
