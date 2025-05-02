@@ -117,7 +117,7 @@ export const getOrderById = async (req, res) => {
     const validProducts = await Promise.all(
       order.products.map(async (product) => {
         if (!mongoose.Types.ObjectId.isValid(product.productId)) {
-          console.warn(`Invalid productId in order ${order._id}: ${product.productId}`);
+         
           return null;
         }
         const productDoc = await Product.findById(product.productId).select("name price image");

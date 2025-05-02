@@ -5,8 +5,6 @@ import { LogOut, Home, List, Package, ShoppingCart } from "lucide-react";
 import { axiosInstance } from "../../config/axiosInstance";
 import { useLogout } from "../../hooks/useLogout";
 
-
-
 const SellerDashboard = () => {
   const [seller, setSeller] = useState(null);
   const [stats, setStats] = useState({
@@ -28,7 +26,6 @@ const SellerDashboard = () => {
 
         const statsRes = await axiosInstance.get("/seller/stats");
         setStats(statsRes.data.stats);
-        
       } catch (err) {
         console.error(err);
         toast.error("Failed to load dashboard data");
@@ -53,32 +50,81 @@ const SellerDashboard = () => {
     { name: "Dashboard", icon: Home, path: "/seller/sellerdashboard" },
     { name: "Product Management", icon: Package, path: "/seller/products" },
     { name: "Order Management", icon: ShoppingCart, path: "/seller/orders" },
-    { name: "Stock Mnagement", icon: List, path: "/seller/products/edit-stock/:id" },
-    
-    
-    
+    { name: "Stock Management", icon: List, path: "/seller/products/edit-stock/:id" },
   ];
 
   if (!seller) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-2xl font-semibold text-gray-600 animate-pulse">Loading...</div>
+      <div className="flex min-h-screen bg-gray-100">
+        {/* Sidebar Skeleton */}
+        <div className="fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600 text-white shadow-xl transition-all duration-300">
+          <nav className="pt-8">
+            {Array(4)
+              .fill()
+              .map((_, index) => (
+                <div
+                  key={index}
+                  className="skeleton h-10 w-full mx-6 mb-2 rounded"
+                ></div>
+              ))}
+          </nav>
+        </div>
+
+        {/* Main Content Skeleton */}
+        <div className="flex-1 ml-64 p-8">
+          {/* Header Skeleton */}
+          <header className="flex justify-between items-center mb-8">
+            <div className="skeleton h-8 w-64 rounded"></div>
+            <div className="skeleton h-10 w-32 rounded"></div>
+          </header>
+
+          {/* Stats Section Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {Array(3)
+              .fill()
+              .map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white p-6 rounded-xl shadow-lg"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <div className="skeleton h-6 w-32 rounded"></div>
+                      <div className="skeleton h-8 w-20 rounded"></div>
+                    </div>
+                    <div className="skeleton h-12 w-12 rounded-full"></div>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          {/* Quick Actions Skeleton */}
+          <div className="bg-white p-8 rounded-xl shadow-lg">
+            <div className="skeleton h-8 w-48 mb-4 rounded"></div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {Array(3)
+                .fill()
+                .map((_, index) => (
+                  <div key={index} className="skeleton h-12 w-full rounded"></div>
+                ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className=" flex-1  p-8 pt-17 flex min-h-screen bg-gray-100">
+    <div className="flex-1 p-8 pt-17 flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="fixed  left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600 text-white shadow-xl transition-all duration-300">
-        
+      <div className="fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600 text-white shadow-xl transition-all duration-300">
         <nav className="pt-8">
           {menuItems.map((item) => (
             <button
               key={item.name}
               onClick={() => navigate(item.path)}
               className={`flex items-center w-full px-6 py-3 text-left text-sm font-medium transition-all duration-200 hover:bg-blue-700 hover:text-white ${
-                location.pathname === item.path ? " hover:bg-blue-700" : ""
+                location.pathname === item.path ? "hover:bg-blue-700" : ""
               }`}
             >
               <item.icon className="w-5 h-5 mr-3" />

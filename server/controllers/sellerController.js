@@ -31,9 +31,10 @@ export const sellerSignup = async (req, res, next) => {
         // Set token in cookies
         res.cookie("token", token, {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
-            secure: NODE_ENV === "production",
-            httpOnly: NODE_ENV === "production",
-        });
+            secure: NODE_ENV === "production" ? true : false,
+            httpOnly: true, // Always secure
+            maxAge: 24 * 60 * 60 * 1000, // 1 day expiry
+          });
 
         res.json({ success: true, message: "Seller account created successfully" });
     } catch (error) {
@@ -67,9 +68,10 @@ export const sellerLogin = async (req, res, next) => {
 
         res.cookie("token", token, {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
-            secure: NODE_ENV === "production",
-            httpOnly: NODE_ENV === "production",
-        });
+            secure: NODE_ENV === "production" ? true : false,
+            httpOnly: true, // Always secure
+            maxAge: 24 * 60 * 60 * 1000, // 1 day expiry
+          });
 
         res.json({ success: true, message: "Seller login successful" });
 

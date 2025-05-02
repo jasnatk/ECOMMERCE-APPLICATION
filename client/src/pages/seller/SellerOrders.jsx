@@ -195,7 +195,7 @@ const SellerOrders = () => {
                               <img
                                 src={product.image || "https://via.placeholder.com/100"}
                                 alt={product.name}
-                                className="w-24 h-24 object-cover rounded-xl border border-white/30"
+                                className="w-30 h-40 object-contain rounded-xl border border-white/90"
                                 onError={(e) => (e.target.src = "https://via.placeholder.com/100")}
                               />
                               <div className="flex-1 text-white/90">

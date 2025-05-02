@@ -3,7 +3,7 @@ import { useFetch } from "../../hooks/useFetch";
 import { axiosInstance } from "../../config/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaPlus, FaMinus } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 export const CartPage = () => {
@@ -35,13 +35,33 @@ export const CartPage = () => {
     try {
       await axiosInstance.put("/cart/removeFromCart", { productId });
       refetch();
-      const updatedCart = products.filter(item => item.productId._id !== productId) || [];
+      const updatedCart = products.filter((item) => item.productId._id !== productId) || [];
       localStorage.setItem("cart", JSON.stringify({ products: updatedCart }));
       window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Product removed from cart!");
     } catch (error) {
       console.error("Failed to remove product:", error?.response?.data?.message || error.message);
       toast.error(error?.response?.data?.message || "Unable to remove product from cart");
+    }
+  };
+
+  const handleQuantityChange = async (productId, quantity) => {
+    if (quantity < 1) return; // Prevent quantity from going below 1
+    try {
+      await axiosInstance.post("/cart/addToCart", {
+        productId,
+        quantity: quantity - products.find((item) => item.productId._id === productId).quantity, // Send delta
+      });
+      refetch();
+      const updatedCart = products.map((item) =>
+        item.productId._id === productId ? { ...item, quantity } : item
+      );
+      localStorage.setItem("cart", JSON.stringify({ products: updatedCart }));
+      window.dispatchEvent(new Event("cartUpdated"));
+      toast.success("Quantity updated!");
+    } catch (error) {
+      console.error("Failed to update quantity:", error?.response?.data?.message || error.message);
+      toast.error(error?.response?.data?.message || "Unable to update quantity");
     }
   };
 
@@ -94,7 +114,7 @@ export const CartPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-base-100 p-4 ">
+      <div className="min-h-screen bg-base-100 p-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center mb-6">
             <div className="h-6 md:h-8 w-32 md:w-48 bg-base-200 rounded animate-pulse mb-4"></div>
@@ -133,7 +153,7 @@ export const CartPage = () => {
 
   if ((products.length === 0 && !isCartEmpty) || isCartEmpty) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-base-100 p-4 ">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-base-100 p-4">
         <h2 className="text-3xl md:text-4xl font-bold text-base-content mb-4 font-playfair text-center">
           Your Cart is Empty
         </h2>
@@ -152,7 +172,7 @@ export const CartPage = () => {
 
   return (
     <div className="pt-24">
-      <div className="min-h-screen bg-base-100 p-4 md:p-8 ">
+      <div className="min-h-screen bg-base-100 p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-extrabold text-base-content text-center mb-4 tracking-tight font-playfair">
             Your Shopping Cart ({products.length} {products.length === 1 ? "item" : "items"})
@@ -187,14 +207,50 @@ export const CartPage = () => {
                   >
                     <div className="flex items-center gap-4 w-full md:w-auto">
                       <img
-                        className="h-16 w-16 md:h-20 md:w-20 object-contain rounded-md shadow-sm"
+                        className="h-16 w-16 md:h-20 md:w-20 object-contain rounded-md shadow-sm cursor-pointer"
                         src={item?.productId?.images?.[0]?.url}
                         alt={item?.productId?.name}
+                        onClick={() => navigate(`/productDetails/${item.productId._id}`)}
+                        onError={(e) => {
+                          console.warn(`Failed to load image for ${item?.productId?.name}: ${item?.productId?.images?.[0]?.url}`);
+                          e.target.src = "https://via.placeholder.com/150";
+                        }}
                       />
-                      <span className="font-medium text-base-content text-sm">{item?.productId?.name}</span>
+                      <span
+                        className="font-medium text-base-content text-sm cursor-pointer hover:text-teal-600"
+                        onClick={() => navigate(`/productDetails/${item.productId._id}`)}
+                      >
+                        {item?.productId?.name}
+                      </span>
                     </div>
                     <span className="text-base-content text-sm">₹{item?.productId?.price.toLocaleString()}</span>
-                    <span className="text-base-content text-sm">{item?.quantity}</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleQuantityChange(item.productId._id, item.quantity - 1)}
+                        className="btn btn-ghost btn-sm"
+                        disabled={item.quantity <= 1}
+                      >
+                        <FaMinus />
+                      </button>
+                      <input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value, 10);
+                          if (!isNaN(value) && value > 0) {
+                            handleQuantityChange(item.productId._id, value);
+                          }
+                        }}
+                        min="1"
+                        className="input input-bordered input-sm w-16 text-center"
+                      />
+                      <button
+                        onClick={() => handleQuantityChange(item.productId._id, item.quantity + 1)}
+                        className="btn btn-ghost btn-sm"
+                        >
+                        <FaPlus />
+                      </button>
+                    </div>
                     <span className="text-base-content text-sm">
                       ₹{(item?.productId?.price * item?.quantity).toLocaleString()}
                     </span>
@@ -242,4 +298,3 @@ export const CartPage = () => {
     </div>
   );
 };
-

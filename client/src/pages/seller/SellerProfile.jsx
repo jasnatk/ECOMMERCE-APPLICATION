@@ -29,15 +29,15 @@ const SellerProfile = () => {
   }
 
   return (
-    <div className="p-6 bg-base-200 min-h-screen pt-24">
-      <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-center">
+    <div className="p-6 min-h-screen pt-24 bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 text-white">
+      <div className="max-w-4xl mx-auto  shadow-xl rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-center">
         <img
           src={seller.profilePic || "/image/seller1.jpg"}
           alt="Seller Profile"
-          className="w-40 h-40 object-cover rounded-full border-4 border-gray-200"
+          className=" bg-base-200 w-40 h-40 object-cover rounded-full border-4 border-gray-200"
         />
-        <div className="flex-1 space-y-2 text-center md:text-left">
-          <h2 className="text-2xl font-semibold">{seller.name}</h2>
+        <div className=" flex-1 space-y-2 text-center md:text-left">
+          <h2 className=" text-2xl font-semibold">{seller.name}</h2>
           <p><span className="font-medium">Email:</span> {seller.email}</p>
           <p><span className="font-medium">Phone:</span> {seller.phone}</p>
           <p><span className="font-medium">Address:</span> {seller.address}</p>
