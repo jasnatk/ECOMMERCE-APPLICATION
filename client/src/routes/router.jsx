@@ -184,11 +184,11 @@ errorElement: <ErrorPage />,
                               element: <SellerOrders/>,
                                },
                                {
-                                path: "products/edit-stock/:id",
+                                path: "products/stock",
                                 element: <Stock/>,
                                  },
                                  {
-                                  path: "products/edit-stock/:id/update",
+                                  path: "products/edit-stock/:id",
                                   element: <EditStock/>,
                                    },
                               

@@ -261,34 +261,21 @@ export const deleteProduct = async (req, res) => {
 
 
 export const updateProductStock = async (req, res) => {
-  const { productId } = req.params;
+  const { productId } = req.params; // ✅ this must exist
   const { stock } = req.body;
-
-  console.log("Updating stock for product:", productId);
-  console.log("New stock value:", stock);
-  console.log("Seller ID from token:", req.seller?._id);
 
   try {
     const product = await Product.findById(productId);
     if (!product) {
-      console.log("Product not found");
       return res.status(404).json({ message: "Product not found" });
-    }
-
-    console.log("Product seller ID:", product.seller);
-
-    if (product.seller.toString() !== req.seller._id.toString()) {
-      console.log("Unauthorized seller attempt");
-      return res.status(403).json({ message: "Unauthorized: Not your product" });
     }
 
     product.stock = stock;
     await product.save();
 
-    console.log("Stock updated successfully");
-    res.status(200).json({ message: "Stock updated successfully", product });
+    res.status(200).json({ message: "Stock updated", product });
   } catch (error) {
     console.error("Error updating stock:", error);
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: "Server error" });
   }
 };

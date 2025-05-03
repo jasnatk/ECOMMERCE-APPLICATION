@@ -14,10 +14,11 @@ const EditStock = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axiosInstance.get(`/product/${id}`);
+        const res = await axiosInstance.get(`/product/productDetails/${id}`);
         setStock(res.data.stock || 0);
         setProductName(res.data.name || "Product");
       } catch (err) {
+        console.error("Error fetching product:", err.response?.data, err.message);
         toast.error("Failed to fetch product", { duration: 4000 });
       } finally {
         setLoading(false);
@@ -31,7 +32,7 @@ const EditStock = () => {
     try {
       await axiosInstance.put(`/product/update-stock/${id}`, { stock });
       toast.success("Stock updated successfully", { duration: 4000 });
-      navigate("/seller/stock");
+      navigate("/seller/products/stock");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update stock", { duration: 4000 });
     }

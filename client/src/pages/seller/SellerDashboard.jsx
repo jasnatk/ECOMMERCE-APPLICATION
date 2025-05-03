@@ -50,7 +50,7 @@ const SellerDashboard = () => {
     { name: "Dashboard", icon: Home, path: "/seller/sellerdashboard" },
     { name: "Product Management", icon: Package, path: "/seller/products" },
     { name: "Order Management", icon: ShoppingCart, path: "/seller/orders" },
-    { name: "Stock Management", icon: List, path: "/seller/products/edit-stock/:id" },
+    { name: "Stock Management", icon: List, path: "/seller/products/stock" },
   ];
 
   if (!seller) {

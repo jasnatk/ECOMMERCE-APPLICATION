@@ -29,7 +29,7 @@ const SellerProfile = () => {
   }
 
   return (
-    <div className="p-6 min-h-screen pt-24 bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 text-white">
+    <div className="p-6 min-h-screen pt-44 bg-gradient-to-br from-purple-400 via-indigo-600 to-blue-700 text-white">
       <div className="max-w-4xl mx-auto  shadow-xl rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-center">
         <img
           src={seller.profilePic || "/image/seller1.jpg"}

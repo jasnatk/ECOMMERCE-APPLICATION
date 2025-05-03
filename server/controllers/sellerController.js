@@ -173,4 +173,31 @@ export const getProductsBySeller = async (req, res) => {
   };
   // In your Express routes (e.g., routes/seller.js)
 
-  
+  // Update Seller Profile
+export const updateSellerProfile = async (req, res) => {
+  try {
+    const sellerId = req.seller.id;
+    const { name, phone, address, profilePic } = req.body;
+
+    const seller = await Seller.findById(sellerId);
+    if (!seller) {
+      return res.status(404).json({ message: "Seller not found" });
+    }
+
+    seller.name = name || seller.name;
+    seller.phone = phone || seller.phone;
+    seller.address = address || seller.address;
+    seller.profilePic = profilePic || seller.profilePic;
+
+    await seller.save();
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      userData: seller,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Failed to update profile" });
+  }
+};
