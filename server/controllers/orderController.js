@@ -116,7 +116,6 @@ export const getOrderById = async (req, res) => {
     const validProducts = await Promise.all(
       order.products.map(async (product) => {
         if (!mongoose.Types.ObjectId.isValid(product.productId)) {
-          console.warn(`Invalid productId in order ${order._id}: ${product.productId}`);
           return null;
         }
         const productDoc = await Product.findById(product.productId).select("name price image");
@@ -241,7 +240,7 @@ export const updateSellerProductStatus = async (req, res) => {
       return res.status(403).json({ message: "Product not found or unauthorized" });
     }
 
-    console.log("Before update - Order ID:", orderId, "Product Index:", productIndex, "Status:", product.status);
+   
 
     order.products[productIndex].status = status;
 
@@ -261,10 +260,6 @@ export const updateSellerProductStatus = async (req, res) => {
     order.status = newOrderStatus;
 
     const updatedOrder = await order.save();
-
-    console.log("After update - Product Status:", updatedOrder.products[productIndex].status);
-    console.log("After update - Order Status:", updatedOrder.status);
-
     res.status(200).json({ message: "Product status updated successfully", order: updatedOrder });
   } catch (error) {
     console.error("Error updating product status:", error);

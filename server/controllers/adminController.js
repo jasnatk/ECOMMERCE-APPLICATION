@@ -118,15 +118,6 @@ export const checkAdmin = async (req, res, next) => {
   }
 };
 
-// Get All Users
-export const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find();
-    res.status(200).json(users);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
 
 // Deactivate User
 export const deactivateUser = async (req, res) => {
@@ -152,5 +143,15 @@ export const deleteUser = async (req, res) => {
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+// Get all users (for admin dashboard)
+export const getAllUsers = async (req, res) => {
+  try {
+      const users = await User.find().select('-password'); 
+      res.json({ users });
+  } catch (error) {
+      console.log("Error in getAllUsers:", error.message);
+      res.status(500).json({ message: error.message || "Internal server error" });
   }
 };

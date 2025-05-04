@@ -3,13 +3,17 @@ import express from "express";
 import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
 import {authAdmin} from "../middleware/authAdmin.js";
+import { authUser } from "../middleware/authUser.js";
 import Seller from '../models/sellerModel.js';
 import {
   adminLogout,
   getAdminProfile,
   adminSignUp,
   adminLogin,
-  checkAdmin
+  checkAdmin,
+  deactivateUser,
+  deleteUser,
+  getAllUsers,
 } from '../controllers/adminController.js';
 
 const router = express.Router();
@@ -68,5 +72,10 @@ router.get("/sellers", async (req, res) => {
 router.post('/logout', adminLogout);
 router.get('/profile', getAdminProfile);
 router.get("/check-admin", checkAdmin);
+
+// Admin user management
+router.get("/users", authUser, authAdmin, getAllUsers);
+router.put('/deactivate/:id', authUser, authAdmin, deactivateUser);
+router.delete('/delete/:id', authUser, authAdmin, deleteUser);
 
 export default router;

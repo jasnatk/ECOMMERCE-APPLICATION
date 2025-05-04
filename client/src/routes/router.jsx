@@ -38,6 +38,7 @@ import EditStock from "../pages/seller/EditStock";
 import MyOrders from "../Components/user/MyOrders";
 import { AdminOrders } from "../pages/admin/AdminOrders";
 import AllProduct from "../Components/admin/AllProduct";
+import { ManageCustomers } from "../pages/admin/ManageCustomers";
 
 
 
@@ -240,6 +241,10 @@ errorElement: <ErrorPage />,
                                {
                                 path: "orders",
                                 element: <AdminOrders/>
+                               },
+                               {
+                                path: "users",
+                                element: <ManageCustomers/>
                                },
                              ]}
 
