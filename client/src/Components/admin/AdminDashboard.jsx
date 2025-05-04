@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FiUser, FiMenu, FiX, FiDollarSign, FiPackage, FiUsers, FiShoppingBag, FiBox, FiList } from 'react-icons/fi';
 import { AdminHeader } from './AdminHeader';
 
@@ -36,50 +36,57 @@ const StatsCard = ({ title, value, icon, color }) => (
   </div>
 );
 
-// Sidebar Component
-const Sidebar = ({ isOpen, setIsOpen }) => {
+// Sidebar Component (Exported)
+export const Sidebar = ({ isOpen, setIsOpen }) => {
   const navItems = [
     { to: '/admin/admindashboard', label: 'Dashboard', icon: <FiList /> },
     { to: '/admin/manage-sellers', label: 'Sellers', icon: <FiUsers /> },
     { to: '/admin/products', label: 'Products', icon: <FiBox /> },
     { to: '/admin/orders', label: 'Orders', icon: <FiPackage /> },
-    { to: '/admin/customers', label: 'Customers', icon: <FiUsers /> },
+   
   ];
 
   return (
-    <div
-      className={`fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-white transform ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      } lg:translate-x-0 lg:static lg:inset-0 transition-transform duration-300 ease-in-out`}
-    >
-      <div className="flex items-center justify-between p-8 border-b border-gray-700">
-        <button onClick={() => setIsOpen(false)} className="lg:hidden">
-          <FiX className="text-2xl" />
-        </button>
+    <>
+      <div
+        className={`fixed inset-y-0 left-0 z-30 w-54 bg-gray-900 text-white transform ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:translate-x-0 transition-transform duration-300 ease-in-out`}
+      >
+        <div className="flex items-center justify-between p-8 border-b border-gray-700">
+          <button onClick={() => setIsOpen(false)} className="md:hidden">
+            <FiX className="text-2xl" />
+          </button>
+        </div>
+        <nav className="p-4 space-y-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="flex items-center p-2 rounded-lg hover:bg-gray-700"
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="mr-3">{item.icon}</span>
+              {item.label}
+            </Link>
+          ))}
+        </nav>
       </div>
-      <nav className="p-4 space-y-2">
-        {navItems.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            className="flex items-center p-2 rounded-lg hover:bg-gray-700"
-            onClick={() => setIsOpen(false)}
-          >
-            <span className="mr-3">{item.icon}</span>
-            {item.label}
-          </Link>
-        ))}
-      </nav>
-    </div>
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          onClick={() => setIsOpen(false)}
+        ></div>
+      )}
+    </>
   );
 };
-
 
 // RecentOrdersTable Component
 const RecentOrdersTable = () => {
   const orders = [
-    { id: '1234', customer: 'John Doe', total: '$150.00', status: 'Pending' },
-    { id: '1235', customer: 'Jane Smith', total: '$89.99', status: 'Shipped' },
+    { id: '1234', customer: 'John Doe', total: '150.00', status: 'Pending' },
+    { id: '1235', customer: 'Jane Smith', total: '800.00', status: 'Shipped' },
   ];
 
   return (
@@ -134,19 +141,18 @@ export const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen  bg-gray-100 dark:bg-gray-900 flex">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-      <div className="flex-1 lg:ml-12  pt-16 transition-all duration-300">
+      <div className="flex-1 md:ml-64 pt-16 transition-all duration-300">
         <AdminHeader setSidebarOpen={setSidebarOpen} />
-        <main className="p-6 mt-">
+        <main className="p-6">
           <h1 className="text-2xl font-bold text-purple-700 dark:text-white mb-6">
-             DASHBOARD
+            DASHBOARD
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatsCard
               title="Total Sales"
-              value="12,345"
-              icon={<FiDollarSign />}
+              value="345"
               color="text-green-600"
             />
             <StatsCard
@@ -157,7 +163,7 @@ export const AdminDashboard = () => {
             />
             <StatsCard
               title="Customers"
-              value="1,234"
+              value="234"
               icon={<FiUsers />}
               color="text-purple-600"
             />

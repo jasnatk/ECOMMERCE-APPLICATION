@@ -31,7 +31,7 @@ export const createOrder = async (req, res) => {
           name: productDoc.name,
           price: productDoc.price,
           image: productDoc.image,
-          status: "pending", // Explicitly set status
+          status: "pending",
         };
       })
     );
@@ -63,12 +63,10 @@ export const createOrder = async (req, res) => {
 
 export const getMyOrders = async (req, res) => {
   try {
-    // Fetch orders and pre-filter products with valid productId
     const orders = await Order.find({ user: req.user.id })
       .sort({ createdAt: -1 })
       .lean();
 
-    // Clean orders by filtering valid productId values
     const cleanedOrders = await Promise.all(
       orders.map(async (order) => {
         const validProducts = await Promise.all(
@@ -84,7 +82,7 @@ export const getMyOrders = async (req, res) => {
             }
             return {
               ...product,
-              productId: productDoc, // Replace productId with populated data
+              productId: productDoc,
             };
           })
         );
@@ -95,10 +93,9 @@ export const getMyOrders = async (req, res) => {
       })
     );
 
-    // Populate seller data
     const populatedOrders = await Order.populate(cleanedOrders, {
       path: "products.seller",
-      select: "storeName",
+      select: "name",
     });
 
     res.status(200).json({ orders: populatedOrders });
@@ -116,7 +113,6 @@ export const getOrderById = async (req, res) => {
     }
     console.log("Raw order from DB:", { _id: order._id, status: order.status, products: order.products });
 
-    // Filter valid products
     const validProducts = await Promise.all(
       order.products.map(async (product) => {
         if (!mongoose.Types.ObjectId.isValid(product.productId)) {
@@ -142,10 +138,9 @@ export const getOrderById = async (req, res) => {
       products: validProducts.filter((p) => p !== null),
     };
 
-    // Populate seller
     const populatedOrder = await Order.populate(cleanedOrder, {
       path: "products.seller",
-      select: "storeName",
+      select: "name",
     });
 
     console.log("Final order sent to frontend:", { _id: populatedOrder._id, status: populatedOrder.status });
@@ -186,7 +181,6 @@ export const getAllOrders = async (req, res) => {
         const validProducts = await Promise.all(
           order.products.map(async (product) => {
             if (!mongoose.Types.ObjectId.isValid(product.productId)) {
-              console.warn(`Invalid productId in order ${order._id}: ${product.productId}`);
               return null;
             }
             const productDoc = await Product.findById(product.productId).select("name price image");
@@ -209,7 +203,7 @@ export const getAllOrders = async (req, res) => {
 
     const populatedOrders = await Order.populate(cleanedOrders, [
       { path: "user", select: "name email" },
-      { path: "products.seller", select: "storeName" },
+      { path: "products.seller", select: "name" },
     ]);
 
     res.status(200).json(populatedOrders);
@@ -223,7 +217,6 @@ export const updateSellerProductStatus = async (req, res) => {
     const { orderId, productIndex, status } = req.body;
     const sellerId = req.seller.id;
 
-    // Validate input
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
       return res.status(400).json({ message: "Invalid order ID" });
     }
@@ -234,30 +227,29 @@ export const updateSellerProductStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid product index" });
     }
 
-    // Find the order
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Check if the product exists and belongs to the seller
+    if (!order.reviewedByAdmin) {
+      return res.status(403).json({ message: "Order must be reviewed by admin before shipping" });
+    }
+
     const product = order.products[productIndex];
     if (!product || product.seller.toString() !== sellerId) {
       return res.status(403).json({ message: "Product not found or unauthorized" });
     }
 
-    // Log current state
     console.log("Before update - Order ID:", orderId, "Product Index:", productIndex, "Status:", product.status);
 
-    // Update the product status
     order.products[productIndex].status = status;
 
-    // Determine the top-level order status
     const allProductsShipped = order.products.every((p) => p.status === "shipped");
     const allProductsDelivered = order.products.every((p) => p.status === "delivered");
     const anyProductPending = order.products.some((p) => p.status === "pending");
 
-    let newOrderStatus = order.status; // Default to current status
+    let newOrderStatus = order.status;
     if (allProductsDelivered) {
       newOrderStatus = "delivered";
     } else if (allProductsShipped) {
@@ -266,13 +258,10 @@ export const updateSellerProductStatus = async (req, res) => {
       newOrderStatus = "pending";
     }
 
-    // Update the top-level status
     order.status = newOrderStatus;
 
-    // Save the updated order
     const updatedOrder = await order.save();
 
-    // Log after update
     console.log("After update - Product Status:", updatedOrder.products[productIndex].status);
     console.log("After update - Order Status:", updatedOrder.status);
 
@@ -323,12 +312,39 @@ export const getSellerOrders = async (req, res) => {
 
     const populatedOrders = await Order.populate(cleanedOrders.filter((o) => o !== null), {
       path: "products.seller",
-      select: "storeName",
+      select: "name",
     });
 
     res.status(200).json(populatedOrders);
   } catch (error) {
     console.error("Error fetching seller orders:", error);
     res.status(500).json({ message: "Server error fetching seller orders", error: error.message });
+  }
+};
+
+export const reviewOrderByAdmin = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return res.status(400).json({ message: "Invalid order ID" });
+    }
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.reviewedByAdmin) {
+      return res.status(400).json({ message: "Order already reviewed by admin" });
+    }
+
+    order.reviewedByAdmin = true;
+    await order.save();
+
+    res.status(200).json({ message: "Order approved by admin", order });
+  } catch (error) {
+    console.error("Admin review error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

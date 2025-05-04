@@ -72,24 +72,7 @@ export const Profile = () => {
           >
             Edit Profile
           </button>
-          <button
-            className="btn w-full font-[Playfair Display] text-lg text-white bg-gradient-to-r from-teal-400 to-teal-900 hover:from-teal-600 hover:to-teal-500 transition-all duration-300 transform hover:-translate-y-1 rounded-xl"
-            onClick={() => navigate("/user/order/my-orders")}
-          >
-            My Orders
-          </button>
-          <button
-            className="btn w-full font-[Playfair Display] text-lg text-white bg-gradient-to-r from-teal-400 to-teal-900 hover:from-teal-600 hover:to-teal-500 transition-all duration-300 transform hover:-translate-y-1 rounded-xl"
-            onClick={() => navigate("/change-password")}
-          >
-            Change Password
-          </button>
-          <button
-            className="btn w-full font-[Playfair Display] text-lg text-white bg-gradient-to-r from-teal-400 to-teal-900 hover:from-teal-600 hover:to-teal-500 transition-all duration-300 transform hover:-translate-y-1 rounded-xl"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+         
         </div>
         <style>{`
           @keyframes slideIn {

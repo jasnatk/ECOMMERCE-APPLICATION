@@ -61,7 +61,7 @@ const SellerOrders = () => {
       );
     } catch (err) {
       console.error("Status update error:", err); // Debug log
-      toast.error("Failed to update status");
+      toast.error("Order has not been reviewed by the admin. Please wait for admin approval before proceeding");
     }
   };
 

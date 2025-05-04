@@ -9,7 +9,8 @@ import {
     cancelOrder,
     getAllOrders,
     getSellerOrders,
-    updateSellerProductStatus
+    updateSellerProductStatus,
+    reviewOrderByAdmin
 } from "../controllers/orderController.js";
 import authSeller from "../middleware/authSeller.js";
 
@@ -23,6 +24,8 @@ router.put("/seller-product-status", authSeller, updateSellerProductStatus);
 router.get("/:orderId", authUser, getOrderById);
 router.put("/:id/cancel", authUser, cancelOrder);
 router.get("/", authAdmin, getAllOrders);
+router.put("/:orderId/review", authAdmin, reviewOrderByAdmin);
+
 
 
 export default router;

@@ -10,7 +10,7 @@ import {
   getProductDetails,
   updateProductStock,
 } from "../controllers/productController.js";
-import { authUser } from "../middleware/authUser.js";
+
 
 const router = express.Router();
 

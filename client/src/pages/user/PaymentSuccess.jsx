@@ -37,7 +37,7 @@ const PaymentSuccess = () => {
         // Redirect to order details after 5 seconds
         setTimeout(() => {
           navigate(`/user/order/${data.orderId}`);
-        }, 4000);
+        }, 3000);
       } catch (err) {
         console.error("Error processing payment success:", err.response?.data || err);
         toast.error(err.response?.data?.message || "Failed to process payment. Please try again.");

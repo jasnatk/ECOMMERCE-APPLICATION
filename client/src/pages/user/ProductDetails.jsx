@@ -293,13 +293,13 @@ export const ProductDetails = () => {
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-8 sm:mt-12">
-          <h2 className="text-xl sm:text-2xl font-bold text-base-content font-playfair mb-4">
+        <div className="mt-16 sm:mt-12">
+          <h2 className="text-xl sm:text-2xl pt-8  font-bold text-base-content font-playfair mb-4">
             Customer Reviews
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* Rating Summary (Left Column) */}
-            <div className="bg-base-100 p-4 rounded-lg border border-base-200">
+            <div className="bg-base-100 p-2 rounded-lg border border-base-200">
               <div className="flex items-center gap-2 sm:gap-4">
                 <Rating
                   initialRating={product?.rating || 0}

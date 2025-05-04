@@ -30,6 +30,8 @@ const orderSchema = new mongoose.Schema({
   stripeSessionId: { type: String },
   status: { type: String, enum: ['pending', 'shipped', 'delivered', 'cancelled'], default: 'pending' },
   createdAt: { type: Date, default: Date.now },
+  reviewedByAdmin: { type: Boolean, default: false }, 
+
 });
 
 const Order = mongoose.model("Order", orderSchema);

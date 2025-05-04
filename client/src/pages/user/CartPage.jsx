@@ -247,7 +247,7 @@ export const CartPage = () => {
                       <button
                         onClick={() => handleQuantityChange(item.productId._id, item.quantity + 1)}
                         className="btn btn-ghost btn-sm"
-                        >
+                      >
                         <FaPlus />
                       </button>
                     </div>
@@ -286,7 +286,8 @@ export const CartPage = () => {
                 <button
                   onClick={makePayment}
                   disabled={isPaying || products.length === 0}
-                  className={`btn btn-success btn-md w-full ${isPaying ? "btn-disabled" : ""}`}
+                  className={`w-full py-2 px-4 text-black font-medium rounded-md ${isPaying || products.length === 0 ? "bg-yellow-300 cursor-not-allowed opacity-60" : "bg-yellow-300 hover:bg-yellow-400"
+                    }`}
                 >
                   {isPaying ? "Processing..." : "Proceed to Checkout"}
                 </button>

@@ -31,12 +31,13 @@ import EditProductForm from "../Components/seller/EditProduct";
 import { ProtectAdminRoutes } from "./ProtectAdminRoutes";
 import AdminProfile from "../pages/admin/AdminProfile";
 import ManageSellers from "../pages/seller/ManageSellers";
-import { ManageOrders } from "../pages/admin/ManageOrders";
 import SellerOrders from "../pages/seller/SellerOrders";
 import OrderDetails from "../Components/user/Order";
 import Stock from "../Components/seller/StockManagement";
 import EditStock from "../pages/seller/EditStock";
 import MyOrders from "../Components/user/MyOrders";
+import { AdminOrders } from "../pages/admin/AdminOrders";
+import AllProduct from "../Components/admin/AllProduct";
 
 
 
@@ -218,6 +219,11 @@ errorElement: <ErrorPage />,
                       path: "logout",
                       element: <LogoutPage role ="admin"/>,
                     },
+                    {
+                      path: "products",
+                      element: <AllProduct/>,
+                    },
+                    
 
                           {   
                              element: <ProtectAdminRoutes/>,
@@ -232,8 +238,8 @@ errorElement: <ErrorPage />,
                                },
 
                                {
-                                path: "manage-orders",
-                                element: <ManageOrders/>
+                                path: "orders",
+                                element: <AdminOrders/>
                                },
                              ]}
 

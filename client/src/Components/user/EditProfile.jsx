@@ -3,7 +3,6 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../config/axiosInstance";
 
-
 export const EditProfile = () => {
     const [formData, setFormData] = useState({
         name: "",
@@ -37,7 +36,7 @@ export const EditProfile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axiosInstance.put("/user/editprofile", formData);
+            await axiosInstance.put("/user/editprofile", formData);
             toast.success("Profile updated successfully!");
             navigate("/user/profile");
         } catch (error) {
@@ -47,103 +46,90 @@ export const EditProfile = () => {
     };
 
     return (
-        <div className="min-h-screen  flex items-center justify-center p-6 pt-24 ">
-            <div className="bg-gradient-to-tr from-teal-400  to-teal-600 card w-full max-w-md bg-white/30 backdrop-blur-xl shadow-xl border border-gray-300/50 hover:shadow-2xl hover:border-white transition-all duration-500 p-6 rounded-2xl">
-                {/* Subtle Background Glow */}
-                <div className="absolute inset-0 bg-gradient-to-t from-teal-800/20 to-transparent rounded-3xl -z-10 animate-fadeIn"></div>
+        <div className="min-h-screen flex items-center justify-center px-4 pt-24 bg-gray-100 ">
+            <div className="w-3/4 md:w-[450px] bg-white p-8 rounded-2xl shadow-lg">
 
-                {/* Title */}
-                <h2 className="text-4xl font-[Playfair Display] font-bold text-white text-center mb-8 bg-clip-text bg-gradient-to-r from-teal-400 via-teal-300 to-teal-400 animate-gradientText">
-                    Edit Profile
+                <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
+                    Edit Your Profile
                 </h2>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="relative">
+                {/* Profile Pic Preview */}
+                {formData.profilePic && (
+                    <div className="flex justify-center mb-6">
+                        <img
+                            src={formData.profilePic}
+                            alt="Profile Preview"
+                            className="h-24 w-24 rounded-full object-cover border-2 border-teal-500 shadow-sm"
+                        />
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Name</label>
                         <input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            placeholder="Name"
-                            className="input input-bordered w-full font-medium  bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
-                        />
+                            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
+/>
+                        
                     </div>
-                    <div className="relative">
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Email</label>
                         <input
                             type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="Email"
-                            className="input input-bordered w-full font-medium bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
+                            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
                         />
                     </div>
-                    <div className="relative">
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Phone Number</label>
                         <input
                             type="text"
                             name="phoneNumber"
                             value={formData.phoneNumber}
                             onChange={handleChange}
-                            placeholder="Phone Number"
-                            className="input input-bordered w-full font-medium bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
+                            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
                         />
                     </div>
-                    <div className="relative">
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Address</label>
                         <input
                             type="text"
                             name="address"
                             value={formData.address}
                             onChange={handleChange}
-                            placeholder="Address"
-                            className="input input-bordered w-full font-medium bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
+                             className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
                         />
                     </div>
-                    <div className="relative">
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Profile Picture URL</label>
                         <input
                             type="text"
                             name="profilePic"
                             value={formData.profilePic}
                             onChange={handleChange}
-                            placeholder="Profile Picture URL"
-                            className="input input-bordered w-full font-medium bg-teal-100/50 text-white placeholder-teal-300 border-teal-600 focus:border-teal-300 focus:ring-2 focus:ring-teal-400 rounded-xl p-4 transition-all duration-300 hover:bg-teal-800/70 hover:shadow-[0_0_12px_rgba(14,51,34,0.3)]"
+                            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
                         />
                     </div>
+
                     <button
                         type="submit"
-                        className="btn w-full font-[Playfair Display] text-xl text-white  bg-gradient-to-r from-teal-600 to-teal-600 hover:from-teal-700 hover:to-teal-700 hover:shadow-[0_0_20px_rgba(14,51,34,0.7)] transition-all duration-300 transform hover:-translate-y-2 rounded-xl"
+                        className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 rounded-lg transition-all"
                     >
-                        Update Profile
+                        Save Changes
                     </button>
                 </form>
-
-                {/* Inline CSS for Animations */}
-                <style>{`
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: scale(0.98);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-    @keyframes gradientText {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    .animate-fadeIn {
-        animation: fadeIn 0.6s ease-in forwards;
-    }
-    .animate-gradientText {
-        background-size: 200% 200%;
-        animation: gradientText 5s ease infinite;
-    }
-`}</style>
-
             </div>
         </div>
     );
 };
+   

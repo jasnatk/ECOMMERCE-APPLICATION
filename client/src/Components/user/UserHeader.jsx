@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion"; // For animations
 import { DarkMode } from "../shared/DarkMode";
-import { FaSearch, FaUser, FaHeart, FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
+import { FaSearch, FaUser, FaHeart, FaShoppingCart, FaBars, FaTimes, FaUserCircle, FaBox, FaLock, FaSignOutAlt } from "react-icons/fa";
 
 export const UserHeader = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   const handleSearchChange = (e) => setSearchQuery(e.target.value);
@@ -32,6 +37,33 @@ export const UserHeader = () => {
     return () => window.removeEventListener("cartUpdated", cartUpdatedListener);
   }, []);
 
+  // Handle scroll to show/hide header
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setIsHeaderVisible(false);
+      } else if (currentScrollY < lastScrollY) {
+        setIsHeaderVisible(true);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
+  // Handle outside click to close dropdown
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
   // Animation variants for mobile menu
   const menuVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -39,8 +71,37 @@ export const UserHeader = () => {
     exit: { opacity: 0, y: -20, transition: { duration: 0.2 } },
   };
 
+  // Animation variants for header
+  const headerVariants = {
+    visible: { y: 0, opacity: 1 },
+    hidden: { y: -100, opacity: 0 },
+  };
+
+  // Animation variants for dropdown
+  const dropdownVariants = {
+    hidden: { opacity: 0, y: 10, scale: 0.95 },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.25, ease: "easeOut" } },
+    exit: { opacity: 0, y: 10, scale: 0.95, transition: { duration: 0.2, ease: "easeIn" } },
+  };
+
+  // Dropdown item animation
+  const itemVariants = {
+    hidden: { opacity: 0, x: -10 },
+    visible: (i) => ({
+      opacity: 1,
+      x: 0,
+      transition: { delay: i * 0.07, duration: 0.25, ease: "easeOut" },
+    }),
+  };
+
   return (
-    <header className="bg-base-100 fixed top-0 left-0 right-0 z-50 px-6 py-4 shadow-lg transition-all duration-300">
+    <motion.header
+      className="bg-base-100 fixed top-0 left-0 right-0 z-50 px-6 py-4 shadow-lg transition-all duration-300"
+      variants={headerVariants}
+      initial="visible"
+      animate={isHeaderVisible ? "visible" : "hidden"}
+      transition={{ duration: 0.3 }}
+    >
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo + Nav */}
         <div className="flex items-center gap-12">
@@ -57,7 +118,7 @@ export const UserHeader = () => {
           </motion.h1>
 
           {/* Desktop Nav */}
-          <ul className=" hidden md:flex gap-8 font-medium  text-gray-700 dark:text-gray-200">
+          <ul className="hidden md:flex gap-8 font-medium text-gray-700 dark:text-gray-200">
             {["All", "Men", "Women", "Kids"].map((category) => (
               <motion.li
                 key={category}
@@ -66,7 +127,7 @@ export const UserHeader = () => {
               >
                 <Link
                   to={category === "All" ? "/product" : `/product?category=${category}`}
-                  className="hover:text-teal-500 transition-colors duration-200 text-base-content "
+                  className="hover:text-teal-500 transition-colors duration-200 text-base-content"
                 >
                   {category}
                 </Link>
@@ -103,8 +164,59 @@ export const UserHeader = () => {
               <FaSearch />
             </button>
           </form>
+          <div className="relative" ref={dropdownRef}>
+            <motion.button
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+              className="text-xl text-teal-600 dark:text-teal-300 hover:text-teal-500 dark:hover:text-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-full p-1"
+              aria-label="User menu"
+              aria-expanded={isUserDropdownOpen}
+            >
+              <FaUser />
+            </motion.button>
+            <AnimatePresence>
+              {isUserDropdownOpen && (
+                <motion.div
+                  variants={dropdownVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="absolute right-0 mt-3 w-48 bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-xl shadow-xl border border-teal-200/50 dark:border-teal-700/50 z-50 overflow-hidden"
+                  style={{ fontFamily: "'Poppins', sans-serif" }}
+                >
+                  {/* Caret/Triangle */}
+                  <div className="absolute -top-2 right-3 w-3 h-3 bg-white/90 dark:bg-gray-800/90 rotate-45 border-t border-l border-teal-200/50 dark:border-teal-700/50"></div>
+                  {[
+                    { to: "/user/profile", label: "Profile", icon: <FaUserCircle className="text-sm" /> },
+                    { to: "/user/order/my-orders", label: "My Orders", icon: <FaBox className="text-sm" /> },
+                    { to: "/change-password", label: "Change Password", icon: <FaLock className="text-sm" /> },
+                    { to: "/logout", label: "Logout", icon: <FaSignOutAlt className="text-sm" /> },
+                  ].map((item, index) => (
+                    <motion.div
+                      key={item.label}
+                      custom={index}
+                      variants={itemVariants}
+                      initial="hidden"
+                      animate="visible"
+                      whileHover={{ scale: 1.02, backgroundColor: "rgba(20, 184, 166, 0.1)" }}
+                      className="border-b border-teal-200/20 dark:border-teal-700/20 last:border-b-0"
+                    >
+                      <Link
+                        to={item.to}
+                        onClick={() => setIsUserDropdownOpen(false)}
+                        className="flex items-center gap-2 px-4 py-3 text-xs font-medium text-gray-800 dark:text-gray-100 hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-200 focus:outline-none focus:bg-teal-50 dark:focus:bg-teal-900"
+                      >
+                        <span className="text-teal-500 dark:text-teal-400">{item.icon}</span>
+                        {item.label}
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           {[
-            { to: "/user/profile", icon: <FaUser /> },
             { to: "/user/wishlist", icon: <FaHeart /> },
             { to: "/user/cart", icon: <FaShoppingCart />, hasBadge: true },
           ].map((item, index) => (
@@ -173,8 +285,61 @@ export const UserHeader = () => {
             </ul>
 
             <div className="flex justify-center gap-8 text-xl">
+              <div className="relative" ref={dropdownRef}>
+                <motion.button
+                  
+                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                  className="text-teal-600 dark:text-teal-300 hover:text-teal-500 dark:hover:text-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-full p-1"
+                  aria-label="User menu"
+                  aria-expanded={isUserDropdownOpen}
+                >
+                  <FaUser />
+                </motion.button>
+                <AnimatePresence>
+                  {isUserDropdownOpen && (
+                    <motion.div
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="absolute left-1/2 transform -translate-x-1/2 mt-3 w-48 bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-xl shadow-xl border border-teal-200/50 dark:border-teal-700/50 z-50 overflow-hidden"
+                      style={{ fontFamily: "'Poppins', sans-serif" }}
+                    >
+                      {/* Caret/Triangle */}
+                      <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-white/90 dark:bg-gray-800/90 rotate-45 border-t border-l border-teal-200/50 dark:border-teal-700/50"></div>
+                      {[
+                        { to: "/user/profile", label: "Profile", icon: <FaUserCircle className="text-sm" /> },
+                        { to: "/user/order/my-orders", label: "My Orders", icon: <FaBox className="text-sm" /> },
+                        { to: "/change-password", label: "Change Password", icon: <FaLock className="text-sm" /> },
+                        { to: "/logout", label: "Logout", icon: <FaSignOutAlt className="text-sm" /> },
+                      ].map((item, index) => (
+                        <motion.div
+                          key={item.label}
+                          custom={index}
+                          variants={itemVariants}
+                          initial="hidden"
+                          animate="visible"
+                          whileHover={{ scale: 1.02, backgroundColor: "rgba(20, 184, 166, 0.1)" }}
+                          className="border-b border-teal-200/20 dark:border-teal-700/20 last:border-b-0"
+                        >
+                          <Link
+                            to={item.to}
+                            onClick={() => {
+                              setIsUserDropdownOpen(false);
+                              setIsMenuOpen(false);
+                            }}
+                            className="flex items-center gap-2 px-4 py-3 text-xs font-medium text-gray-800 dark:text-gray-100 hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-200 focus:outline-none focus:bg-teal-50 dark:focus:bg-teal-900"
+                          >
+                            <span className="text-teal-500 dark:text-teal-400">{item.icon}</span>
+                            {item.label}
+                          </Link>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
               {[
-                { to: "/user/profile", icon: <FaUser /> },
                 { to: "/user/wishlist", icon: <FaHeart /> },
                 { to: "/user/cart", icon: <FaShoppingCart />, hasBadge: true },
               ].map((item, index) => (
@@ -203,6 +368,6 @@ export const UserHeader = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 };

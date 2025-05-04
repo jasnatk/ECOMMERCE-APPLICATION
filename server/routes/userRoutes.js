@@ -9,7 +9,7 @@ import {
   resetPassword,
   changePassword,checkUser
 } from '../controllers/userController.js';
-import { authUser } from '../middleware/authUser.js'; // Authentication middleware
+import { authUser } from '../middleware/authUser.js'; 
 
 const router = express.Router();
 
