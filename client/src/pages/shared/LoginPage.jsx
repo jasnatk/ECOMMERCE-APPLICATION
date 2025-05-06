@@ -44,6 +44,7 @@ export const LoginPage = ({ role }) => {
     try {
       const response = await axiosInstance.post(user.loginAPI, data);
       const responseData = response?.data?.data;
+      
 
       if (role === "seller") {
         dispatch(saveSeller(responseData));

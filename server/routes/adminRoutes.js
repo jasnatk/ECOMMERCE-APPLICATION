@@ -1,8 +1,7 @@
 import express from "express";
-
 import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
-import {authAdmin} from "../middleware/authAdmin.js";
+import { authAdmin } from "../middleware/authAdmin.js";
 import { authUser } from "../middleware/authUser.js";
 import Seller from '../models/sellerModel.js';
 import {
@@ -22,6 +21,7 @@ const router = express.Router();
 // Public routes
 router.post('/signup', adminSignUp);
 router.post('/login', adminLogin);
+router.post('/logout', adminLogout);
 
 // Protected routes
 router.use(authAdmin);
@@ -62,15 +62,13 @@ router.put("/products/:id/verify", async (req, res) => {
 
 router.get("/sellers", async (req, res) => {
   try {
-    const sellers = await Seller.find();  // Change User to Seller
+    const sellers = await Seller.find();
     res.json({ sellers });
   } catch (error) {
     res.status(500).json({ message: "Error fetching sellers", error });
   }
 });
 
-
-router.post('/logout', adminLogout);
 router.get('/profile', getAdminProfile);
 router.get("/check-admin", checkAdmin);
 
@@ -78,6 +76,6 @@ router.get("/check-admin", checkAdmin);
 router.get("/users", authUser, authAdmin, getAllUsers);
 router.put('/deactivate/:id', authUser, authAdmin, deactivateUser);
 router.delete('/delete/:id', authUser, authAdmin, deleteUser);
-router.put('/sellers/:id/verify',authUser, authAdmin,verifySeller);
+router.put('/sellers/:id/verify', authUser, authAdmin, verifySeller);
 
 export default router;

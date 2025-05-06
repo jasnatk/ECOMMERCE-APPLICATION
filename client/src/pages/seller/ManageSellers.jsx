@@ -32,13 +32,17 @@ const ManageSellers = () => {
   const handleVerifySeller = async (sellerId) => {
     try {
       const res = await axiosInstance.put(`/admin/sellers/${sellerId}/verify`);
-      setSellers((prevSellers) =>
-        prevSellers.map((seller) =>
+      console.log('Response from verifySeller:', res.data);
+      setSellers((prevSellers) => {
+        const updatedSellers = prevSellers.map((seller) =>
           seller._id === sellerId ? { ...seller, isVerified: res.data.seller.isVerified } : seller
-        )
-      );
+        );
+        console.log('Updated sellers:', updatedSellers); // Log the updated state
+        return updatedSellers;
+      });
       toast.success(res.data.message);
     } catch (err) {
+      console.error('Error in handleVerifySeller:', err.response?.data, err.message);
       const msg = err.response?.data?.message || "Failed to update seller verification";
       toast.error(msg);
     }
