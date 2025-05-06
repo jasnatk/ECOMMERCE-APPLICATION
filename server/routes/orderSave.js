@@ -32,7 +32,7 @@ router.get("/paymentsuccess", async (req, res) => {
     const address = {
       name: customer.name,
       email: customer.email,
-      phone: customer.phone,
+      phone: customer.phoneNumber,
       line1: customer.address?.line1,
       line2: customer.address?.line2,
       city: customer.address?.city,

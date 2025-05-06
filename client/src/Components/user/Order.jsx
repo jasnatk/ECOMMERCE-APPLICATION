@@ -197,7 +197,7 @@ const OrderDetails = () => {
                   <span className="font-medium">Email:</span> {order.address?.email || "N/A"}
                 </p>
                 <p>
-                  <span className="font-medium">Phone:</span> {order.address?.phone || "N/A"}
+                  <span className="font-medium">Phone:</span> {order.address?.phoneNumber || "N/A"}
                 </p>
                 <p>
                   <span className="font-medium">Address:</span> {order.address?.line1 || "N/A"},{" "}

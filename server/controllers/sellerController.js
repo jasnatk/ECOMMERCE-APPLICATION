@@ -8,10 +8,10 @@ const NODE_ENV = process.env.NODE_ENV;
 // Seller Signup
 export const sellerSignup = async (req, res, next) => {
     try {
-        const { name, email, password, phone, address, profilePic } = req.body;
+        const { name, email, password,  phoneNumber, address, profilePic } = req.body;
 
         // Data validation
-        if (!name || !email || !password || !phone || !address) {
+        if (!name || !email || !password || !phoneNumber || !address) {
             return res.status(400).json({ success: false, message: "All fields required" });
         }
 
@@ -22,7 +22,7 @@ export const sellerSignup = async (req, res, next) => {
         }
 
         // Create a new seller (NO HASHING HERE)
-        const newSeller = new Seller({ name, email, password, phone, address, profilePic });
+        const newSeller = new Seller({ name, email, password, phoneNumber, address, profilePic});
         await newSeller.save();
 
         // Generate token
@@ -177,7 +177,7 @@ export const getProductsBySeller = async (req, res) => {
 export const updateSellerProfile = async (req, res) => {
   try {
     const sellerId = req.seller.id;
-    const { name, phone, address, profilePic } = req.body;
+    const { name,  phoneNumber, address, profilePic } = req.body;
 
     const seller = await Seller.findById(sellerId);
     if (!seller) {
@@ -185,7 +185,7 @@ export const updateSellerProfile = async (req, res) => {
     }
 
     seller.name = name || seller.name;
-    seller.phone = phone || seller.phone;
+    seller. phoneNumber =  phoneNumber || seller. phoneNumber;
     seller.address = address || seller.address;
     seller.profilePic = profilePic || seller.profilePic;
 

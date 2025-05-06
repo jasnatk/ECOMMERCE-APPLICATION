@@ -1,5 +1,3 @@
-// src/pages/admin/AdminOrders.jsx
-
 import React, { useState, useEffect } from 'react';
 import { axiosInstance } from '../../config/axiosInstance';
 import { FiPackage, FiChevronDown, FiChevronUp } from 'react-icons/fi';
@@ -36,7 +34,7 @@ const OrderDetails = ({ order }) => {
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">{product.name}</td>
                     <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">{product.quantity}</td>
-                    <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">${product.price.toFixed(2)}</td>
+                    <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">₹{product.price.toFixed(2)}</td>
                     <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">{product.status}</td>
                   </tr>
                 ))}
@@ -49,7 +47,7 @@ const OrderDetails = ({ order }) => {
         <div>
           <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Order Information</h4>
           <div className="text-sm text-gray-700 dark:text-gray-200 space-y-2">
-            <p><strong>Address:</strong><br />{order.address?.name}, {order.address?.email}, {order.address?.phone}<br />{order.address?.line1}, {order.address?.line2}<br />{order.address?.city}, {order.address?.state}, {order.address?.postal_code}, {order.address?.country}</p>
+            <p><strong>Address:</strong><br />{order.address?.name}, {order.address?.email}, {order.address?.phoneNumber}<br />{order.address?.line1}, {order.address?.line2}<br />{order.address?.city}, {order.address?.state}, {order.address?.postal_code}, {order.address?.country}</p>
             <p><strong>Payment Method:</strong> {order.paymentMethod}</p>
             <p><strong>Payment Status:</strong> {order.paymentStatus}</p>
             <p><strong>Currency:</strong> {order.currency}</p>
@@ -69,7 +67,7 @@ const OrderRow = ({ order, handleReviewOrder, toggleDetails, isExpanded }) => {
       <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
         <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{order._id}</td>
         <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{order.user?.name || 'N/A'}</td>
-        <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">${order.amountTotal.toFixed(2)}</td>
+        <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">₹{order.amountTotal.toFixed(2)}</td>
         <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{order.status}</td>
         <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{order.products.length}</td>
         <td className="px-6 py-4 text-sm flex items-center space-x-2">

@@ -181,7 +181,7 @@ const SellerOrders = () => {
                           <p>{order.address?.line1}, {order.address?.line2}</p>
                           <p>{order.address?.city}, {order.address?.state} {order.address?.postal_code}</p>
                           <p>{order.address?.country}</p>
-                          <p>{order.address?.phone}</p>
+                          <p>{order.address?.phoneNumber}</p>
                         </div>
                       </div>
 

@@ -26,6 +26,29 @@ export const ProductDetails = () => {
 
   const product = productDetails?.data || {};
 
+  // Fetch wishlist status on component mount
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      try {
+        const response = await axiosInstance.get("/wishlist/getAll", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const wishlist = response.data.data?.products || [];
+        const isProductInWishlist = wishlist.some(
+          (item) => item?.product_id?._id === params?.id
+        );
+        setIsWishlisted(isProductInWishlist);
+      } catch (error) {
+        console.error("Error checking wishlist status:", error);
+        // Silently fail to avoid disrupting UX
+      }
+    };
+
+    checkWishlistStatus();
+  }, [params?.id]);
+
   useEffect(() => {
     const fetchReviews = async () => {
       setReviewsLoading(true);
@@ -294,7 +317,7 @@ export const ProductDetails = () => {
 
         {/* Reviews Section */}
         <div className="mt-16 sm:mt-12">
-          <h2 className="text-xl sm:text-2xl pt-8  font-bold text-base-content font-playfair mb-4">
+          <h2 className="text-xl sm:text-2xl pt-8 font-bold text-base-content font-playfair mb-4">
             Customer Reviews
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">

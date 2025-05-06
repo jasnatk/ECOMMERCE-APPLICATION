@@ -17,9 +17,28 @@ export const ProductCard = ({
   const navigate = useNavigate();
   const fallbackImage = "https://placehold.co/300x300?text=No+Image&font=roboto";
 
+  // Fetch wishlist status on component mount
   useEffect(() => {
-    setIsWishlisted(isInWishlist);
-  }, [isInWishlist]);
+    const checkWishlistStatus = async () => {
+      try {
+        const response = await axiosInstance.get("/wishlist/getAll", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const wishlist = response.data.data?.products || [];
+        const isProductInWishlist = wishlist.some(
+          (item) => item?.product_id?._id === products?._id
+        );
+        setIsWishlisted(isProductInWishlist);
+      } catch (error) {
+        // Silently fail to avoid disrupting UX, as wishlist status is not critical
+        console.error("Error checking wishlist status:", error);
+      }
+    };
+
+    checkWishlistStatus();
+  }, [products?._id]);
 
   const handleAddToCart = async () => {
     try {
@@ -39,7 +58,11 @@ export const ProductCard = ({
 
   const handleWishlistToggle = async () => {
     try {
-      const res = await axiosInstance.put(`/wishlist/toggle/${products?._id}`);
+      const res = await axiosInstance.put(`/wishlist/toggle/${products?._id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       setIsWishlisted((prev) => !prev);
       toast.success(res.data.message);
       if (onToggle) onToggle(products._id);
@@ -48,7 +71,7 @@ export const ProductCard = ({
       if (error?.response?.status === 401) {
         toast.error("Please log in to use wishlist");
       } else {
-        toast.error("Failed to update wishlist");
+        toast.error(error?.response?.data?.message || "Failed to update wishlist");
       }
     }
   };
@@ -103,7 +126,6 @@ export const ProductCard = ({
               className="text-xs"
               readonly
             />
-            
           </div>
         </div>
 

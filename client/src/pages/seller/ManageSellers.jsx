@@ -1,5 +1,3 @@
-// src/pages/admin/ManageSellers.jsx
-
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../config/axiosInstance";
 import toast from "react-hot-toast";
@@ -8,7 +6,7 @@ import { FiUsers } from "react-icons/fi";
 import { AdminHeader } from "../../Components/admin/AdminHeader";
 import { Sidebar } from "../../Components/admin/AdminDashboard";
 
- const ManageSellers = () => {
+const ManageSellers = () => {
   const [sellers, setSellers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -30,6 +28,21 @@ import { Sidebar } from "../../Components/admin/AdminDashboard";
 
     fetchSellers();
   }, []);
+
+  const handleVerifySeller = async (sellerId) => {
+    try {
+      const res = await axiosInstance.put(`/admin/sellers/${sellerId}/verify`);
+      setSellers((prevSellers) =>
+        prevSellers.map((seller) =>
+          seller._id === sellerId ? { ...seller, isVerified: res.data.seller.isVerified } : seller
+        )
+      );
+      toast.success(res.data.message);
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to update seller verification";
+      toast.error(msg);
+    }
+  };
 
   if (loading) {
     return (
@@ -89,6 +102,7 @@ import { Sidebar } from "../../Components/admin/AdminDashboard";
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Email</th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Joined On</th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Action</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -107,11 +121,23 @@ import { Sidebar } from "../../Components/admin/AdminDashboard";
                             <span className="px-2 py-1 text-yellow-700 bg-yellow-100 dark:bg-yellow-700 dark:text-white rounded">Pending</span>
                           )}
                         </td>
+                        <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                          <button
+                            onClick={() => handleVerifySeller(seller._id)}
+                            className={`px-3 py-1 rounded text-white ${
+                              seller.isVerified
+                                ? 'bg-red-500 hover:bg-red-600'
+                                : 'bg-green-500 hover:bg-green-600'
+                            }`}
+                          >
+                            {seller.isVerified ? 'Unverify' : 'Verify'}
+                          </button>
+                        </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="4" className="text-center py-8 text-gray-600 dark:text-gray-300">
+                      <td colSpan="5" className="text-center py-8 text-gray-600 dark:text-gray-300">
                         No sellers found.
                       </td>
                     </tr>
@@ -125,4 +151,5 @@ import { Sidebar } from "../../Components/admin/AdminDashboard";
     </motion.div>
   );
 };
-export default ManageSellers
+
+export default ManageSellers;

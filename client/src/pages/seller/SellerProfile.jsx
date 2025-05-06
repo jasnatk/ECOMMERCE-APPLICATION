@@ -39,7 +39,7 @@ const SellerProfile = () => {
         <div className=" flex-1 space-y-2 text-center md:text-left">
           <h2 className=" text-2xl font-semibold">{seller.name}</h2>
           <p><span className="font-medium">Email:</span> {seller.email}</p>
-          <p><span className="font-medium">Phone:</span> {seller.phone}</p>
+          <p><span className="font-medium">Phone:</span> {seller.phoneNumber}</p>
           <p><span className="font-medium">Address:</span> {seller.address}</p>
         </div>
       </div>

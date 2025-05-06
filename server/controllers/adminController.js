@@ -1,6 +1,7 @@
 import User from "../models/userModel.js";  
 import bcrypt from 'bcryptjs';
 import { generateToken } from "../utilities/token.js";
+import Seller from "../models/sellerModel.js";
 
 // Admin Registration
 export const adminSignUp = async (req, res) => {
@@ -153,5 +154,33 @@ export const getAllUsers = async (req, res) => {
   } catch (error) {
       console.log("Error in getAllUsers:", error.message);
       res.status(500).json({ message: error.message || "Internal server error" });
+  }
+};
+ 
+
+// Verify Seller
+export const verifySeller = async (req, res) => {
+  try {
+    const sellerId = req.params.id;
+    const seller = await Seller.findById(sellerId);
+
+    if (!seller) {
+      return res.status(404).json({ message: "Seller not found" });
+    }
+
+    seller.isVerified = !seller.isVerified; // Toggle verification status
+    await seller.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Seller ${seller.isVerified ? 'verified' : 'unverified'} successfully`,
+      seller,
+    });
+  } catch (error) {
+    console.error("Error in verifySeller:", error); // Enhanced logging
+    res.status(500).json({ 
+      message: "Failed to update seller verification status",
+      error: error.message, // Include error message for debugging
+    });
   }
 };

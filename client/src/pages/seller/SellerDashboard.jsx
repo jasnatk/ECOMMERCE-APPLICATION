@@ -138,7 +138,7 @@ const SellerDashboard = () => {
       <div className="flex-1 ml-64 p-8">
         {/* Header */}
         <header className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome, {seller.name} 👋</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Welcome, {seller.name} </h1>
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300 shadow-md"

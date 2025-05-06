@@ -14,6 +14,7 @@ import {
   deactivateUser,
   deleteUser,
   getAllUsers,
+  verifySeller,
 } from '../controllers/adminController.js';
 
 const router = express.Router();
@@ -77,5 +78,6 @@ router.get("/check-admin", checkAdmin);
 router.get("/users", authUser, authAdmin, getAllUsers);
 router.put('/deactivate/:id', authUser, authAdmin, deactivateUser);
 router.delete('/delete/:id', authUser, authAdmin, deleteUser);
+router.put('/sellers/:id/verify',authUser, authAdmin,verifySeller);
 
 export default router;

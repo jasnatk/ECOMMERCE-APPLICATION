@@ -72,12 +72,12 @@ export const getMyOrders = async (req, res) => {
         const validProducts = await Promise.all(
           order.products.map(async (product) => {
             if (!mongoose.Types.ObjectId.isValid(product.productId)) {
-              console.warn(`Invalid productId in order ${order._id}: ${product.productId}`);
+             
               return null;
             }
             const productDoc = await Product.findById(product.productId).select("name price image");
             if (!productDoc) {
-              console.warn(`Product not found for ID in order ${order._id}: ${product.productId}`);
+              
               return null;
             }
             return {
@@ -111,8 +111,6 @@ export const getOrderById = async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-    console.log("Raw order from DB:", { _id: order._id, status: order.status, products: order.products });
-
     const validProducts = await Promise.all(
       order.products.map(async (product) => {
         if (!mongoose.Types.ObjectId.isValid(product.productId)) {
@@ -142,7 +140,7 @@ export const getOrderById = async (req, res) => {
       select: "name",
     });
 
-    console.log("Final order sent to frontend:", { _id: populatedOrder._id, status: populatedOrder.status });
+    
 
     res.status(200).json(populatedOrder);
   } catch (err) {
