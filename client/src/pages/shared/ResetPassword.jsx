@@ -40,10 +40,10 @@ export const ResetPassword = () => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-base-200 py-10 px-4 min-h-screen">
-      <div className="bg-white shadow-2xl rounded-lg w-full max-w-md p-8 space-y-6">
+    <div className="bg-base-100 flex items-center justify-center  py-10 px-4 min-h-screen">
+      <div className="text-base-content shadow-2xl rounded-lg w-full max-w-md p-8 space-y-6">
         <h1 className="text-3xl font-bold text-center">Reset Password</h1>
-        <p className="text-center text-gray-600">Enter your new password below.</p>
+        <p className="text-center ">Enter your new password below.</p>
 
         <form
           className="flex flex-col items-center space-y-6 w-full"

@@ -97,7 +97,7 @@ export const SignupPage = ({ role }) => {
                         <button className="w-full max-w-xs h-12 bg-black text-white rounded-md mt-4 hover:bg-gray-800">Signup</button>
                     </form>
 
-                    <p className="text-sm text-gray-600">Already have an account? <Link to={user.loginRoute} className="text-teal-500 hover:underline">Login</Link></p>
+                    <p className="text-sm text-base-content">Already have an account? <Link to={user.loginRoute} className="text-teal-500 hover:underline">Login</Link></p>
                 </div>
             </div>
         </div>

@@ -404,7 +404,7 @@ export const ProductDetails = () => {
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-base-content text-sm sm:text-base">
-                              {review.user.name}
+                            {review.user?.name || "Anonymous"}
                             </span>
                           </div>
                           {/* Rating */}

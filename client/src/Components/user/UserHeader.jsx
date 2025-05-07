@@ -190,7 +190,6 @@ export const UserHeader = () => {
                   {[
                     { to: "/user/profile", label: "Profile", icon: <FaUserCircle className="text-sm" /> },
                     { to: "/user/order/my-orders", label: "My Orders", icon: <FaBox className="text-sm" /> },
-                    { to: "/change-password", label: "Change Password", icon: <FaLock className="text-sm" /> },
                     { to: "/logout", label: "Logout", icon: <FaSignOutAlt className="text-sm" /> },
                   ].map((item, index) => (
                     <motion.div
@@ -310,7 +309,6 @@ export const UserHeader = () => {
                       {[
                         { to: "/user/profile", label: "Profile", icon: <FaUserCircle className="text-sm" /> },
                         { to: "/user/order/my-orders", label: "My Orders", icon: <FaBox className="text-sm" /> },
-                        { to: "/change-password", label: "Change Password", icon: <FaLock className="text-sm" /> },
                         { to: "/logout", label: "Logout", icon: <FaSignOutAlt className="text-sm" /> },
                       ].map((item, index) => (
                         <motion.div

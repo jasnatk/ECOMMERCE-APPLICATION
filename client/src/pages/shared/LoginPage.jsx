@@ -113,7 +113,7 @@ export const LoginPage = ({ role }) => {
               />
             </div>
 
-            <div className="w-full max-w-xs flex justify-between text-sm text-gray-500">
+            <div className="w-full max-w-xs flex justify-between text-sm text-base-content">
               <Link to="/forgot-password" className="hover:underline">
                 Forgot password?
               </Link>

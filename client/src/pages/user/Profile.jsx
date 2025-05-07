@@ -2,6 +2,8 @@ import React from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { useLogout } from "../../hooks/useLogout";
 import { useNavigate } from "react-router-dom";
+import { DarkMode } from "../../Components/shared/DarkMode";
+
 
 export const Profile = () => {
   const navigate = useNavigate();
@@ -15,16 +17,16 @@ export const Profile = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl font-semibold text-teal-600">Loading...</p>
+      <div className="flex items-center justify-center min-h-screen bg-base-100 dark:bg-gray-900">
+        <p className="text-xl font-semibold text-teal-600 dark:text-teal-400">Loading...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl font-semibold text-error">
+      <div className="flex items-center justify-center min-h-screen bg-base-100 dark:bg-gray-900">
+        <p className="text-xl font-semibold text-error dark:text-red-400">
           Error: {error?.response?.data?.message || "Failed to load profile"}
         </p>
       </div>
@@ -32,12 +34,21 @@ export const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen p-6 flex items-center justify-center pt-24">
-      <div className="bg-gradient-to-tr from-teal-400 to-teal-200 card w-full max-w-md bg-white/30 backdrop-blur-xl shadow-xl border border-gray-300/50 hover:shadow-2xl hover:border-white transition-all duration-500 p-6 rounded-2xl">
+    <div className="bg-base-100 dark:bg-gray-900 min-h-screen p-6 flex items-center justify-center pt-24">
+      <div className="bg-gradient-to-tr from-teal-400 to-teal-200 dark:from-teal-800 dark:to-teal-600 card w-full max-w-md bg-white/30 dark:bg-gray-800/30 backdrop-blur-xl shadow-xl border border-gray-300/50 dark:border-gray-700/50 hover:shadow-2xl text-base-content dark:text-gray-100 hover:border-white dark:hover:border-gray-500 transition-all duration-500 p-6 rounded-2xl">
+        {/* Optional: Add DarkMode toggle in the top-right corner */}
+        <div className="absolute top-4 right-4">
+          <DarkMode/>
+        </div>
+
         <div className="relative flex justify-center mb-6">
           <div className="avatar indicator">
-            <span className={`indicator-item badge badge-sm ${isOnline ? "badge-success animate-bounce" : "badge-error"}`}></span>
-            <div className="w-36 rounded-full ring ring-offset-4 ring-offset-white ring-accent transition-all duration-300 hover:ring-offset-4 hover:ring-primary hover:scale-105">
+            <span
+              className={`indicator-item badge badge-sm ${
+                isOnline ? "badge-success animate-bounce" : "badge-error"
+              }`}
+            ></span>
+            <div className="w-36 rounded-full ring ring-offset-4 ring-offset-white dark:ring-offset-gray-900 ring-accent transition-all duration-300 hover:ring-offset-4 hover:ring-primary hover:scale-105">
               <img
                 src={user?.profilePic || "https://placehold.co/150x150?text=No+Image"}
                 alt="Profile"
@@ -50,29 +61,36 @@ export const Profile = () => {
           </div>
         </div>
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-[Playfair Display] font-bold text-green bg-clip-text bg-gradient-to-r from-white via-teal-900 to-teal-500 animate-pulse">
+          <h1
+            className="text-4xl font-[Playfair Display] font-bold bg-clip-text bg-gradient-to-r from-black via-teal-900 to-teal-500 dark:from-gray-300 dark:via-teal-600 dark:to-teal-400 animate-pulse"
+          >
             {user?.name || "No Name"}
           </h1>
           <div className="space-y-2">
-            <p className="text-lg text-black">
-              Email: <span className="text-black font-semibold">{user?.email || "No Email"}</span>
+            <p className="text-lg text-gray-900 dark:text-gray-200">
+              Email: <span className="font-semibold">{user?.email || "No Email"}</span>
             </p>
-            <p className="text-lg text-black">
-              Phone: <span className="text-black font-semibold">{user?.phoneNumber || "No Phone"}</span>
+            <p className="text-lg text-gray-900 dark:text-gray-200">
+              Phone: <span className="font-semibold">{user?.phoneNumber || "No Phone"}</span>
             </p>
-            <p className="text-lg text-black">
-              Address: <span className="text-black font-semibold">{user?.address || "No Address"}</span>
+            <p className="text-lg text-gray-900 dark:text-gray-200">
+              Address: <span className="font-semibold">{user?.address || "No Address"}</span>
             </p>
           </div>
         </div>
         <div className="mt-8 space-y-3">
           <button
-            className="btn w-full font-[Playfair Display] text-lg text-white bg-gradient-to-r from-teal-400 to-teal-900 hover:from-teal-600 hover:to-teal-500 transition-all duration-300 transform hover:-translate-y-1 rounded-xl"
+            className="btn w-full font-[Playfair Display] text-lg text-white bg-gradient-to-r from-teal-400 to-teal-900 dark:from-teal-600 dark:to-teal-700 hover:from-teal-600 hover:to-teal-500 dark:hover:from-teal-500 dark:hover:to-teal-600 transition-all duration-300 transform hover:-translate-y-1 rounded-xl"
             onClick={() => navigate("/user/edit-profile")}
           >
             Edit Profile
           </button>
-         
+          <button
+            className="btn w-full font-[Playfair Display] text-lg text-white bg-gradient-to-r from-teal-400 to-teal-900 dark:from-teal-600 dark:to-teal-700 hover:from-teal-600 hover:to-teal-500 dark:hover:from-teal-500 dark:hover:to-teal-600 transition-all duration-300 transform hover:-translate-y-1 rounded-xl"
+            onClick={() => navigate("/change-password")}
+          >
+            Change Password
+          </button>
         </div>
         <style>{`
           @keyframes slideIn {
@@ -87,6 +105,9 @@ export const Profile = () => {
           }
           .animate-slideIn {
             animation: slideIn 0.3s ease-out forwards;
+          }
+          html {
+            transition: background-color 0.3s ease, color 0.3s ease;
           }
         `}</style>
       </div>

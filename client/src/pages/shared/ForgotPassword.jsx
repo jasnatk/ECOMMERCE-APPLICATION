@@ -41,9 +41,9 @@ export const ForgotPassword = () => {
 
   return (
     <div className="flex items-center justify-center bg-base-200 py-10 px-4 min-h-screen">
-      <div className="bg-white shadow-2xl rounded-lg w-full max-w-md p-8 space-y-6">
+      <div className="text-base-content shadow-2xl rounded-lg w-full max-w-md p-8 space-y-6">
         <h1 className="text-3xl font-bold text-center">Forgot Password</h1>
-        <p className="text-center text-gray-600">
+        <p className="text-center text-sm">
           Enter your email and we’ll send you a password reset link.
         </p>
 
@@ -69,7 +69,7 @@ export const ForgotPassword = () => {
           </button>
         </form>
 
-        <div className="text-sm text-center text-gray-600">
+        <div className="text-sm text-center">
           <span>Remember your password? </span>
           <button
             onClick={() => navigate("/login")}

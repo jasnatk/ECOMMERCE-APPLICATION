@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
-import { LogOut, Home, List, Package, ShoppingCart } from "lucide-react";
+import { Home, List, Package, ShoppingCart } from "lucide-react";
 import { axiosInstance } from "../../config/axiosInstance";
-import { useLogout } from "../../hooks/useLogout";
 
 const SellerDashboard = () => {
   const [seller, setSeller] = useState(null);
@@ -16,7 +15,6 @@ const SellerDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const profileRef = useRef(null);
-  const handleLogout = useLogout("seller");
 
   useEffect(() => {
     const fetchSellerData = async () => {
@@ -55,9 +53,9 @@ const SellerDashboard = () => {
 
   if (!seller) {
     return (
-      <div className="flex min-h-screen bg-gray-100">
+      <div className="flex min-h-screen bg-base-100">
         {/* Sidebar Skeleton */}
-        <div className="fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600 text-white shadow-xl transition-all duration-300">
+        <div className="text-base-content fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600  shadow-xl transition-all duration-300">
           <nav className="pt-8">
             {Array(4)
               .fill()
@@ -115,9 +113,9 @@ const SellerDashboard = () => {
   }
 
   return (
-    <div className="flex-1 p-8 pt-17 flex min-h-screen bg-gray-100">
+    <div className="flex-1 p-8 pt-17 flex min-h-screen bg-base-100">
       {/* Sidebar */}
-      <div className="fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600 text-white shadow-xl transition-all duration-300">
+      <div className=" text-white fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600  shadow-xl transition-all duration-300">
         <nav className="pt-8">
           {menuItems.map((item) => (
             <button
@@ -135,25 +133,18 @@ const SellerDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 p-8">
+      <div className="flex-1 ml-64 p-8  bg-base-100">
         {/* Header */}
-        <header className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome, {seller.name} </h1>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300 shadow-md"
-          >
-            <LogOut size={18} />
-            Logout
-          </button>
+        <header className=" text-base-content flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Welcome, {seller.name}</h1>
         </header>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          <div className="bg-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
+        <div className=" bg-base-100 grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <div className=" text-base-content p-6  rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-700">Total Products</h3>
+                <h3 className="text-lg font-semibold ">Total Products</h3>
                 <p className="text-3xl font-bold text-indigo-600">{stats.totalProducts}</p>
               </div>
               <div className="p-3 bg-indigo-100 rounded-full">
@@ -161,10 +152,10 @@ const SellerDashboard = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
-            <div className="flex items-center justify-between">
+          <div className="bg-base-100 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
+            <div className="flex items-center justify-between text-base-content">
               <div>
-                <h3 className="text-lg font-semibold text-gray-700">Orders</h3>
+                <h3 className="text-lg font-semibold ">Orders</h3>
                 <p className="text-3xl font-bold text-green-600">{stats.totalOrders}</p>
               </div>
               <div className="p-3 bg-green-100 rounded-full">
@@ -172,10 +163,10 @@ const SellerDashboard = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
-            <div className="flex items-center justify-between">
+          <div className="bg-base-100 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
+            <div className="flex items-center justify-between text-base-content">
               <div>
-                <h3 className="text-lg font-semibold text-gray-700">Revenue</h3>
+                <h3 className="text-lg font-semibold ">Revenue</h3>
                 <p className="text-3xl font-bold text-yellow-600">₹ {stats.totalRevenue.toLocaleString()}</p>
               </div>
               <div className="p-3 bg-yellow-100 rounded-full">
@@ -193,8 +184,8 @@ const SellerDashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white p-8 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
+        <div className="bg-base-100 p-8 rounded-xl shadow-lg">
+          <h2 className=" text-base-content text-2xl font-semibold  mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button
               onClick={() => navigate("/seller/products/new")}

@@ -1,6 +1,7 @@
 import React from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
+import { DarkMode } from "../shared/DarkMode"; // Import DarkMode component
 
 export const MyOrders = () => {
   const [orders, isLoading, error] = useFetch("/order/my-orders");
@@ -11,8 +12,12 @@ export const MyOrders = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white dark:bg-gray-900 p-6 pt-24">
-        <div className="max-w-5xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white dark:from-gray-900 dark:to-gray-800 p-6 pt-24">
+        <div className="max-w-5xl mx-auto relative">
+          {/* Optional: Add DarkMode toggle */}
+          <div className="absolute top-0 right-0">
+            <DarkMode />
+          </div>
           <h2 className="text-4xl font-extrabold text-teal-500 dark:text-teal-300 mb-8 text-center tracking-tight">
             Loading Your Orders...
           </h2>
@@ -31,8 +36,9 @@ export const MyOrders = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white dark:bg-gray-900 flex items-center justify-center pt-24">
-        <div className="bg-base-200 dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-base-300 dark:border-gray-700 max-w-md w-full">
+      <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white dark:from-gray-900 dark:to-gray-800 flex items-center justify-center pt-24">
+        <div className="bg-base-200 dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-base-300 dark:border-gray-700 max-w-md w-full relative">
+         
           <h2 className="text-3xl font-bold text-base-content dark:text-white mb-4">
             Oops, Something Went Wrong
           </h2>
@@ -52,9 +58,10 @@ export const MyOrders = () => {
 
   if (!ordersArray.length) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white dark:bg-gray-900 flex items-center justify-center pt-24">
-        <div className="text-center max-w-md">
-          <h2 className="text-4xl font-extrabold text-teal-500 dark:text-teal-300 mb-4 tracking-tight">
+      <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white dark:from-gray-900 dark:to-gray-800 flex items-center justify-center pt-24">
+        <div className="text-center max-w-md relative">
+         
+          <h2 className="text-4xl font-extrabold text-teal-700 dark:text-teal-300 mb-4 tracking-tight">
             No Orders Yet
           </h2>
           <p className="text-base-content dark:text-gray-300 mb-6 text-lg">
@@ -72,8 +79,9 @@ export const MyOrders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white dark:bg-gray-900 p-6 pt-24">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white dark:from-gray-900 dark:to-gray-800 p-6 pt-24">
+      <div className="max-w-5xl mx-auto relative">
+      
         <h2 className="text-4xl font-extrabold text-teal-700 dark:text-teal-300 mb-10 text-center tracking-tight">
           Your Order History
         </h2>
@@ -135,6 +143,11 @@ export const MyOrders = () => {
           ))}
         </div>
       </div>
+      <style>{`
+        html {
+          transition: background-color 0.3s ease, color 0.3s ease;
+        }
+      `}</style>
     </div>
   );
 };
