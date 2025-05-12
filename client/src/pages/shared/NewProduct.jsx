@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,6 +14,9 @@ const NewProduct = () => {
     stock: "",
   });
   const [images, setImages] = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const validImageTypes = ["image/png", "image/jpeg", "image/gif"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,16 +27,55 @@ const NewProduct = () => {
   };
 
   const handleFileChange = (e) => {
-    setImages(Array.from(e.target.files));
+    const files = Array.from(e.target.files).filter((file) =>
+      validImageTypes.includes(file.type)
+    );
+    if (files.length + images.length > 5) {
+      toast.error("You can upload a maximum of 5 images.");
+      return;
+    }
+    if (files.length < e.target.files.length) {
+      toast.error("Only PNG, JPG, and GIF files are allowed.");
+    }
+    setImages((prev) => [...prev, ...files]);
   };
 
   const handleDeleteImage = (indexToRemove) => {
     setImages((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files).filter((file) =>
+      validImageTypes.includes(file.type)
+    );
+    if (files.length + images.length > 5) {
+      toast.error("You can upload a maximum of 5 images.");
+      return;
+    }
+    if (files.length < e.dataTransfer.files.length) {
+      toast.error("Only PNG, JPG, and GIF files are allowed.");
+    }
+    setImages((prev) => [...prev, ...files]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (images.length === 0) {
+      toast.error("Please upload at least one image.");
+      return;
+    }
     const productData = new FormData();
     Object.keys(formData).forEach((key) => productData.append(key, formData[key]));
     images.forEach((img) => productData.append("images", img));
@@ -44,12 +86,18 @@ const NewProduct = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success(response.data.message || "Product created successfully", { duration: 4000 });
+      toast.success(response.data.message || "Product created successfully", { duration: 2000 });
       navigate("/seller/products");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to create product", { duration: 4000 });
+      toast.error(error.response?.data?.message || "Failed to create product", { duration: 2000 });
     }
   };
+
+  useEffect(() => {
+    return () => {
+      images.forEach((file) => URL.revokeObjectURL(URL.createObjectURL(file)));
+    };
+  }, [images]);
 
   return (
     <motion.div
@@ -204,7 +252,7 @@ const NewProduct = () => {
             </label>
           </motion.div>
 
-          {/* File Upload */}
+          {/* File Upload and Image Preview */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -214,80 +262,80 @@ const NewProduct = () => {
               Product Images
             </label>
             <div className="flex items-center justify-center w-full">
-              <label className="flex flex-col items-center justify-center w-full h-32 bg-white border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all duration-300">
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <svg
-                    className="w-8 h-8 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M7 16V8m0 0L3 12m4-4l4 4m6 4v-8m0 0l-4-4m4 4l-4 4"
-                    />
-                  </svg>
-                  <p className="mt-1 text-sm text-gray-600">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    PNG, JPG, or GIF (Max 5 images)
-                  </p>
-                </div>
+              <label
+                className={`flex flex-col items-center justify-center w-full h-48 bg-white border-2 border-dashed rounded-lg cursor-pointer transition-all duration-300 ${
+                  isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-blue-500"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                role="region"
+                aria-label="Drag and drop or click to upload images"
+              >
+                {images.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg
+                      className="w-8 h-8 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M7 16V8m0 0L3 12m4-4l4 4m6 4v-8m0 0l-4-4m4 4l-4 4"
+                      />
+                    </svg>
+                    <p className="mt-1 text-sm text-gray-600">
+                      <span className="font-semibold">Click to upload</span> or drag and drop
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      PNG, JPG, or GIF (Max 5 images)
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-4 p-4">
+                    <AnimatePresence>
+                      {images.map((file, index) => (
+                        <motion.div
+                          key={`image-${index}`}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          className="relative"
+                        >
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={`selected-image-${index}`}
+                            className="w-24 h-24 object-cover rounded-lg border border-gray-200"
+                          />
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            type="button"
+                            onClick={() => handleDeleteImage(index)}
+                            className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                            aria-label={`Delete image ${index + 1}`}
+                          >
+                            ✕
+                          </motion.button>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                )}
                 <input
                   type="file"
                   accept="image/*"
                   multiple
                   onChange={handleFileChange}
                   className="hidden"
-                  required
                 />
               </label>
             </div>
           </motion.div>
-
-          {/* Image Preview */}
-          {images.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.9 }}
-            >
-              <h3 className="text-gray-800 font-semibold mb-2">Selected Images</h3>
-              <div className="flex flex-wrap gap-4">
-                <AnimatePresence>
-                  {images.map((file, index) => (
-                    <motion.div
-                      key={`image-${index}`}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      className="relative"
-                    >
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`selected-image-${index}`}
-                        className="w-24 h-24 object-cover rounded-lg border border-gray-200"
-                      />
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        type="button"
-                        onClick={() => handleDeleteImage(index)}
-                        className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                        aria-label={`Delete image ${index + 1}`}
-                      >
-                        ✕
-                      </motion.button>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          )}
 
           {/* Submit Button */}
           <motion.div

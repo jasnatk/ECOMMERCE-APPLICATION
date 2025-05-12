@@ -303,10 +303,10 @@ export const getSellerOrders = async (req, res) => {
       })
     );
 
-    const populatedOrders = await Order.populate(cleanedOrders.filter((o) => o !== null), {
-      path: "products.seller",
-      select: "name",
-    });
+    const populatedOrders = await Order.populate(cleanedOrders.filter((o) => o !== null), [
+      { path: "user", select: "name email" }, // Add user population
+      { path: "products.seller", select: "name" },
+    ]);
 
     res.status(200).json(populatedOrders);
   } catch (error) {

@@ -11,7 +11,7 @@ import {
   saveAdmin,
   clearAdmin,
 } from "../../redux/features/userSlice";
-import {toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 export const LoginPage = ({ role }) => {
   const { register, handleSubmit } = useForm();
@@ -44,7 +44,6 @@ export const LoginPage = ({ role }) => {
     try {
       const response = await axiosInstance.post(user.loginAPI, data);
       const responseData = response?.data?.data;
-      
 
       if (role === "seller") {
         dispatch(saveSeller(responseData));
@@ -65,14 +64,20 @@ export const LoginPage = ({ role }) => {
         dispatch(clearUser());
       }
 
-      toast.error("Login Failed");
+      const errorMessage =
+        error.response?.data?.message || "Login Failed";
+      if (error.response?.status === 403 && role === "seller") {
+        toast.error("Your account is blocked. Please contact support.");
+      } else {
+        toast.error(errorMessage);
+      }
       console.error(error);
     }
   };
 
   return (
     <div className="flex items-center justify-center bg-base-200 py-24 min-h-screen">
-      <div className=" shadow-2xl rounded-lg flex flex-col lg:flex-row w-full max-w-4xl overflow-hidden">
+      <div className="shadow-2xl rounded-lg flex flex-col lg:flex-row w-full max-w-4xl overflow-hidden">
         {/* Left Side - Image */}
         <div className="hidden lg:flex w-full lg:w-1/2">
           <img
@@ -84,7 +89,7 @@ export const LoginPage = ({ role }) => {
 
         {/* Right Side - Login Form */}
         <div className="w-full lg:w-1/2 p-8 flex flex-col justify-center items-center space-y-6">
-          <h1 className="text-4xl font-bold text-center"> Login</h1>
+          <h1 className="text-4xl font-bold text-center">{user.role} Login</h1>
           <p className="text-center font-medium text-teal-500">
             Z Fashion - Your Ultimate Fashion Destination
           </p>
@@ -117,9 +122,7 @@ export const LoginPage = ({ role }) => {
               <Link to="/forgot-password" className="hover:underline">
                 Forgot password?
               </Link>
-              <Link to="/reset-password" className="hover:underline">
-                Reset password?
-              </Link>
+              
               <Link to={user.signupRoute} className="hover:underline">
                 New {user.role}?
               </Link>

@@ -36,7 +36,7 @@ export const AdminLayout = () => {
       <div className="min-h-96">
         <Outlet />
       </div>
-      <Footer />
+      <Footer/>
     </div>
   );
 };

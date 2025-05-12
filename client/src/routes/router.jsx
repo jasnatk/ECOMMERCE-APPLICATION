@@ -39,6 +39,7 @@ import MyOrders from "../Components/user/MyOrders";
 import { AdminOrders } from "../pages/admin/AdminOrders";
 import AllProduct from "../Components/admin/AllProduct";
 import { ManageCustomers } from "../pages/admin/ManageCustomers";
+import PendingVerification from "../pages/seller/PendingVerification";
 
 
 
@@ -168,6 +169,10 @@ errorElement: <ErrorPage />,
                            {
                            path: "sellerdashboard",
                            element: <SellerDashboard />,
+                           },
+                           {
+                           path: "/seller/pending",
+                           element: <PendingVerification/>,
                            },
                            {
                             path: "products/new",

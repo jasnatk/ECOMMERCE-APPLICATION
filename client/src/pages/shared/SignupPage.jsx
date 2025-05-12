@@ -36,8 +36,8 @@ export const SignupPage = ({ role }) => {
             const userData = {
                 ...data,
                 role: user.role,
-              };
-              
+            };
+            
             await axiosInstance.post(user.signupAPI, userData);
             toast.success("Signup successful!");
     
@@ -48,7 +48,6 @@ export const SignupPage = ({ role }) => {
             toast.error(error.response?.data?.message || "Signup failed. Try again.");
         }
     };
-    
 
     return (
         <div className="flex items-center justify-center bg-base-200 py-24 min-h-screen">
@@ -79,8 +78,6 @@ export const SignupPage = ({ role }) => {
 
                         <input type="text" placeholder="Address" {...register("address", { required: "Address is required" })} className="input input-bordered w-full max-w-xs" />
                         {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
-
-                        <input type="text" placeholder="Profile Picture URL" {...register("profilePic")} className="input input-bordered w-full max-w-xs" />
 
                         <input type="password" placeholder="Password" {...register("password", {
                             required: "Password is required",

@@ -1,19 +1,44 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { useLogout } from "../../hooks/useLogout";
 import { useNavigate } from "react-router-dom";
 import { DarkMode } from "../../Components/shared/DarkMode";
-
+import { axiosInstance } from "../../config/axiosInstance";
+import { toast } from "react-hot-toast";
 
 export const Profile = () => {
   const navigate = useNavigate();
   const [userDetails, isLoading, error] = useFetch("/user/profile");
   const handleLogout = useLogout("user");
-
+  const fileInputRef = useRef(null);
   const isOnline = true;
 
   // Access user data
   const user = userDetails?.data || {};
+
+  // Define default avatar (local image)
+  const defaultImage = "/image/fauser1.png"; // Local fa-user icon image
+  // Use default avatar if profilePic is missing or invalid
+  const profileImage = user?.profilePic && user.profilePic !== "" ? user.profilePic : defaultImage;
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("profilePic", file);
+
+    try {
+      const res = await axiosInstance.post("/user/upload-profile-pic", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      userDetails.data.profilePic = res.data.data.profilePic;
+      toast.success("Profile picture updated successfully!");
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Error uploading profile picture");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -36,26 +61,29 @@ export const Profile = () => {
   return (
     <div className="bg-base-100 dark:bg-gray-900 min-h-screen p-6 flex items-center justify-center pt-24">
       <div className="bg-gradient-to-tr from-teal-400 to-teal-200 dark:from-teal-800 dark:to-teal-600 card w-full max-w-md bg-white/30 dark:bg-gray-800/30 backdrop-blur-xl shadow-xl border border-gray-300/50 dark:border-gray-700/50 hover:shadow-2xl text-base-content dark:text-gray-100 hover:border-white dark:hover:border-gray-500 transition-all duration-500 p-6 rounded-2xl">
-        {/* Optional: Add DarkMode toggle in the top-right corner */}
-        <div className="absolute top-4 right-4">
-          <DarkMode/>
-        </div>
-
         <div className="relative flex justify-center mb-6">
           <div className="avatar indicator">
             <span
               className={`indicator-item badge badge-sm ${
                 isOnline ? "badge-success animate-bounce" : "badge-error"
-              }`}
+              } translate-x-[-8px] translate-y-[8px]`}
             ></span>
             <div className="w-36 rounded-full ring ring-offset-4 ring-offset-white dark:ring-offset-gray-900 ring-accent transition-all duration-300 hover:ring-offset-4 hover:ring-primary hover:scale-105">
               <img
-                src={user?.profilePic || "https://placehold.co/150x150?text=No+Image"}
+                src={profileImage}
                 alt="Profile"
-                className="object-cover rounded-full"
+                className="object-cover rounded-full cursor-pointer"
+                onClick={() => fileInputRef.current.click()}
                 onError={(e) => {
-                  e.target.src = "https://placehold.co/150x150?text=No+Image";
+                  e.target.src = defaultImage;
                 }}
+              />
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/jpeg,image/jpg,image/png"
+                onChange={handleFileChange}
+                className="hidden"
               />
             </div>
           </div>
@@ -114,5 +142,3 @@ export const Profile = () => {
     </div>
   );
 };
-
-export default Profile;

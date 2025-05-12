@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import { generateToken } from "../utilities/token.js";
+import uploadToCloudinary, { destroyImageFromCloudinary, getPublicIdFromUrl } from "../utilities/imageUpload.js";
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -17,7 +18,7 @@ const setTokenCookie = (res, token) => {
 // 1. User Signup
 export const userSignUp = async (req, res) => {
     try {
-        const { name, email, password, confirmPassword, address, phoneNumber, profilePic } = req.body;
+        const { name, email, password, confirmPassword, address, phoneNumber } = req.body;
 
         if (!name || !email || !password || !confirmPassword || !phoneNumber) {
             return res.status(400).json({ message: "All fields required" });
@@ -39,8 +40,7 @@ export const userSignUp = async (req, res) => {
             email: email.toLowerCase(),
             password: hashedPassword,
             phoneNumber,
-            address,
-            profilePic
+            address
         });
 
         await newUser.save();
@@ -66,7 +66,7 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ message: "All fields required" });
         }
 
-        const user = await User.findOne({ email: email.toLowerCase(),role: 'user' });
+        const user = await User.findOne({ email: email.toLowerCase(), role: 'user' });
         if (!user) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
@@ -118,7 +118,6 @@ export const checkUser = async (req, res) => {
     }
 };
 
-
 // 5. Get User Profile
 export const getUserProfile = async (req, res) => {
     try {
@@ -144,7 +143,6 @@ export const updateUserProfile = async (req, res) => {
         user.email = req.body.email?.toLowerCase() || user.email;
         user.address = req.body.address || user.address;
         user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-        user.profilePic = req.body.profilePic || user.profilePic;
 
         if (req.body.password) {
             user.password = await bcrypt.hash(req.body.password, 10);
@@ -206,5 +204,40 @@ export const changePassword = async (req, res) => {
         res.json({ message: "Password changed successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+// 10. Upload Profile Picture
+export const uploadProfilePic = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({ message: "No file uploaded" });
+        }
+
+        // Upload to Cloudinary
+        const uploadResult = await uploadToCloudinary(req.file.path);
+
+        // Delete old profile picture from Cloudinary if it exists
+        if (user.profilePic) {
+            const publicId = getPublicIdFromUrl(user.profilePic);
+            if (publicId) {
+                await destroyImageFromCloudinary(publicId);
+            }
+        }
+
+        // Update user with new profile picture URL
+        user.profilePic = uploadResult.url;
+        await user.save();
+
+        const userWithoutPassword = await User.findById(user._id).select("-password");
+        res.json({ data: userWithoutPassword, message: "Profile picture updated successfully" });
+    } catch (error) {
+        console.error("Error uploading profile picture:", error.message);
+        res.status(500).json({ message: error.message || "Failed to upload profile picture" });
     }
 };

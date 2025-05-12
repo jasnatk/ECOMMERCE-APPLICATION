@@ -2,13 +2,14 @@ import { generateToken } from "../utilities/token.js";
 import Seller from "../models/sellerModel.js";
 import Product from "../models/productModel.js";
 import Order from "../models/orderModel.js";
+import uploadToCloudinary, { destroyImageFromCloudinary, getPublicIdFromUrl } from "../utilities/imageUpload.js";
 
 const NODE_ENV = process.env.NODE_ENV;
 
 // Seller Signup
 export const sellerSignup = async (req, res, next) => {
     try {
-        const { name, email, password,  phoneNumber, address, profilePic } = req.body;
+        const { name, email, password, phoneNumber, address, profilePic } = req.body;
 
         // Data validation
         if (!name || !email || !password || !phoneNumber || !address) {
@@ -21,7 +22,7 @@ export const sellerSignup = async (req, res, next) => {
             return res.status(400).json({ message: "Seller already exists" });
         }
 
-        // Create a new seller (NO HASHING HERE)
+        // Create a new seller
         const newSeller = new Seller({ name, email, password, phoneNumber, address, profilePic});
         await newSeller.save();
 
@@ -32,9 +33,9 @@ export const sellerSignup = async (req, res, next) => {
         res.cookie("token", token, {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production" ? true : false,
-            httpOnly: true, // Always secure
+            httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000, // 1 day expiry
-          });
+        });
 
         res.json({ success: true, message: "Seller account created successfully" });
     } catch (error) {
@@ -58,6 +59,11 @@ export const sellerLogin = async (req, res, next) => {
             return res.status(404).json({ success: false, message: "Seller does not exist" });
         }
 
+        // Check if seller is blocked
+        if (isSellerExist.isBlocked) {
+            return res.status(403).json({ success: false, message: "Seller is blocked" });
+        }
+
         const passwordMatch = await isSellerExist.comparePassword(password);
 
         if (!passwordMatch) {
@@ -69,9 +75,9 @@ export const sellerLogin = async (req, res, next) => {
         res.cookie("token", token, {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production" ? true : false,
-            httpOnly: true, // Always secure
+            httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000, // 1 day expiry
-          });
+        });
 
         res.json({ success: true, message: "Seller login successful" });
 
@@ -81,11 +87,10 @@ export const sellerLogin = async (req, res, next) => {
     }
 };
 
-
 // Get Seller Profile
 export const sellerProfile = async (req, res, next) => {
     try {
-        const { seller } = req; // 
+        const { seller } = req; // seller data from middleware
 
         const userData = await Seller.findById(seller.id).select("-password");
 
@@ -95,7 +100,6 @@ export const sellerProfile = async (req, res, next) => {
         res.status(error.statusCode || 500).json(error.message || "Internal server error");
     }
 };
-
 
 // Seller Logout
 export const sellerLogout = async (req, res, next) => {
@@ -158,7 +162,7 @@ export const getSellerStats = async (req, res) => {
       console.log(error);
       res.status(500).json({ message: "Failed to fetch seller stats" });
     }
-  };
+};
   
 export const getProductsBySeller = async (req, res) => {
     try {
@@ -170,14 +174,13 @@ export const getProductsBySeller = async (req, res) => {
       console.error("Error fetching products by seller:", error);
       res.status(500).json({ message: "Failed to fetch products" });
     }
-  };
-  // In your Express routes (e.g., routes/seller.js)
+};
 
-  // Update Seller Profile
+// Update Seller Profile
 export const updateSellerProfile = async (req, res) => {
   try {
     const sellerId = req.seller.id;
-    const { name,  phoneNumber, address, profilePic } = req.body;
+    const { name, phoneNumber, address, profilePic } = req.body;
 
     const seller = await Seller.findById(sellerId);
     if (!seller) {
@@ -185,7 +188,7 @@ export const updateSellerProfile = async (req, res) => {
     }
 
     seller.name = name || seller.name;
-    seller. phoneNumber =  phoneNumber || seller. phoneNumber;
+    seller.phoneNumber = phoneNumber || seller.phoneNumber;
     seller.address = address || seller.address;
     seller.profilePic = profilePic || seller.profilePic;
 
@@ -199,5 +202,69 @@ export const updateSellerProfile = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Failed to update profile" });
+  }
+};
+
+export const uploadSellerProfilePic = async (req, res) => {
+  try {
+    const seller = await Seller.findById(req.seller.id);
+    if (!seller) {
+      return res.status(404).json({ message: "Seller not found" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Upload to Cloudinary
+    const uploadResult = await uploadToCloudinary(req.file.path);
+
+    // Delete old profile picture from Cloudinary if it exists
+    if (seller.profilePic) {
+      const publicId = getPublicIdFromUrl(seller.profilePic);
+      if (publicId) {
+        await destroyImageFromCloudinary(publicId);
+      }
+    }
+
+    // Update seller with new profile picture URL
+    seller.profilePic = uploadResult.url;
+    await seller.save();
+
+    const sellerWithoutPassword = await Seller.findById(seller._id).select("-password");
+    res.json({ success: true, message: "Profile picture updated successfully", data: sellerWithoutPassword });
+  } catch (error) {
+    console.error("Error uploading profile picture:", error.message);
+    res.status(500).json({ message: error.message || "Failed to upload profile picture" });
+  }
+};
+
+// Block Seller
+export const blockSeller = async (req, res) => {
+  try {
+    const sellerId = req.params.sellerId;
+    const seller = await Seller.findById(sellerId);
+    if (!seller) {
+      return res.status(404).json({ message: "Seller not found" });
+    }
+
+    seller.isBlocked = !seller.isBlocked;
+    if (seller.isBlocked) {
+      seller.isVerified = false; // Unverify seller when blocking
+    }
+    await seller.save();
+
+    res.json({
+      success: true,
+      message: seller.isBlocked ? "Seller blocked successfully" : "Seller unblocked successfully",
+      seller: {
+        _id: seller._id,
+        isBlocked: seller.isBlocked,
+        isVerified: seller.isVerified
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Failed to block seller" });
   }
 };

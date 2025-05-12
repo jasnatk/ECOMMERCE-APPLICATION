@@ -19,16 +19,21 @@ router.post("/create-checkout-session", async (req, res) => {
       return res.status(400).json({ message: "Products are required" });
     }
 
-    // Validate and enrich products
+    // Validate and enrich products, including stock check
     const validatedProducts = await Promise.all(
       products.map(async (product) => {
-        const productId = product._id || product.productId; // Handle both _id and productId
+        const productId = product._id || product.productId;
         if (!mongoose.Types.ObjectId.isValid(productId)) {
           throw new Error(`Invalid product ID: ${productId}`);
         }
-        const productDoc = await Product.findById(productId).select("name price image seller");
+        const productDoc = await Product.findById(productId).select("name price image seller stock");
         if (!productDoc) {
           throw new Error(`Product not found: ${productId}`);
+        }
+        // Check stock availability
+        const requestedQuantity = product.quantity || 1;
+        if (productDoc.stock < requestedQuantity) {
+          throw new Error(`Insufficient stock for product: ${productDoc.name}. Available: ${productDoc.stock}, Requested: ${requestedQuantity}`);
         }
         if (!mongoose.Types.ObjectId.isValid(product.sellerId) || product.sellerId !== productDoc.seller.toString()) {
           console.warn(`Invalid or mismatched sellerId for product ${productId}. Using seller from Product model.`);
@@ -39,8 +44,8 @@ router.post("/create-checkout-session", async (req, res) => {
           name: product.name || productDoc.name,
           price: parseFloat(product.price) || productDoc.price,
           image: product.image || productDoc.image || "https://via.placeholder.com/100",
-          sellerId: productDoc.seller.toString(), // Use seller from Product model
-          quantity: product.quantity || 1,
+          sellerId: productDoc.seller.toString(),
+          quantity: requestedQuantity,
           description: product.description || "No description",
         };
       })
@@ -81,6 +86,7 @@ router.post("/create-checkout-session", async (req, res) => {
           validatedProducts.map((p) => ({
             _id: p.productId,
             sellerId: p.sellerId,
+            quantity: p.quantity,
           }))
         ),
       },
@@ -90,8 +96,8 @@ router.post("/create-checkout-session", async (req, res) => {
   } catch (error) {
     console.error("Stripe session creation error:", error.message);
     return res
-      .status(500)
-      .json({ message: "Failed to create Stripe session", error: error.message });
+      .status(400)
+      .json({ message: error.message || "Failed to create Stripe session" });
   }
 });
 

@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import bcrypt from 'bcryptjs';
 import { generateToken } from "../utilities/token.js";
 import Seller from "../models/sellerModel.js";
+import uploadToCloudinary, { destroyImageFromCloudinary, getPublicIdFromUrl } from "../utilities/imageUpload.js";
 
 // Admin Registration
 export const adminSignUp = async (req, res) => {
@@ -182,5 +183,73 @@ export const verifySeller = async (req, res) => {
       message: "Failed to update seller verification status",
       error: error.message, // Include error message for debugging
     });
+  }
+};
+// Update Admin Profile
+export const updateAdminProfile = async (req, res) => {
+  try {
+    const adminId = req.user.id;
+    const { name, phoneNumber, address } = req.body;
+
+    const admin = await User.findById(adminId);
+    if (!admin || admin.role !== "admin") {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    admin.name = name || admin.name;
+    admin.phoneNumber = phoneNumber || admin.phoneNumber;
+    admin.address = address || admin.address;
+
+    await admin.save();
+
+    const adminWithoutPassword = await User.findById(adminId).select("-password");
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      data: adminWithoutPassword,
+    });
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ message: error.message || "Failed to update profile" });
+  }
+};
+
+
+// Upload Admin Profile Picture
+export const uploadAdminProfilePic = async (req, res) => {
+  try {
+    const admin = await User.findById(req.user.id);
+    if (!admin || admin.role !== "admin") {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Upload to Cloudinary
+    const uploadResult = await uploadToCloudinary(req.file.path);
+
+    // Delete old profile picture from Cloudinary if it exists
+    if (admin.profilePic) {
+      const publicId = getPublicIdFromUrl(admin.profilePic);
+      if (publicId) {
+        await destroyImageFromCloudinary(publicId);
+      }
+    }
+
+    // Update admin with new profile picture URL
+    admin.profilePic = uploadResult.url;
+    await admin.save();
+
+    const adminWithoutPassword = await User.findById(admin._id).select("-password");
+    res.json({
+      success: true,
+      message: "Profile picture updated successfully",
+      data: adminWithoutPassword,
+    });
+  } catch (error) {
+    console.error("Error uploading profile picture:", error.message);
+    res.status(500).json({ message: error.message || "Failed to upload profile picture" });
   }
 };

@@ -13,17 +13,27 @@ export const SellerHeader = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-3xl font-bold">
-          <Link
-            to="/seller/sellerDashboard"
-            className="hover:text-gray-500"
-            style={{ fontFamily: 'Playfair Display, serif' }}
-          >
-            Z FASHION
-          </Link>
-        </h1>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900 text-white pl-8 p-4">
+      <div className="container mx-0 flex justify-between items-center">
+        <div className="flex items-center gap-4">
+          <h1 className="text-3xl font-bold">
+            <Link
+              to="/seller/sellerDashboard"
+              className="hover:text-gray-500"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
+              Z FASHION SELLER
+            </Link>
+          </h1>
+          <h2 className="text-lg">
+            <Link
+              to="/seller/sellerDashboard"
+              className="hover:text-gray-500"
+            >
+              Home
+            </Link>
+          </h2>
+        </div>
         <nav className="flex items-center gap-4">
           <div className="relative">
             <FiUser
@@ -51,7 +61,6 @@ export const SellerHeader = () => {
               </div>
             )}
           </div>
-          <DarkMode />
         </nav>
       </div>
     </header>

@@ -12,7 +12,7 @@ export const useLogout = (role = "user") => {
 
   const handleLogout = async () => {
     try {
-      await axiosInstance.post(`/${role}/logout`); // Dynamically hits /user/logout, /seller/logout, etc.
+      await axiosInstance.post(`/${role}/logout`); 
     } catch (error) {
       console.error(`${role} logout failed:`, error);
     }

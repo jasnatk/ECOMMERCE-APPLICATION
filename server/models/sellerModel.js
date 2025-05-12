@@ -8,9 +8,17 @@ const sellerSchema = new mongoose.Schema({
     password: { type: String, required: true },
     phoneNumber: { type: String, required: true },
     address: { type: String, required: true },
-    profilePic: { type: String },
-    isVerified: { type: Boolean, default: false }
-});
+  profilePic: {
+      type: String,
+      default: ""
+    },
+    isVerified: { type: Boolean, default: false },
+    isBlocked: {
+    type: Boolean,
+    default: false,
+  },
+},{timestamps: true }
+ );
 
 // Hash password before saving to database
 sellerSchema.pre('save', async function(next) {

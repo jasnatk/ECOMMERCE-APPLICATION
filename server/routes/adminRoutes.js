@@ -4,6 +4,8 @@ import Product from "../models/productModel.js";
 import { authAdmin } from "../middleware/authAdmin.js";
 import { authUser } from "../middleware/authUser.js";
 import Seller from '../models/sellerModel.js';
+import upload from "../middleware/multer.js";
+import { blockSeller } from "../controllers/sellerController.js";
 import {
   adminLogout,
   getAdminProfile,
@@ -14,6 +16,8 @@ import {
   deleteUser,
   getAllUsers,
   verifySeller,
+  updateAdminProfile,
+  uploadAdminProfilePic,
 } from '../controllers/adminController.js';
 
 const router = express.Router();
@@ -22,7 +26,9 @@ const router = express.Router();
 router.post('/signup', adminSignUp);
 router.post('/login', adminLogin);
 router.post('/logout', adminLogout);
-
+router.put("/profile", authAdmin, updateAdminProfile);
+router.post("/upload-profile-pic", authAdmin, upload.single("profilePic"), uploadAdminProfilePic);
+router.put('/sellers/:sellerId/block', blockSeller);
 // Protected routes
 router.use(authAdmin);
 

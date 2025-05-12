@@ -11,7 +11,6 @@ const SellerDashboard = () => {
     totalOrders: 0,
     totalRevenue: 0,
   });
-
   const navigate = useNavigate();
   const location = useLocation();
   const profileRef = useRef(null);
@@ -20,7 +19,15 @@ const SellerDashboard = () => {
     const fetchSellerData = async () => {
       try {
         const profileRes = await axiosInstance.get("/seller/profile");
-        setSeller(profileRes.data.userData);
+        const sellerData = profileRes.data.userData;
+
+        // Check if seller is verified
+        if (!sellerData.isVerified) {
+          navigate("/seller/pending"); // Redirect to pending verification page
+          return;
+        }
+
+        setSeller(sellerData);
 
         const statsRes = await axiosInstance.get("/seller/stats");
         setStats(statsRes.data.stats);
@@ -55,7 +62,7 @@ const SellerDashboard = () => {
     return (
       <div className="flex min-h-screen bg-base-100">
         {/* Sidebar Skeleton */}
-        <div className="text-base-content fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600  shadow-xl transition-all duration-300">
+        <div className="text-base-content fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600 shadow-xl transition-all duration-300">
           <nav className="pt-8">
             {Array(4)
               .fill()
@@ -70,21 +77,15 @@ const SellerDashboard = () => {
 
         {/* Main Content Skeleton */}
         <div className="flex-1 ml-64 p-8">
-          {/* Header Skeleton */}
           <header className="flex justify-between items-center mb-8">
             <div className="skeleton h-8 w-64 rounded"></div>
             <div className="skeleton h-10 w-32 rounded"></div>
           </header>
-
-          {/* Stats Section Skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             {Array(3)
               .fill()
               .map((_, index) => (
-                <div
-                  key={index}
-                  className="bg-white p-6 rounded-xl shadow-lg"
-                >
+                <div key={index} className="bg-white p-6 rounded-xl shadow-lg">
                   <div className="flex items-center justify-between">
                     <div className="space-y-2">
                       <div className="skeleton h-6 w-32 rounded"></div>
@@ -95,8 +96,6 @@ const SellerDashboard = () => {
                 </div>
               ))}
           </div>
-
-          {/* Quick Actions Skeleton */}
           <div className="bg-white p-8 rounded-xl shadow-lg">
             <div className="skeleton h-8 w-48 mb-4 rounded"></div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -115,7 +114,7 @@ const SellerDashboard = () => {
   return (
     <div className="flex-1 p-8 pt-17 flex min-h-screen bg-base-100">
       {/* Sidebar */}
-      <div className=" text-white fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600  shadow-xl transition-all duration-300">
+      <div className="text-white fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600 shadow-xl transition-all duration-300">
         <nav className="pt-8">
           {menuItems.map((item) => (
             <button
@@ -133,18 +132,15 @@ const SellerDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 p-8  bg-base-100">
-        {/* Header */}
-        <header className=" text-base-content flex justify-between items-center mb-8">
+      <div className="flex-1 ml-64 p-8 bg-base-100">
+        <header className="text-base-content flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Welcome, {seller.name}</h1>
         </header>
-
-        {/* Stats Section */}
-        <div className=" bg-base-100 grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          <div className=" text-base-content p-6  rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
+        <div className="bg-base-100 grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <div className="text-base-content p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold ">Total Products</h3>
+                <h3 className="text-lg font-semibold">Total Products</h3>
                 <p className="text-3xl font-bold text-indigo-600">{stats.totalProducts}</p>
               </div>
               <div className="p-3 bg-indigo-100 rounded-full">
@@ -155,7 +151,7 @@ const SellerDashboard = () => {
           <div className="bg-base-100 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
             <div className="flex items-center justify-between text-base-content">
               <div>
-                <h3 className="text-lg font-semibold ">Orders</h3>
+                <h3 className="text-lg font-semibold">Orders</h3>
                 <p className="text-3xl font-bold text-green-600">{stats.totalOrders}</p>
               </div>
               <div className="p-3 bg-green-100 rounded-full">
@@ -166,11 +162,18 @@ const SellerDashboard = () => {
           <div className="bg-base-100 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
             <div className="flex items-center justify-between text-base-content">
               <div>
-                <h3 className="text-lg font-semibold ">Revenue</h3>
-                <p className="text-3xl font-bold text-yellow-600">₹ {stats.totalRevenue.toLocaleString()}</p>
+                <h3 className="text-lg font-semibold">Revenue</h3>
+                <p className="text-3xl font-bold text-yellow-600">
+                  ₹ {stats.totalRevenue.toLocaleString()}
+                </p>
               </div>
               <div className="p-3 bg-yellow-100 rounded-full">
-                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6 text-yellow-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -182,10 +185,8 @@ const SellerDashboard = () => {
             </div>
           </div>
         </div>
-
-        {/* Quick Actions */}
         <div className="bg-base-100 p-8 rounded-xl shadow-lg">
-          <h2 className=" text-base-content text-2xl font-semibold  mb-4">Quick Actions</h2>
+          <h2 className="text-base-content text-2xl font-semibold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button
               onClick={() => navigate("/seller/products/new")}

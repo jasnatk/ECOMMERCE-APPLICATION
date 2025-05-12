@@ -1,50 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { axiosInstance } from "../../config/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { FaTrashAlt, FaPlus, FaMinus } from "react-icons/fa";
 import toast from "react-hot-toast";
-import { ProductCard } from "../../Components/user/Cards";
-import { ProductCardSkeltons } from "../../Components/user/ProductCardSkeltons";
 
 export const CartPage = () => {
   const [cartData, isLoading, error, refetch] = useFetch("/cart/getCart");
   const [isCartEmpty, setIsCartEmpty] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
-  const [newReleases, setNewReleases] = useState([]);
-  const [isLoadingNewReleases, setIsLoadingNewReleases] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 5; // 5 products per page
   const navigate = useNavigate();
 
   // Access products from cartData?.data?.products
   const products = cartData?.data?.products || [];
 
   const errorMessage = error?.response?.data?.message || "Unable to fetch cart";
-
-  // Fetch new releases (limited to 10 products)
-  useEffect(() => {
-    const fetchNewReleases = async () => {
-      try {
-        setIsLoadingNewReleases(true);
-        const response = await axiosInstance.get("/product/productList", {
-          params: {
-            sort: "createdAt:desc", // Sort by latest products
-            limit: 10, // Fetch exactly 10 products
-          },
-        });
-        setNewReleases(response.data.data || []);
-      } catch (err) {
-        console.error("Failed to fetch new releases:", err);
-        setNewReleases([]);
-      } finally {
-        setIsLoadingNewReleases(false);
-      }
-    };
-
-    fetchNewReleases();
-  }, []);
 
   const handleClearCart = async () => {
     try {
@@ -87,7 +58,7 @@ export const CartPage = () => {
       );
       localStorage.setItem("cart", JSON.stringify({ products: updatedCart }));
       window.dispatchEvent(new Event("cartUpdated"));
-      toast.success("Quantity updated!");
+      
     } catch (error) {
       console.error("Failed to update quantity:", error?.response?.data?.message || error.message);
       toast.error(error?.response?.data?.message || "Unable to update quantity");
@@ -130,20 +101,6 @@ export const CartPage = () => {
       toast.error(error.response?.data?.message || "Payment failed. Please try again.");
     } finally {
       setIsPaying(false);
-    }
-  };
-
-  // Pagination logic
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = newReleases.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(newReleases.length / productsPerPage);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    const productsSection = document.getElementById('new-releases-section');
-    if (productsSection) {
-      productsSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -340,142 +297,6 @@ export const CartPage = () => {
               </div>
             </>
           )}
-
-          {/* New Releases in Fashion Section */}
-          <div id="new-releases-section" className="mt-12">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-base-content pl-20 mb-6 tracking-tight font-playfair">
-              New Releases in Fashion
-            </h2>
-            <div className="relative">
-              <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-2 px-20 justify-items-center">
-                {isLoadingNewReleases ? (
-                  [...Array(5)].map((_, index) => (
-                    <ProductCardSkeltons key={index} className="w-46 h-64" />
-                  ))
-                ) : currentProducts.length > 0 ? (
-                  currentProducts.map((value) => (
-                    <div key={value?._id} className="w-46">
-                      <ProductCard products={value} />
-                    </div>
-                  ))
-                ) : (
-                  <div className="col-span-full text-center py-8">
-                    <p className="text-base-content/70 text-base">
-                      No new releases found at the moment.
-                    </p>
-                  </div>
-                )}
-              </div>
-              {totalPages > 1 && (
-                <div className="flex justify-end mt-6 mb-4">
-                  <nav aria-label="Pagination" className="flex items-center gap-2">
-                    <button
-                      className={`px-4 py-2 text-sm font-medium rounded-full border border-gray-300 transition-all duration-200 ${
-                        currentPage === 1
-                          ? "opacity-50 cursor-not-allowed bg-gray-100"
-                          : "hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200"
-                      }`}
-                      onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
-                      disabled={currentPage === 1}
-                      aria-label="Previous page"
-                    >
-                      ❮
-                    </button>
-                    {(() => {
-                      const pages = [];
-                      const maxPagesToShow = 5;
-                      const halfRange = Math.floor(maxPagesToShow / 2);
-                      let startPage = Math.max(1, currentPage - halfRange);
-                      let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-                      if (endPage - startPage + 1 < maxPagesToShow) {
-                        startPage = Math.max(1, endPage - maxPagesToShow + 1);
-                      }
-
-                      if (startPage > 1) {
-                        pages.push(
-                          <button
-                            key={1}
-                            className={`px-4 py-2 text-sm font-medium rounded-full border border-gray-300 transition-all duration-200 ${
-                              currentPage === 1
-                                ? "bg-gray-800 text-white border-gray-800"
-                                : "hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200"
-                            }`}
-                            onClick={() => handlePageChange(1)}
-                            aria-label={`Page 1${currentPage === 1 ? ", current" : ""}`}
-                          >
-                            1
-                          </button>
-                        );
-                        if (startPage > 2) {
-                          pages.push(
-                            <span key="start-ellipsis" className="px-2 text-sm text-gray-500">
-                              ...
-                            </span>
-                          );
-                        }
-                      }
-
-                      for (let i = startPage; i <= endPage; i++) {
-                        pages.push(
-                          <button
-                            key={i}
-                            className={`px-4 py-2 text-sm font-medium rounded-full border border-gray-300 transition-all duration-200 ${
-                              currentPage === i
-                                ? "bg-gray-800 text-white border-gray-800"
-                                : "hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200"
-                            }`}
-                            onClick={() => handlePageChange(i)}
-                            aria-label={`Page ${i}${currentPage === i ? ", current" : ""}`}
-                          >
-                            {i}
-                          </button>
-                        );
-                      }
-
-                      if (endPage < totalPages) {
-                        if (endPage < totalPages - 1) {
-                          pages.push(
-                            <span key="end-ellipsis" className="px-2 text-sm text-gray-500">
-                              ...
-                            </span>
-                          );
-                        }
-                        pages.push(
-                          <button
-                            key={totalPages}
-                            className={`px-4 py-2 text-sm font-medium rounded-full border border-gray-300 transition-all duration-200 ${
-                              currentPage === totalPages
-                                ? "bg-gray-800 text-white border-gray-800"
-                                : "hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200"
-                            }`}
-                            onClick={() => handlePageChange(totalPages)}
-                            aria-label={`Page ${totalPages}${currentPage === totalPages ? ", current" : ""}`}
-                          >
-                            {totalPages}
-                          </button>
-                        );
-                      }
-
-                      return pages;
-                    })()}
-                    <button
-                      className={`px-4 py-2 text-sm font-medium rounded-full border border-gray-300 transition-all duration-200 ${
-                        currentPage === totalPages
-                          ? "opacity-50 cursor-not-allowed bg-gray-100"
-                          : "hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200"
-                      }`}
-                      onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-                      disabled={currentPage === totalPages}
-                      aria-label="Next page"
-                    >
-                      ❯
-                    </button>
-                  </nav>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
       </div>
     </div>

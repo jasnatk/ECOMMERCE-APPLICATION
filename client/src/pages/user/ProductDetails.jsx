@@ -92,9 +92,6 @@ export const ProductDetails = () => {
       const res = await axiosInstance.put(`/wishlist/toggle/${params?.id}`);
       setIsWishlisted(!isWishlisted);
       toast.success(res.data.message);
-      if (res.data.message.includes("added")) {
-        navigate("/user/wishlist");
-      }
     } catch (error) {
       if (error?.response?.status === 401) {
         toast.error("Please log in to use wishlist");

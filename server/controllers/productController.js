@@ -261,7 +261,7 @@ export const deleteProduct = async (req, res) => {
 
 
 export const updateProductStock = async (req, res) => {
-  const { productId } = req.params; // ✅ this must exist
+  const { productId } = req.params;
   const { stock } = req.body;
 
   try {
@@ -270,7 +270,8 @@ export const updateProductStock = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    product.stock = stock;
+    // Increment the stock instead of replacing it
+    product.stock = (product.stock || 0) + Number(stock);
     await product.save();
 
     res.status(200).json({ message: "Stock updated", product });
