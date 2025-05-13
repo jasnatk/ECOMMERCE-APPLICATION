@@ -19,7 +19,7 @@ export const RootLayout = () => {
         try {
             const response = await axiosInstance({ method: "GET", url: "/user/check-user" });
             console.log(response, "========checkUser response");
-            dispatch(saveUser());
+            dispatch(saveUser(response.data));
             setIsLoading(false);
         } catch (error) {
             console.log(error);

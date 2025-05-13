@@ -170,9 +170,7 @@ export const ManageCustomers = () => {
               </div>
             ) : (
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">
-                  Customer Management
-                </h2>
+                
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs sm:text-sm">
                     <thead className="bg-gray-50 dark:bg-gray-700">

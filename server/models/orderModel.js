@@ -15,7 +15,7 @@ const orderSchema = new mongoose.Schema({
   address: {
     name: String,
     email: String,
-    phoneNumber: String,
+    phone: String,
     line1: String,
     line2: String,
     city: String,
@@ -30,7 +30,7 @@ const orderSchema = new mongoose.Schema({
   stripeSessionId: { type: String },
   status: { type: String, enum: ['pending', 'shipped', 'delivered', 'cancelled'], default: 'pending' },
   createdAt: { type: Date, default: Date.now },
-  reviewedByAdmin: { type: Boolean, default: false }, 
+ 
 
 });
 

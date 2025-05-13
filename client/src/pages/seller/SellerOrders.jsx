@@ -40,7 +40,6 @@ const SellerOrders = () => {
 
   const handleStatusChange = async (orderId, productIndex, status) => {
     try {
-      console.log("Updating status:", { orderId, productIndex, status }); // Debug log
       await axiosInstance.put("/order/seller-product-status", {
         orderId,
         productIndex,
@@ -60,8 +59,8 @@ const SellerOrders = () => {
         )
       );
     } catch (err) {
-      console.error("Status update error:", err); // Debug log
-      toast.error("Order has not been reviewed by the admin. Please wait for admin approval before proceeding");
+      console.error("Status update error:", err);
+      toast.error("Failed to update product status");
     }
   };
 
@@ -115,7 +114,7 @@ const SellerOrders = () => {
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-3xl font-bold text-white "
+            className="text-3xl font-bold text-white"
           >
             Order Management
           </motion.h1>

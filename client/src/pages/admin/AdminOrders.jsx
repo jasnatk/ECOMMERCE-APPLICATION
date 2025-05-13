@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { AdminHeader } from '../../Components/admin/AdminHeader';
 import { Link } from 'react-router-dom';
 
-// Sidebar Component (Copied from AdminDashboard for consistency)
+// Sidebar Component (Unchanged)
 export const Sidebar = ({ isOpen, setIsOpen }) => {
   const navItems = [
     { to: '/admin/admindashboard', label: 'Dashboard', icon: <FiList /> },
@@ -52,10 +52,10 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
   );
 };
 
-// OrderDetails Component
+// OrderDetails Component (Updated colSpan)
 const OrderDetails = ({ order }) => {
   return (
-    <td colSpan="6" className="bg-gray-100 dark:bg-gray-800 p-4 sm:p-6">
+    <td colSpan="5" className="bg-gray-100 dark:bg-gray-800 p-4 sm:p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* Products Table */}
         <div>
@@ -122,7 +122,6 @@ const OrderDetails = ({ order }) => {
             <p><strong>Currency:</strong> {order.currency}</p>
             <p><strong>Stripe Session ID:</strong> {order.stripeSessionId || 'N/A'}</p>
             <p><strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-            <p><strong>Reviewed by Admin:</strong> {order.reviewedByAdmin ? 'Yes' : 'No'}</p>
           </div>
         </div>
       </div>
@@ -130,41 +129,35 @@ const OrderDetails = ({ order }) => {
   );
 };
 
-// OrderRow Component
-const OrderRow = ({ order, handleReviewOrder, toggleDetails, isExpanded }) => {
+// OrderRow Component (Updated)
+const OrderRow = ({ order, toggleDetails, isExpanded }) => {
   return (
     <>
       <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
         <td
-          className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white truncate max-w-[100px] sm:max-w-[150px]"
+          className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white truncate w-[20%] max-w-0"
           title={order._id}
         >
           {order._id}
         </td>
         <td
-          className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white truncate max-w-[120px] sm:max-w-[200px]"
+          className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white truncate w-[20%] max-w-0"
           title={order.user?.name || 'N/A'}
         >
           {order.user?.name || 'N/A'}
         </td>
-        <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white">₹{order.amountTotal.toFixed(2)}</td>
-        <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white">{order.status}</td>
-        <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white">{order.products.length}</td>
-        <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm flex items-center space-x-2">
-          <button
-            onClick={() => handleReviewOrder(order._id)}
-            disabled={order.reviewedByAdmin}
-            className={`px-2 sm:px-3 py-1 rounded text-white text-xs sm:text-sm ${
-              order.reviewedByAdmin ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-700'
-            }`}
-          >
-            {order.reviewedByAdmin ? 'Reviewed' : 'Review'}
-          </button>
+        <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white w-[20%]">
+          {order.products.length}
+        </td>
+        <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white w-[20%]">
+          ₹{order.amountTotal.toFixed(2)}
+        </td>
+        <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm w-[20%]">
           <button
             onClick={() => toggleDetails(order._id)}
             className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           >
-            {isExpanded ? <FiChevronUp size={16} sm:size={20} /> : <FiChevronDown size={16} sm:size={20} />}
+            {isExpanded ? <FiChevronUp size={16} className="sm:h-5 sm:w-5" /> : <FiChevronDown size={16} className="sm:h-5 sm:w-5" />}
           </button>
         </td>
       </tr>
@@ -177,7 +170,7 @@ const OrderRow = ({ order, handleReviewOrder, toggleDetails, isExpanded }) => {
   );
 };
 
-// AdminOrders Component
+// AdminOrders Component (Updated)
 export const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -204,16 +197,6 @@ export const AdminOrders = () => {
       toast.error(msg);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleReviewOrder = async (orderId) => {
-    try {
-      await axiosInstance.put(`order/${orderId}/review`);
-      setOrders(prev => prev.map(o => (o._id === orderId ? { ...o, reviewedByAdmin: true } : o)));
-      toast.success('Order reviewed');
-    } catch (err) {
-      toast.error('Failed to review order');
     }
   };
 
@@ -282,26 +265,23 @@ export const AdminOrders = () => {
             ) : (
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs sm:text-sm">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs sm:text-sm table-fixed">
                     <thead className="bg-gray-50 dark:bg-gray-700">
                       <tr>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[100px] sm:w-[150px]">
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[20%]">
                           Order ID
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[120px] sm:w-[200px]">
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[20%]">
                           Customer
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[80px]">
-                          Total
-                        </th>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[100px]">
-                          Status
-                        </th>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[80px]">
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[20%]">
                           Items
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[120px]">
-                          Actions
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[20%]">
+                          Total
+                        </th>
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[20%]">
+                          Details
                         </th>
                       </tr>
                     </thead>
@@ -310,7 +290,6 @@ export const AdminOrders = () => {
                         <OrderRow
                           key={order._id}
                           order={order}
-                          handleReviewOrder={handleReviewOrder}
                           toggleDetails={toggleDetails}
                           isExpanded={expandedOrderId === order._id}
                         />

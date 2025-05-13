@@ -21,7 +21,7 @@ const PendingVerification = () => {
         </p>
         <button
         onClick={() => navigate("/seller/login")}
-          className="px-4 sm:px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-200"
+          className="px-4 sm:px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-all duration-200"
         >
           Back to Login
         </button>

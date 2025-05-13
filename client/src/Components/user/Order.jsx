@@ -13,6 +13,8 @@ const OrderDetails = () => {
   const [reviews, setReviews] = useState({});
   const [isOrderOpen, setIsOrderOpen] = useState(true);
   const [isAddressOpen, setIsAddressOpen] = useState(false);
+  // New state to track which products have reviews submitted
+  const [reviewSubmitted, setReviewSubmitted] = useState({});
 
   const fetchOrder = async () => {
     try {
@@ -63,7 +65,9 @@ const OrderDetails = () => {
       const response = await axiosInstance.post("/review/add-review", payload);
       console.log("Review response:", response.data);
       toast.success("Review submitted successfully!");
-      toggleReviewBox(index);
+      toggleReviewBox(index); // Close the review box
+      // Mark the product as reviewed
+      setReviewSubmitted((prev) => ({ ...prev, [index]: true }));
       console.log("Dispatching reviewSubmitted event");
       window.dispatchEvent(new Event("reviewSubmitted"));
     } catch (err) {
@@ -76,7 +80,7 @@ const OrderDetails = () => {
     return (
       <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <div className="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-2xl p-6 animate-pulse">
+          <div className="bg_gray-800 bg-opacity-50 backdrop-blur-lg rounded-2xl p-6 animate-pulse">
             <div className="h-8 bg-gray-700 rounded w-1/4 mb-6"></div>
             <div className="space-y-4">
               {[...Array(3)].map((_, i) => (
@@ -196,9 +200,7 @@ const OrderDetails = () => {
                 <p>
                   <span className="font-medium">Email:</span> {order.address?.email || "N/A"}
                 </p>
-                <p>
-                  <span className="font-medium">Phone:</span> {order.address?.phoneNumber || "N/A"}
-                </p>
+               
                 <p>
                   <span className="font-medium">Address:</span> {order.address?.line1 || "N/A"},{" "}
                   {order.address?.line2 || ""}
@@ -249,14 +251,25 @@ const OrderDetails = () => {
                     </p>
                   </div>
 
-                  <button
-                    className="mt-4 inline-flex items-center px-4 py-2 bg-emerald-500 text-white text-sm font-medium rounded-full hover:bg-emerald-600 transition-all duration-300"
-                    onClick={() => toggleReviewBox(index)}
-                  >
-                    {reviewBox[index] ? "Close Review" : "Add a Review"}
-                  </button>
+                  {/* Conditionally render the "Add a Review" button */}
+                  {item.status === "delivered" && !reviewSubmitted[index] ? (
+                    <button
+                      className="mt-4 inline-flex items-center px-4 py-2 bg-emerald-500 text-white text-sm font-medium rounded-full hover:bg-emerald-600 transition-all duration-300"
+                      onClick={() => toggleReviewBox(index)}
+                    >
+                      {reviewBox[index] ? "Close Review" : "Add a Review"}
+                    </button>
+                  ) : item.status === "delivered" ? (
+                    <p className="mt-4 text-gray-400 text-sm">
+                      Review submitted. Thank you!
+                    </p>
+                  ) : (
+                    <p className="mt-4 text-gray-400 text-sm">
+                      Don't forget to leave a review after your order is delivered.
+                    </p>
+                  )}
 
-                  {reviewBox[index] && (
+                  {reviewBox[index] && item.status === "delivered" && !reviewSubmitted[index] && (
                     <div className="mt-6 bg-gray-900 bg-opacity-50 backdrop-blur-lg p-6 rounded-lg border border-gray-700 animate-fadeIn">
                       <h5 className="text-lg font-medium text-white mb-4">Write Your Review</h5>
                       <div className="space-y-4">

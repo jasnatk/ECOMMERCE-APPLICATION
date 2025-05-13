@@ -1,16 +1,14 @@
-import React, { useRef } from "react";
+import React from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { useLogout } from "../../hooks/useLogout";
 import { useNavigate } from "react-router-dom";
 import { DarkMode } from "../../Components/shared/DarkMode";
-import { axiosInstance } from "../../config/axiosInstance";
 import { toast } from "react-hot-toast";
 
 export const Profile = () => {
   const navigate = useNavigate();
   const [userDetails, isLoading, error] = useFetch("/user/profile");
   const handleLogout = useLogout("user");
-  const fileInputRef = useRef(null);
   const isOnline = true;
 
   // Access user data
@@ -20,25 +18,6 @@ export const Profile = () => {
   const defaultImage = "/image/fauser1.png"; // Local fa-user icon image
   // Use default avatar if profilePic is missing or invalid
   const profileImage = user?.profilePic && user.profilePic !== "" ? user.profilePic : defaultImage;
-
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("profilePic", file);
-
-    try {
-      const res = await axiosInstance.post("/user/upload-profile-pic", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      userDetails.data.profilePic = res.data.data.profilePic;
-      toast.success("Profile picture updated successfully!");
-    } catch (error) {
-      console.error("Upload error:", error);
-      toast.error("Error uploading profile picture");
-    }
-  };
 
   if (isLoading) {
     return (
@@ -72,18 +51,10 @@ export const Profile = () => {
               <img
                 src={profileImage}
                 alt="Profile"
-                className="object-cover rounded-full cursor-pointer"
-                onClick={() => fileInputRef.current.click()}
+                className="object-cover rounded-full"
                 onError={(e) => {
                   e.target.src = defaultImage;
                 }}
-              />
-              <input
-                type="file"
-                ref={fileInputRef}
-                accept="image/jpeg,image/jpg,image/png"
-                onChange={handleFileChange}
-                className="hidden"
               />
             </div>
           </div>

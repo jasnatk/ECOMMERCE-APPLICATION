@@ -87,7 +87,7 @@ export const WishlistPage = () => {
       </h1>
       {wishlist.length === 0 ? (
         <p className="text-center text-base text-base-content/70 py-8">
-          Your wishlist is empty!
+          is empty!
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

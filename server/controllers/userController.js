@@ -45,8 +45,7 @@ export const userSignUp = async (req, res) => {
 
         await newUser.save();
 
-        const token = generateToken(newUser._id, "user");
-        setTokenCookie(res, token);
+        
 
         const userWithoutPassword = await User.findById(newUser._id).select("-password");
 

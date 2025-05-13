@@ -13,7 +13,7 @@ export const SellerHeader = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900 text-white pl-8 p-4">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900 text-white pl-12 p-4">
       <div className="container mx-0 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <h1 className="text-3xl font-bold">
@@ -22,7 +22,7 @@ export const SellerHeader = () => {
               className="hover:text-gray-500"
               style={{ fontFamily: 'Playfair Display, serif' }}
             >
-              Z FASHION SELLER
+              SELLER
             </Link>
           </h1>
           <h2 className="text-lg">
@@ -61,6 +61,7 @@ export const SellerHeader = () => {
               </div>
             )}
           </div>
+           <DarkMode />
         </nav>
       </div>
     </header>

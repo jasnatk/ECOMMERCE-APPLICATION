@@ -1,6 +1,7 @@
 import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
 import mongoose from "mongoose";
+import { Review } from "../models/reviewModel.js";
 
 export const createOrder = async (req, res) => {
   try {
@@ -72,12 +73,10 @@ export const getMyOrders = async (req, res) => {
         const validProducts = await Promise.all(
           order.products.map(async (product) => {
             if (!mongoose.Types.ObjectId.isValid(product.productId)) {
-             
               return null;
             }
             const productDoc = await Product.findById(product.productId).select("name price image");
             if (!productDoc) {
-              
               return null;
             }
             return {
@@ -107,45 +106,43 @@ export const getMyOrders = async (req, res) => {
 
 export const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.orderId).lean();
+    const order = await Order.findById(req.params.orderId).populate("products.productId");
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-    const validProducts = await Promise.all(
-      order.products.map(async (product) => {
-        if (!mongoose.Types.ObjectId.isValid(product.productId)) {
-          return null;
-        }
-        const productDoc = await Product.findById(product.productId).select("name price image");
-        if (!productDoc) {
-          console.warn(`Product not found for ID in order ${order._id}: ${product.productId}`);
-          return null;
-        }
-        const transformedProduct = {
-          ...product,
-          productId: productDoc,
-        };
-        
-        return transformedProduct;
-      })
-    );
 
-    const cleanedOrder = {
-      ...order,
-      products: validProducts.filter((p) => p !== null),
-    };
+    // Fetch reviews for all products in one query
+    const productIds = order.products
+      .filter((p) => mongoose.Types.ObjectId.isValid(p.productId))
+      .map((p) => p.productId);
+    const reviews = await Review.find({
+      productId: { $in: productIds },
+      user: order.user,
+    }).lean();
 
-    const populatedOrder = await Order.populate(cleanedOrder, {
-      path: "products.seller",
-      select: "name",
+    const reviewMap = reviews.reduce((map, review) => {
+      map[review.productId.toString()] = review;
+      return map;
+    }, {});
+
+    // Add hasReview and review data to each product
+    const productsWithReviewStatus = order.products.map((product) => {
+      const productIdStr = product.productId.toString();
+      const review = reviewMap[productIdStr];
+      return {
+        ...product.toObject(),
+        hasReview: !!review,
+        review: review || null, // Include review data
+      };
     });
 
-    
-
-    res.status(200).json(populatedOrder);
-  } catch (err) {
-    console.error("Error fetching order:", err);
-    res.status(500).json({ message: "Internal server error" });
+    res.json({
+      ...order.toObject(),
+      products: productsWithReviewStatus,
+    });
+  } catch (error) {
+    console.error("Error fetching order:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -229,16 +226,10 @@ export const updateSellerProductStatus = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    if (!order.reviewedByAdmin) {
-      return res.status(403).json({ message: "Order must be reviewed by admin before shipping" });
-    }
-
     const product = order.products[productIndex];
     if (!product || product.seller.toString() !== sellerId) {
       return res.status(403).json({ message: "Product not found or unauthorized" });
     }
-
-   
 
     order.products[productIndex].status = status;
 
@@ -304,7 +295,7 @@ export const getSellerOrders = async (req, res) => {
     );
 
     const populatedOrders = await Order.populate(cleanedOrders.filter((o) => o !== null), [
-      { path: "user", select: "name email" }, // Add user population
+      { path: "user", select: "name email" },
       { path: "products.seller", select: "name" },
     ]);
 
@@ -312,32 +303,5 @@ export const getSellerOrders = async (req, res) => {
   } catch (error) {
     console.error("Error fetching seller orders:", error);
     res.status(500).json({ message: "Server error fetching seller orders", error: error.message });
-  }
-};
-
-export const reviewOrderByAdmin = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(orderId)) {
-      return res.status(400).json({ message: "Invalid order ID" });
-    }
-
-    const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
-    }
-
-    if (order.reviewedByAdmin) {
-      return res.status(400).json({ message: "Order already reviewed by admin" });
-    }
-
-    order.reviewedByAdmin = true;
-    await order.save();
-
-    res.status(200).json({ message: "Order approved by admin", order });
-  } catch (error) {
-    console.error("Admin review error:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
