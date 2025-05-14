@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { FiUserX, FiUserMinus, FiUsers, FiPackage, FiShoppingBag, FiList, FiBox, FiX } from 'react-icons/fi';
-import { axiosInstance } from '../../config/axiosInstance';
-import toast from 'react-hot-toast';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { AdminHeader } from '../../Components/admin/AdminHeader';
 
-// Sidebar Component (Copied from AdminOrders for consistency)
+import React, { useState, useEffect } from "react";
+import { FiUserX, FiUserMinus, FiUsers, FiPackage, FiShoppingBag, FiList, FiBox, FiX } from "react-icons/fi";
+import { axiosInstance } from "../../config/axiosInstance";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { AdminHeader } from "../../Components/admin/AdminHeader";
+
+// Sidebar Component (Unchanged)
 export const Sidebar = ({ isOpen, setIsOpen }) => {
   const navItems = [
-    { to: '/admin/admindashboard', label: 'Dashboard', icon: <FiList /> },
-    { to: '/admin/manage-sellers', label: 'Sellers', icon: <FiShoppingBag /> },
-    { to: '/admin/products', label: 'Products', icon: <FiBox /> },
-    { to: '/admin/orders', label: 'Orders', icon: <FiPackage /> },
-    { to: '/admin/users', label: 'Customers', icon: <FiUsers /> },
+    { to: "/admin/admindashboard", label: "Dashboard", icon: <FiList /> },
+    { to: "/admin/manage-sellers", label: "Sellers", icon: <FiShoppingBag /> },
+    { to: "/admin/products", label: "Products", icon: <FiBox /> },
+    { to: "/admin/orders", label: "Orders", icon: <FiPackage /> },
+    { to: "/admin/users", label: "Customers", icon: <FiUsers /> },
   ];
 
   return (
     <>
       <div
         className={`fixed inset-y-0 left-0 z-30 w-56 bg-gray-900 text-white transform ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+          isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:sticky md:top-0 md:h-screen transition-transform duration-300 ease-in-out`}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
@@ -33,7 +34,7 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
             <Link
               key={item.to}
               to={item.to}
-              className={`flex items-center p-2 rounded-lg hover:bg-gray-700 ${index === 0 ? 'mt-3' : ''}`}
+              className={`flex items-center p-2 rounded-lg hover:bg-gray-700 ${index === 0 ? "mt-3" : ""}`}
               onClick={() => setIsOpen(false)}
             >
               <span className="ml-1 mr-3">{item.icon}</span>
@@ -57,23 +58,23 @@ export const ManageCustomers = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   // Fetch all customers
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axiosInstance.get('/admin/users');
+        const res = await axiosInstance.get("/admin/users");
         const users = Array.isArray(res.data.users) ? res.data.users : [];
         setCustomers(users);
       } catch (err) {
         const msg =
           err.response?.data?.message ||
           (err.response?.status === 500
-            ? 'Server error'
+            ? "Server error"
             : err.response?.status === 401 || err.response?.status === 403
-            ? 'Unauthorized'
-            : 'Failed to load customers');
+            ? "Unauthorized"
+            : "Failed to load customers");
         setError(msg);
         toast.error(msg);
       } finally {
@@ -93,22 +94,22 @@ export const ManageCustomers = () => {
           customer._id === userId ? { ...customer, isActive: false } : customer
         )
       );
-      toast.success('User deactivated successfully');
+      toast.success("User deactivated successfully");
     } catch (err) {
-      const msg = err.response?.data?.message || 'Failed to deactivate user';
+      const msg = err.response?.data?.message || "Failed to deactivate user";
       toast.error(msg);
     }
   };
 
   // Handle delete user
   const handleDelete = async (userId) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
+    if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         await axiosInstance.delete(`/admin/delete/${userId}`);
         setCustomers(customers.filter((customer) => customer._id !== userId));
-        toast.success('User deleted successfully');
+        toast.success("User deleted successfully");
       } catch (err) {
-        const msg = err.response?.data?.message || 'Failed to delete user';
+        const msg = err.response?.data?.message || "Failed to delete user";
         toast.error(msg);
       }
     }
@@ -119,9 +120,9 @@ export const ManageCustomers = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900"
+        className="flex items-center justify-center min-h-screen bg-base-100"
       >
-        <div className="text-base sm:text-lg font-semibold text-gray-700 dark:text-white animate-pulse">
+        <div className="text-base sm:text-lg font-semibold text-base-content animate-pulse">
           Loading Customers...
         </div>
       </motion.div>
@@ -133,14 +134,14 @@ export const ManageCustomers = () => {
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900"
+        className="flex items-center justify-center min-h-screen bg-base-100"
       >
-        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded shadow text-center">
-          <h2 className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mb-2">Error</h2>
-          <p className="text-base sm:text-lg text-gray-700 dark:text-gray-200">{error}</p>
+        <div className="bg-base-100 p-4 sm:p-6 rounded-xl shadow-xl text-center">
+          <h2 className="text-xl sm:text-2xl font-bold text-red-600 mb-2">Error</h2>
+          <p className="text-base sm:text-lg text-base-content">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded text-sm sm:text-base"
+            className="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md text-sm sm:text-base"
           >
             Retry
           </button>
@@ -153,7 +154,7 @@ export const ManageCustomers = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gray-100 dark:bg-gray-900 flex"
+      className="min-h-screen bg-base-100 flex"
     >
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <div className="flex-1 pt-16 transition-all duration-300 flex justify-center">
@@ -164,80 +165,79 @@ export const ManageCustomers = () => {
               <FiUsers className="mr-2 text-xl sm:text-2xl" /> Manage Customers
             </h1>
             {customers.length === 0 ? (
-              <div className="text-center py-8 sm:py-16 text-gray-600 dark:text-gray-300">
+              <div className="text-center py-8 sm:py-16 text-base-content">
                 <FiUsers className="w-8 sm:w-10 h-8 sm:h-10 mx-auto mb-4" />
                 <p className="text-base sm:text-lg">No customers found.</p>
               </div>
             ) : (
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
-                
+              <div className="bg-base-100 rounded-xl shadow-xl border border-base-300 p-4 sm:p-6">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs sm:text-sm">
-                    <thead className="bg-gray-50 dark:bg-gray-700">
+                  <table className="min-w-full divide-y divide-base-300 text-xs sm:text-sm">
+                    <thead className="bg-base-200">
                       <tr>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[120px] sm:w-[150px]">
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-base-content w-[120px] sm:w-[150px]">
                           Name
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[150px] sm:w-[200px]">
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-base-content w-[150px] sm:w-[200px]">
                           Email
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[100px] sm:w-[120px] hidden sm:table-cell">
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-base-content w-[100px] sm:w-[120px] hidden sm:table-cell">
                           Phone
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[150px] sm:w-[200px] hidden md:table-cell">
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-base-content w-[150px] sm:w-[200px] hidden md:table-cell">
                           Address
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[80px]">
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-base-content w-[80px]">
                           Status
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-gray-600 dark:text-gray-300 w-[100px]">
+                        <th className="px-4 sm:px-6 py-3 text-left font-semibold uppercase text-base-content w-[100px]">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="bg-base-100 divide-y divide-base-300">
                       {customers.map((customer) => (
-                        <tr key={customer._id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <tr key={customer._id} className="hover:bg-base-200">
                           <td
-                            className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white truncate max-w-[120px] sm:max-w-[150px]"
+                            className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-base-content truncate max-w-[120px] sm:max-w-[150px]"
                             title={customer.name}
                           >
                             {customer.name}
                           </td>
                           <td
-                            className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white truncate max-w-[150px] sm:max-w-[200px]"
+                            className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-base-content truncate max-w-[150px] sm:max-w-[200px]"
                             title={customer.email}
                           >
                             {customer.email}
                           </td>
                           <td
-                            className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white truncate max-w-[100px] sm:max-w-[120px] hidden sm:table-cell"
-                            title={customer.phoneNumber || 'N/A'}
+                            className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-base-content truncate max-w-[100px] sm:max-w-[120px] hidden sm:table-cell"
+                            title={customer.phoneNumber || "N/A"}
                           >
-                            {customer.phoneNumber || 'N/A'}
+                            {customer.phoneNumber || "N/A"}
                           </td>
                           <td
-                            className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white truncate max-w-[150px] sm:max-w-[200px] hidden md:table-cell"
-                            title={customer.address || 'N/A'}
+                            className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-base-content truncate max-w-[150px] sm:max-w-[200px] hidden md:table-cell"
+                            title={customer.address || "N/A"}
                           >
-                            {customer.address || 'N/A'}
+                            {customer.address || "N/A"}
                           </td>
-                          <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white">
+                          <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-base-content">
                             {customer.isActive ? (
-                              <span className="px-2 py-1 text-xs sm:text-sm text-green-700 bg-green-100 dark:bg-green-700 dark:text-white rounded">
+                              <span className="px-2 py-1 text-xs sm:text-sm text-green-600 bg-green-100 rounded">
                                 Active
                               </span>
                             ) : (
-                              <span className="px-2 py-1 text-xs sm:text-sm text-red-700 bg-red-100 dark:bg-red-700 dark:text-white rounded">
+                              <span className="px-2 py-1 text-xs sm:text-sm text-red-600 bg-red-100 rounded">
                                 Inactive
                               </span>
                             )}
                           </td>
-                          <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-white flex space-x-2">
+                          <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-base-content flex space-x-2">
                             <button
                               onClick={() => handleDeactivate(customer._id)}
                               className={`p-1 sm:p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded text-xs sm:text-sm ${
-                                !customer.isActive ? 'opacity-50 cursor-not-allowed' : ''
+                                !customer.isActive ? "opacity-50 cursor-not-allowed" : ""
                               }`}
                               title="Deactivate"
                               disabled={!customer.isActive}

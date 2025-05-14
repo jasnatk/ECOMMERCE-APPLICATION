@@ -60,7 +60,7 @@ const SellerDashboard = () => {
 
   if (!seller) {
     return (
-      <div className="flex min-h-screen bg-base-100">
+      <div className="flex-1 p-8 pt-17 flex min-h-screen bg-base-100">
         {/* Sidebar Skeleton */}
         <div className="text-base-content fixed left-0 w-64 h-full bg-gradient-to-b from-purple-600 via-indigo-600 to-blue-600 shadow-xl transition-all duration-300">
           <nav className="pt-8">
@@ -69,7 +69,7 @@ const SellerDashboard = () => {
               .map((_, index) => (
                 <div
                   key={index}
-                  className="skeleton h-10 w-full mx-6 mb-2 rounded"
+                  className="skeleton h-10 w-3/4 mx-4 mb-2 rounded"
                 ></div>
               ))}
           </nav>

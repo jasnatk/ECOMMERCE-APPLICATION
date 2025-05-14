@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
@@ -34,7 +35,7 @@ const PaymentSuccess = () => {
 
         toast.success("Cart cleared successfully!");
 
-        // Redirect to order details after 5 seconds
+        // Redirect to order details after 3 seconds
         setTimeout(() => {
           navigate(`/user/order/${data.orderId}`);
         }, 3000);
@@ -50,18 +51,18 @@ const PaymentSuccess = () => {
   }, [navigate, sessionId]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 pt-22">
-      <div className="relative bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full border-2 border-green-100 transform transition hover:scale-105">
+    <div className="flex items-center justify-center min-h-screen bg-base-100 pt-22">
+      <div className="relative bg-base-100 p-6 rounded-3xl shadow-xl max-w-sm w-full border-2 border-green-100 transform transition hover:scale-105">
         <div className="flex justify-center">
           <FaCheckCircle className="text-green-500" size={48} />
         </div>
         <h1 className="mt-4 text-2xl font-bold text-green-600 text-center">
           Payment Successful!
         </h1>
-        <p className="mt-3 text-base text-gray-600 text-center leading-relaxed">
+        <p className="mt-3 text-base text-base-content text-center leading-relaxed">
           Your payment has been processed successfully. Thank you for your order!
         </p>
-        <p className="mt-2 text-xs text-gray-500 text-center">
+        <p className="mt-2 text-xs text-base-content text-center">
           {isCartCleared ? "Your cart has been cleared." : "Clearing your cart..."} Redirecting to your
           order details in a few seconds...
         </p>

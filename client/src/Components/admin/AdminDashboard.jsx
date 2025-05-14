@@ -1,40 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FiPackage, FiUsers, FiShoppingBag, FiList, FiBox, FiX } from 'react-icons/fi';
-import { axiosInstance } from '../../config/axiosInstance';
-import toast from 'react-hot-toast';
-import { AdminHeader } from './AdminHeader';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { FiPackage, FiUsers, FiShoppingBag, FiList, FiBox, FiX } from "react-icons/fi";
+import { axiosInstance } from "../../config/axiosInstance";
+import toast from "react-hot-toast";
+import { AdminHeader } from "./AdminHeader";
 
 // StatsCard Component
 const StatsCard = ({ title, value, icon, color }) => (
-  <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md flex flex-col items-center justify-center h-28 sm:h-32 w-full border border-gray-200">
+  <div className="bg-base-100 p-4 sm:p-6 rounded-xl shadow-xl flex flex-col items-center justify-center h-28 sm:h-32 w-full border border-base-300">
     <div className={`text-2xl sm:text-3xl ${color} mb-2`}>{icon}</div>
     <div className="text-center">
-      <div className="text-base sm:text-lg font-semibold text-gray-700 dark:text-gray-200">{title}</div>
-      <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">{value}</p>
+      <div className="text-base sm:text-lg font-semibold text-base-content">{title}</div>
+      <p className="text-lg sm:text-xl font-bold text-base-content">{value}</p>
     </div>
   </div>
 );
 
-// Sidebar Component
+// Sidebar Component (Unchanged as per request)
 export const Sidebar = ({ isOpen, setIsOpen }) => {
   const navItems = [
-    { to: '/admin/admindashboard', label: 'Dashboard', icon: <FiList /> },
-    { to: '/admin/manage-sellers', label: 'Sellers', icon: <FiShoppingBag /> },
-    { to: '/admin/products', label: 'Products', icon: <FiBox /> },
-    { to: '/admin/orders', label: 'Orders', icon: <FiPackage /> },
-    { to: '/admin/users', label: 'Customers', icon: <FiUsers /> },
+    { to: "/admin/admindashboard", label: "Dashboard", icon: <FiList /> },
+    { to: "/admin/manage-sellers", label: "Sellers", icon: <FiShoppingBag /> },
+    { to: "/admin/products", label: "Products", icon: <FiBox /> },
+    { to: "/admin/orders", label: "Orders", icon: <FiPackage /> },
+    { to: "//actions", label: "Customers", icon: <FiUsers /> },
   ];
 
   return (
     <>
       <div
-        className={`fixed inset-y-0 left-0 z-30 w-56 bg-gray-900 text-white transform ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-y-0 left-0 z-30 w-56 bg-gray-900 pt-4 text-white transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:sticky md:top-0 md:h-screen transition-transform duration-300 ease-in-out`}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
-         39
           <button onClick={() => setIsOpen(false)} className="md:hidden">
             <FiX className="text-2xl" />
           </button>
@@ -67,19 +66,19 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
 const RecentOrdersTable = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchRecentOrders = async () => {
       try {
-        const res = await axiosInstance.get('order/');
+        const res = await axiosInstance.get("order/");
         const sanitized = Array.isArray(res.data)
           ? res.data
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .slice(0, 5)
               .map((order) => ({
                 id: order._id,
-                customer: order.user?.name || 'N/A',
+                customer: order.user?.name || "N/A",
                 total: order.amountTotal.toFixed(2),
                 status: order.status,
               }))
@@ -89,10 +88,10 @@ const RecentOrdersTable = () => {
         const msg =
           err.response?.data?.message ||
           (err.response?.status === 500
-            ? 'Server error'
+            ? "Server error"
             : err.response?.status === 401 || err.response?.status === 403
-            ? 'Unauthorized'
-            : 'Failed to load orders');
+            ? "Unauthorized"
+            : "Failed to load orders");
         setError(msg);
         toast.error(msg);
       } finally {
@@ -104,52 +103,52 @@ const RecentOrdersTable = () => {
   }, []);
 
   if (loading) {
-    return <div className="text-center py-4 text-gray-600 dark:text-gray-300">Loading recent orders...</div>;
+    return <div className="text-center py-4 text-base-content">Loading recent orders...</div>;
   }
 
   if (error) {
-    return <div className="text-center py-4 text-red-600 dark:text-red-400">{error}</div>;
+    return <div className="text-center py-4 text-red-600">{error}</div>;
   }
 
   return (
-    <div className="mt-6 sm:mt-8 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md">
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4">
+    <div className="mt-6 sm:mt-8 bg-base-100 p-4 sm:p-6 rounded-xl shadow-xl border border-base-300">
+      <h2 className="text-lg sm:text-xl font-semibold text-base-content mb-4">
         Recent Orders
       </h2>
       {orders.length === 0 ? (
-        <div className="text-center py-4 text-gray-600 dark:text-gray-300">No recent orders found.</div>
+        <div className="text-center py-4 text-base-content">No recent orders found.</div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+          <table className="min-w-full divide-y divide-base-300">
+            <thead className="bg-base-200">
               <tr>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider">
                   Order ID
                 </th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider">
                   Customer
                 </th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider">
                   Total
                 </th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider">
                   Status
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-base-100 divide-y divide-base-300">
               {orders.map((order) => (
-                <tr key={order.id}>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white truncate max-w-[100px] sm:max-w-[150px]">
+                <tr key={order.id} className="hover:bg-base-200">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-base-content truncate max-w-[100px] sm:max-w-[150px]">
                     {order.id}
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white truncate max-w-[120px] sm:max-w-[200px]">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-base-content truncate max-w-[120px] sm:max-w-[200px]">
                     {order.customer}
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-base-content">
                     ₹{order.total}
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-base-content">
                     {order.status}
                   </td>
                 </tr>
@@ -170,32 +169,32 @@ export const AdminDashboard = () => {
   const [sellerCount, setSellerCount] = useState(0);
   const [customerCount, setCustomerCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const orderRes = await axiosInstance.get('order/');
+        const orderRes = await axiosInstance.get("order/");
         const orders = Array.isArray(orderRes.data) ? orderRes.data : [];
         setOrderCount(orders.length);
         const salesSum = orders.reduce((sum, order) => sum + (order.amountTotal || 0), 0);
         setTotalSales(salesSum.toFixed(2));
 
-        const sellerRes = await axiosInstance.get('/admin/sellers');
+        const sellerRes = await axiosInstance.get("/admin/sellers");
         const sellers = Array.isArray(sellerRes.data.sellers) ? sellerRes.data.sellers : [];
         setSellerCount(sellers.length);
 
-        const customerRes = await axiosInstance.get('/admin/users');
+        const customerRes = await axiosInstance.get("/admin/users");
         const customers = Array.isArray(customerRes.data.users) ? customerRes.data.users : [];
         setCustomerCount(customers.length);
       } catch (err) {
         const msg =
           err.response?.data?.message ||
           (err.response?.status === 500
-            ? 'Server error'
+            ? "Server error"
             : err.response?.status === 401 || err.response?.status === 403
-            ? 'Unauthorized'
-            : 'Failed to load dashboard stats');
+            ? "Unauthorized"
+            : "Failed to load dashboard stats");
         setError(msg);
         toast.error(msg);
       } finally {
@@ -208,8 +207,8 @@ export const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
-        <div className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-white animate-pulse">
+      <div className="flex items-center justify-center min-h-screen bg-base-100">
+        <div className="text-lg sm:text-xl font-semibold text-base-content animate-pulse">
           Loading Dashboard...
         </div>
       </div>
@@ -218,13 +217,13 @@ export const AdminDashboard = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
-        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded shadow text-center">
-          <h2 className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mb-2">Error</h2>
-          <p className="text-gray-700 dark:text-gray-200">{error}</p>
+      <div className="flex items-center justify-center min-h-screen bg-base-100">
+        <div className="bg-base-100 p-4 sm:p-6 rounded-xl shadow-xl text-center">
+          <h2 className="text-xl sm:text-2xl font-bold text-red-600 mb-2">Error</h2>
+          <p className="text-base-content">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded text-sm sm:text-base"
+            class TEAM="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md text-sm sm:text-base"
           >
             Retry
           </button>
@@ -234,7 +233,7 @@ export const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
+    <div className="min-h-screen bg-base-100 flex">
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <div className="flex-1 pt-16 transition-all duration-300 flex justify-center">
         <div className="w-full max-w-[90%] sm:max-w-4xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl">

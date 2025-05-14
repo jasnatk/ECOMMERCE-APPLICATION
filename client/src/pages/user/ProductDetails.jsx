@@ -42,7 +42,6 @@ export const ProductDetails = () => {
         setIsWishlisted(isProductInWishlist);
       } catch (error) {
         console.error("Error checking wishlist status:", error);
-        // Silently fail to avoid disrupting UX
       }
     };
 
@@ -183,8 +182,86 @@ export const ProductDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-base-100">
-        <p className="text-lg sm:text-xl font-semibold text-teal-600">Loading...</p>
+      <div className="min-h-screen bg-base-100 p-4 sm:p-6 lg:p-8 pt-16 sm:pt-24">
+        <div className="container mx-auto">
+          <div className="card bg-base-100 rounded-xl p-4 sm:p-6 my-4 shadow-sm">
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+              {/* Skeleton for Product Image */}
+              <div className="lg:w-1/2">
+                <div className="h-64 sm:h-80 lg:h-96 w-full bg-base-200 rounded-lg animate-pulse"></div>
+                <div className="flex justify-center space-x-2 mt-4">
+                  {[1, 2, 3, 4].map((_, index) => (
+                    <div
+                      key={index}
+                      className="w-12 h-12 sm:w-16 sm:h-16 bg-base-200 rounded-xl animate-pulse"
+                    ></div>
+                  ))}
+                </div>
+              </div>
+              {/* Skeleton for Product Info */}
+              <div className="lg:w-1/2 flex flex-col space-y-4">
+                <div className="h-6 sm:h-8 w-3/4 bg-base-200 rounded animate-pulse"></div>
+                <div className="h-6 sm:h-7 w-1/4 bg-base-200 rounded animate-pulse"></div>
+                <div className="h-4 w-1/2 bg-base-200 rounded animate-pulse"></div>
+                <div className="h-4 w-full bg-base-200 rounded animate-pulse"></div>
+                <div className="h-4 w-5/6 bg-base-200 rounded animate-pulse"></div>
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-20 bg-base-200 rounded animate-pulse"></div>
+                  <div className="flex items-center gap-1">
+                    <div className="h-6 w-6 bg-base-200 rounded animate-pulse"></div>
+                    <div className="h-6 w-12 bg-base-200 rounded animate-pulse"></div>
+                    <div className="h-6 w-6 bg-base-200 rounded animate-pulse"></div>
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                  <div className="h-10 w-full sm:w-1/2 bg-base-200 rounded-md animate-pulse"></div>
+                  <div className="h-10 w-full sm:w-1/4 bg-base-200 rounded-md animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+            {/* Skeleton for Reviews Section */}
+            <div className="mt-16 sm:mt-12">
+              <div className="h-6 sm:h-8 w-1/4 bg-base-200 rounded animate-pulse mb-4"></div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                {/* Skeleton for Rating Summary */}
+                <div>
+                  <div className="h-6 w-1/2 bg-base-200 rounded animate-pulse mb-2"></div>
+                  <div className="h-4 w-3/4 bg-base-200 rounded animate-pulse mb-2"></div>
+                  <div className="space-y-2">
+                    {[1, 2, 3, 4, 5].map((_, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <div className="h-4 w-12 bg-base-200 rounded animate-pulse"></div>
+                        <div className="h-2 w-24 sm:w-32 bg-base-200 rounded-full animate-pulse"></div>
+                        <div className="h-4 w-8 bg-base-200 rounded animate-pulse"></div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Skeleton for Customer Reviews */}
+                <div>
+                  <div className="h-6 w-1/3 bg-base-200 rounded animate-pulse mb-4"></div>
+                  {[1, 2].map((_, index) => (
+                    <div key={index} className="border-b border-base-200 pb-4 mb-4">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-base-200 rounded-full animate-pulse"></div>
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 w-1/4 bg-base-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-1/2 bg-base-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-full bg-base-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-3/4 bg-base-200 rounded animate-pulse"></div>
+                          <div className="flex gap-2">
+                            <div className="h-6 w-20 bg-base-200 rounded animate-pulse"></div>
+                            <div className="h-6 w-16 bg-base-200 rounded animate-pulse"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -360,7 +437,25 @@ export const ProductDetails = () => {
             {/* Customer Reviews (Right Column) */}
             <div>
               {reviewsLoading && (
-                <p className="text-teal-600 text-sm sm:text-base">Loading reviews...</p>
+                <div className="space-y-4">
+                  {[1, 2].map((_, index) => (
+                    <div key={index} className="border-b border-base-200 pb-4">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-base-200 rounded-full animate-pulse"></div>
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 w-1/4 bg-base-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-1/2 bg-base-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-full bg-base-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-3/4 bg-base-200 rounded animate-pulse"></div>
+                          <div className="flex gap-2">
+                            <div className="h-6 w-20 bg-base-200 rounded animate-pulse"></div>
+                            <div className="h-6 w-16 bg-base-200 rounded animate-pulse"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
               {reviewsError && (
                 <p className="text-error text-sm sm:text-base">Error: {reviewsError}</p>
@@ -401,7 +496,7 @@ export const ProductDetails = () => {
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-base-content text-sm sm:text-base">
-                            {review.user?.name || "Anonymous"}
+                              {review.user?.name || "Anonymous"}
                             </span>
                           </div>
                           {/* Rating */}
