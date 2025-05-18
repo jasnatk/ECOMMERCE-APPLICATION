@@ -270,8 +270,27 @@ export const updateProductStock = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Increment the stock instead of replacing it
-    product.stock = (product.stock || 0) + Number(stock);
+    // Validate stock input
+    const stockToAdd = Number(stock);
+    if (!Number.isInteger(stockToAdd)) {
+      return res.status(400).json({ message: "Stock must be an integer" });
+    }
+    if (stockToAdd < 1) {
+      return res.status(400).json({ message: "Stock to add must be at least 1" });
+    }
+    if (stockToAdd > 10000) {
+      return res.status(400).json({ message: "Stock to add cannot exceed 10,000" });
+    }
+
+    // Calculate new stock
+    const newStock = (product.stock || 0) + stockToAdd;
+
+    // Ensure the total stock doesn't exceed 10,000
+    if (newStock > 10000) {
+      return res.status(400).json({ message: "Total stock cannot exceed 10,000" });
+    }
+
+    product.stock = newStock;
     await product.save();
 
     res.status(200).json({ message: "Stock updated", product });

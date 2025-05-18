@@ -40,14 +40,51 @@ const EditStock = () => {
     fetchProduct();
   }, [id, navigate]);
 
+  const handleStockChange = (e) => {
+    const value = e.target.value;
+    // Allow empty input for user convenience
+    if (value === "") {
+      setStockToAdd("");
+      return;
+    }
+
+    const numValue = Number(value);
+    if (!Number.isInteger(numValue)) {
+      toast.error("Stock must be an integer", { duration: 4000 });
+      return;
+    }
+    if (numValue < 1) {
+      toast.error("Stock must be at least 1", { duration: 4000 });
+      return;
+    }
+    if (numValue > 10000) {
+      toast.error("Stock cannot exceed 10,000", { duration: 4000 });
+      return;
+    }
+    if (currentStock + numValue > 10000) {
+      toast.error("Total stock cannot exceed 10,000", { duration: 4000 });
+      return;
+    }
+    setStockToAdd(value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (stockToAdd < 0) {
-      toast.error("Cannot add negative stock", { duration: 4000 });
+    const numStock = Number(stockToAdd);
+    if (!stockToAdd || numStock < 1) {
+      toast.error("Stock must be at least 1", { duration: 4000 });
+      return;
+    }
+    if (numStock > 10000) {
+      toast.error("Stock cannot exceed 10,000", { duration: 4000 });
+      return;
+    }
+    if (currentStock + numStock > 10000) {
+      toast.error("Total stock cannot exceed 10,000", { duration: 4000 });
       return;
     }
     try {
-      await axiosInstance.put(`/product/update-stock/${id}`, { stock: Number(stockToAdd) });
+      await axiosInstance.put(`/product/update-stock/${id}`, { stock: numStock });
       toast.success("Stock updated successfully", { duration: 4000 });
       navigate("/seller/products/stock");
     } catch (err) {
@@ -97,10 +134,11 @@ const EditStock = () => {
               type="number"
               id="stock"
               value={stockToAdd}
-              onChange={(e) => setStockToAdd(e.target.value)}
+              onChange={handleStockChange}
               className="w-full p-3 sm:p-4 bg-white border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 peer transition-all duration-300 text-sm sm:text-base"
               required
-              min={0}
+              min="1"
+              max="10000"
               placeholder=" "
             />
             <label
